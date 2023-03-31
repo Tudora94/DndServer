@@ -42,7 +42,7 @@ namespace DndServer.Controllers
         public IActionResult Post([FromBody] Campaign.Campaign campaign)
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
-            int iD = camp.CampaignID;
+            int iD = campaign.CampaignID;
 
             return Ok(iD);
         }
