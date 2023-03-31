@@ -30,7 +30,6 @@ namespace DndServer.Controllers
     [Route("[controller]")]
     public class AllowedRaceController : ControllerBase
     {
-
         private readonly ILogger<AllowedRaceController> _logger;
 
         public AllowedRaceController(ILogger<AllowedRaceController> logger)
@@ -44,6 +43,15 @@ namespace DndServer.Controllers
             List<int> Response = camp.Sources;
 
             return Response;
+        }
+        
+        [HttpPost(Name = "SetAllowedRace")]
+        public IActionResult Post([FromBody] Campaign.Campaign campaign)
+        {
+            DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
+            int iD = campaign.CampaignID;
+
+            return Ok(iD);
         }
     }
 }
