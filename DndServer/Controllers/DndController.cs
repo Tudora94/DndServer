@@ -46,5 +46,13 @@ namespace DndServer.Controllers
 
             return Ok(iD);
         }
+        [HttpGet(Name = "GetAllowedRaces")]
+        public async Task<List<int>> GetAllowedRaces()
+        {
+            DndServer.Campaign.CampaignPreferences camp = new DndServer.Campaign.CampaignPreferences();
+            List<int> Response = camp.AllowedRaces;
+
+            return Response;
+        }
     }
 }
