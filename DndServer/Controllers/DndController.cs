@@ -17,16 +17,33 @@ namespace DndServer.Controllers
         {
             _logger = logger;
         }
-
         [HttpGet(Name = "GetCampaignDetails")]
         public async Task<Campaign.Campaign> CampaignDetails()
-
-
-
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
 
             return camp;
+        }
+    }
+
+    [ApiController]
+    [Route("[controller]")]
+    public class AllowedRaceController : ControllerBase
+    {
+
+        private readonly ILogger<AllowedRaceController> _logger;
+
+        public AllowedRaceController(ILogger<AllowedRaceController> logger)
+        {
+            _logger = logger;
+        }
+        [HttpGet(Name = "GetAllowedRaces")]
+        public async Task<List<int>> GetAllowedRaces()
+        {
+            DndServer.Campaign.CampaignPreferences camp = new DndServer.Campaign.CampaignPreferences();
+            List<int> Response = camp.Sources;
+
+            return Response;
         }
     }
 }
