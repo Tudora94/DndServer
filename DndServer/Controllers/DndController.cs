@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using DndServer.Campaign;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DndServer.Dal;
 
 namespace DndServer.Controllers
 {
@@ -42,7 +43,13 @@ namespace DndServer.Controllers
         public IActionResult Post([FromBody] Campaign.Campaign campaign)
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
-            int iD = campaign.CampaignID;
+            SqlDal sqlDal = new SqlDal();
+
+
+
+            String LocalCampaignName = campaign.CampaignName;
+
+            int iD = sqlDal.getCampaignId(LocalCampaignName);
 
             return Ok(iD);
         }
