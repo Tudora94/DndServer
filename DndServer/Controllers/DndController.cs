@@ -3,6 +3,7 @@ using DndServer.Campaign;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DndServer.Dal;
+using Microsoft.Extensions.Logging;
 
 namespace DndServer.Controllers
 {
@@ -23,6 +24,7 @@ namespace DndServer.Controllers
         public async Task<Campaign.Campaign> CampaignDetails()
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
+            _logger.LogInformation("Hello World for Get Request");
 
             return camp;
         }
@@ -44,6 +46,8 @@ namespace DndServer.Controllers
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
             SqlDal sqlDal = new SqlDal();
+
+            _logger.LogInformation("Hello World.");
 
 
 
