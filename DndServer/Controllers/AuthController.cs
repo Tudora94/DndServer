@@ -14,12 +14,20 @@ namespace DndServer.Controllers
 
     {
 
+        private readonly IConfiguration _configuration;
+
+        public AuthController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         AuthSql authentication = new AuthSql();
+        PasswordHashing passwordHashing = new PasswordHashing();
+
 
         [HttpPost("Register")]
         public async Task<ActionResult<string>> Register(RegistrationModel request)
         {
-            PasswordHashing passwordHashing = new PasswordHashing();
             UserModel user = new UserModel();
 
             passwordHashing.CreatePasswordHash(request.password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -29,9 +37,16 @@ namespace DndServer.Controllers
             user.PaswordSalt = passwordSalt;
             string email = request.email;
 
-            bool userAdded = authentication.AddUser(user, email);
+            if (!authentication.CheckUser(user.UserName))
+            {
+                return BadRequest("UserName already in use");
+            }
+            if (!authentication.CheckEmail(email))
+            {
+                return BadRequest("Email already in use");
+            }
 
-            if (userAdded)
+            if (authentication.AddUser(user) && authentication.AddEmail(user, email))
             {
                 return Ok("user Registered Successfully");
             }
@@ -41,6 +56,28 @@ namespace DndServer.Controllers
             }
 
 
+        }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult<string>> Login(UserLoginModel login)
+        {
+
+            TokenGenerator tokenGenerator = new TokenGenerator();
+            UserModel user = new UserModel();
+            authentication.LoginUser(login.UserName, user);
+
+            if (user.UserName == "")
+            {
+                return BadRequest("Invalid Login Credentials");
+            }
+            if (!passwordHashing.VerifyPasswordHash(login.Password, user.PasswordHash, user.PaswordSalt))
+            {
+                return BadRequest("Invalid Login Credentials");
+            }
+
+            var privateKey = _configuration.GetSection("AppSettings:Token").Value;
+            string token = tokenGenerator.CreateToken(user, privateKey);
+            return Ok(token);
         }
     }
 }
