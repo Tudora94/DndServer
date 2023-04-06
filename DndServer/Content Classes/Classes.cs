@@ -20,7 +20,7 @@
         public string ClassDescr { get => classDescr; set => classDescr = value; }
         public int HitPoints { get => hitPoints; set => hitPoints = value; }
         public int Level { get => level; set => level = value; }
-        public List<int> Spells1 { get => Spells; set => Spells = value; }
+        public List<int> Spells { get => Spells; set => Spells = value; }
         public List<int> Abilities { get => abilities; set => abilities = value; }
         public List<int> ClassProficiencies { get => classProficiencies; set => classProficiencies = value; }
         public List<int> Defence { get => defence; set => defence = value; }
