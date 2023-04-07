@@ -59,9 +59,9 @@ namespace DndServer.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> Login(UserLoginModel login)
+        public async Task<ActionResult<TokenModel>> Login(UserLoginModel login) //return TokenModel
         {
-
+            TokenModel token = new TokenModel();
             TokenGenerator tokenGenerator = new TokenGenerator();
             UserModel user = new UserModel();
             authentication.LoginUser(login.UserName, user);
@@ -76,7 +76,8 @@ namespace DndServer.Controllers
             }
 
             var privateKey = _configuration.GetSection("AppSettings:Token").Value;
-            string token = tokenGenerator.CreateToken(user, privateKey);
+            string tokenString = tokenGenerator.CreateToken(user, privateKey);
+            token.Token = tokenString;
             return Ok(token);
         }
     }
