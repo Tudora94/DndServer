@@ -4,12 +4,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DndServer.Dal;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DndServer.Controllers
 {
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class CampaignController : ControllerBase
     {
 
@@ -32,6 +34,8 @@ namespace DndServer.Controllers
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
+
     public class AllowedRaceController : ControllerBase
     {
         private readonly ILogger<AllowedRaceController> _logger;
