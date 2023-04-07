@@ -7,57 +7,122 @@
 	},
 	"item": [
 		{
-			"name": "GetCampaignId",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"campaignID\": 0,\r\n  \"campaignName\": \"TestName\",\r\n  \"numberOfPlayers\": 0,\r\n  \"preferences\": {\r\n    \"sources\": [\r\n      \"string\"\r\n    ],\r\n    \"advancementType\": true,\r\n    \"hpType\": true,\r\n    \"weightType\": true,\r\n    \"goldWeight\": true,\r\n    \"allowedRaces\": [\r\n      0\r\n    ]\r\n  }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"Tudora\",\r\n  \"password\": \"1qF5&ut90:101\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44332/api/auth/Login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44332",
+							"path": [
+								"api",
+								"auth",
+								"Login"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://86.12.57.173:5099/AllowedRace",
-					"protocol": "http",
-					"host": [
-						"86",
-						"12",
-						"57",
-						"173"
-					],
-					"port": "5099",
-					"path": [
-						"AllowedRace"
-					]
+				{
+					"name": "RegisterUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"string\",\r\n  \"password\": \"string\",\r\n  \"confirmPassword\": \"string\",\r\n  \"email\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:44332/api/auth/Register",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44332",
+							"path": [
+								"api",
+								"auth",
+								"Register"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "HealthCheck",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://86.12.57.173:5099/Campaign",
-					"protocol": "http",
-					"host": [
-						"86",
-						"12",
-						"57",
-						"173"
-					],
-					"port": "5099",
-					"path": [
-						"Campaign"
-					]
+			"name": "Campaign",
+			"item": [
+				{
+					"name": "HealthCheck",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/Campaign",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"Campaign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCampaignId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"campaignID\": 0,\r\n  \"campaignName\": \"TestName\",\r\n  \"numberOfPlayers\": 0,\r\n  \"preferences\": {\r\n    \"sources\": [\r\n      \"string\"\r\n    ],\r\n    \"advancementType\": true,\r\n    \"hpType\": true,\r\n    \"weightType\": true,\r\n    \"goldWeight\": true,\r\n    \"allowedRaces\": [\r\n      0\r\n    ]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://86.12.57.173:5099/AllowedRace",
+							"protocol": "http",
+							"host": [
+								"86",
+								"12",
+								"57",
+								"173"
+							],
+							"port": "5099",
+							"path": [
+								"AllowedRace"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
