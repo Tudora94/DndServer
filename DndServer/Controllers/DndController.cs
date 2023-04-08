@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace DndServer.Controllers
 {
 
-    [ApiController]
+    /*[ApiController]
     [Route("[controller]")]
     [Authorize]
     public class CampaignController : ControllerBase
@@ -30,7 +30,7 @@ namespace DndServer.Controllers
 
             return camp;
         }
-    }
+    }*/
 
     [ApiController]
     [Route("[controller]")]
