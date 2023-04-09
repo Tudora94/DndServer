@@ -11,12 +11,24 @@
 			"item": [
 				{
 					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.environment.set(\"bearerToken\", jsonResponse.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userName\": \"Tudora\",\r\n  \"password\": \"1qF5&ut90:101\"\r\n}",
+							"raw": "{\r\n  \"userName\": \"{{user}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,12 +36,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44332/api/auth/Login",
-							"protocol": "https",
+							"raw": "{{base_Url}}/api/auth/Login",
 							"host": [
-								"localhost"
+								"{{base_Url}}"
 							],
-							"port": "44332",
 							"path": [
 								"api",
 								"auth",
@@ -46,7 +56,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"string\",\r\n  \"password\": \"string\",\r\n  \"confirmPassword\": \"string\",\r\n  \"email\": \"string\"\r\n}",
+							"raw": "{\r\n  \"username\": \"{{user}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"confirmPassword\": \"{{password}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -54,12 +64,10 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:44332/api/auth/Register",
-							"protocol": "https",
+							"raw": "{{base_Url}}/api/auth/Register",
 							"host": [
-								"localhost"
+								"{{base_Url}}"
 							],
-							"port": "44332",
 							"path": [
 								"api",
 								"auth",
@@ -75,30 +83,23 @@
 			"name": "Campaign",
 			"item": [
 				{
-					"name": "HealthCheck",
+					"name": "SetCampaignId",
 					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_Url}}/Campaign",
-							"host": [
-								"{{base_Url}}"
-							],
-							"path": [
-								"Campaign"
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetCampaignId",
-					"request": {
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"campaignID\": 0,\r\n  \"campaignName\": \"TestName\",\r\n  \"numberOfPlayers\": 0,\r\n  \"preferences\": {\r\n    \"sources\": [\r\n      \"string\"\r\n    ],\r\n    \"advancementType\": true,\r\n    \"hpType\": true,\r\n    \"weightType\": true,\r\n    \"goldWeight\": true,\r\n    \"allowedRaces\": [\r\n      0\r\n    ]\r\n  }\r\n}",
+							"raw": "{\r\n  \"campaignId\": 0,\r\n  \"userName1\": \"{{user}}\",\r\n  \"name\": \"string2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -106,17 +107,44 @@
 							}
 						},
 						"url": {
-							"raw": "http://86.12.57.173:5099/AllowedRace",
-							"protocol": "http",
+							"raw": "{{base_Url}}/api/CampaignNew/CreateCampaign",
 							"host": [
-								"86",
-								"12",
-								"57",
-								"173"
+								"{{base_Url}}"
 							],
-							"port": "5099",
 							"path": [
-								"AllowedRace"
+								"api",
+								"CampaignNew",
+								"CreateCampaign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCampaigns",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaigns/{{user}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetCampaigns",
+								"{{user}}"
 							]
 						}
 					},
