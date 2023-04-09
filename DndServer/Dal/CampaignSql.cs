@@ -27,7 +27,7 @@ namespace DndServer.Dal
 
                 cmdSetCampaignId.ExecuteNonQuery();
 
-                string getCampaignId = @"SELECT Id FROM DndDb.dbo.CampaignName WHERE USerId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username) AND CampaignName = @CampaignName";
+                string getCampaignId = @"SELECT Id FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username) AND CampaignName = @CampaignName";
                 SqlCommand cmdGetCampaignId = new SqlCommand(getCampaignId, conn);
 
                 cmdGetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName1;
@@ -52,6 +52,34 @@ namespace DndServer.Dal
             {
                 return 0;
             }
+        }
+
+        public CampaignListModel getCampaigns(string userName)
+        {
+            connections.SqlOpenConnection(conn);
+
+            string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username)";
+            SqlCommand CmdGetCampaigns = new SqlCommand(sqlString, conn);
+
+            CmdGetCampaigns.Parameters.Add("@username", SqlDbType.VarChar).Value=userName;
+
+            DataTable dt = new DataTable();
+
+            SqlDataAdapter da = new SqlDataAdapter(CmdGetCampaigns);
+            da.Fill(dt);
+            connections.SQLCloseConnection(conn);
+
+            CampaignListModel campaignListModel = new CampaignListModel();
+
+            foreach(DataRow dr in dt.Rows)
+            {
+                GetCampaignModel getCampaignModel = new GetCampaignModel();
+                getCampaignModel.Id = Convert.ToInt32(dr[0]);
+                getCampaignModel.CampaignName = dr[1].ToString();
+                campaignListModel.CampaignModels.Add(getCampaignModel);
+            }
+
+            return campaignListModel;
         }
 
     }

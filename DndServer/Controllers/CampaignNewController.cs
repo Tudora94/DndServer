@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using DndServer.Campaign.Models;
 using DndServer.Dal;
 using System.Net;
-//using System.Web.Http;
 
 namespace DndServer.Controllers
 {
@@ -12,11 +11,13 @@ namespace DndServer.Controllers
     [ApiController]
     public class CampaignNewController : ControllerBase
     {
+        CampaignSql campaignSql = new CampaignSql();
+
+
         [HttpPost("CreateCampaign")]
         [Authorize]
         public async Task<ActionResult<int>> createCampaign(CreateCampaignModel request)
         {
-            CampaignSql campaignSql = new CampaignSql();
 
             int CampaignId = campaignSql.CreateCampaign(request);
 
@@ -27,9 +28,13 @@ namespace DndServer.Controllers
 
         [HttpGet("GetCampaigns/{userName}")]
         [Authorize]
-        public async Task<ActionResult<string>> getCampagins([System.Web.Http.FromUri] string userName) //pass in UserId
+        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] string userName) //pass in UserId
         {
-            return userName;
+            CampaignListModel responseList = new CampaignListModel();
+
+            responseList = campaignSql.getCampaigns(userName);
+
+            return Ok(responseList.CampaignModels);
         }
     }
 }
