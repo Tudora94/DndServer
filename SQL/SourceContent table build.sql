@@ -1,17 +1,9 @@
 USE DndDb
-BEGIN TRANSACTION;
-CREATE TABLE SourceID(
-ID int NOT NULL,
-SourceType VARCHAR(30) NOT NULL,
-)
 
-INSERT INTO SourceID (ID, SourceType)
-VALUES
-(0, 'PHB 5TH EDITION CONTENT'),
-(1, 'HOMEBREW CONTENT'),
-(2, 'ONLINE CONTENT'),
-(3, 'OTHER SOURCE CONTENT')
-SELECT * FROM SourceID
-
---COMMIT
---ROLLBACK
+CREATE TABLE CampaignSourceData(
+Id int Identity(1,1) primary key,
+CampaignId int foreign key references CampaignName(Id),
+PHB_5TH_EDITION_CONTENT bit,
+HOMEBREW_CONTENT bit,
+ONLINE_CONTENT bit,
+OTHER_SOURCE_CONTENT bit)
