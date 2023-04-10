@@ -2,12 +2,17 @@ using Microsoft.AspNetCore.Mvc;
 using DndServer.Campaign;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DndServer.Dal;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using DndServer.Campaign.Models;
 
 namespace DndServer.Controllers
 {
 
-    [ApiController]
+    /*[ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class CampaignController : ControllerBase
     {
 
@@ -22,13 +27,16 @@ namespace DndServer.Controllers
         public async Task<Campaign.Campaign> CampaignDetails()
         {
             DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
+            _logger.LogInformation("Hello World for Get Request");
 
             return camp;
         }
-    }
+    }*/
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
+
     public class AllowedRaceController : ControllerBase
     {
         private readonly ILogger<AllowedRaceController> _logger;
@@ -39,17 +47,25 @@ namespace DndServer.Controllers
         }
 
         [HttpPost(Name = "SetAllowedRace")]
-        public IActionResult Post([FromBody] Campaign.Campaign campaign)
+        public IActionResult Post([FromBody] CampaignModel campaign)
         {
-            DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
-            int iD = campaign.CampaignID;
+            CampaignModel camp = new CampaignModel();
+            SqlDal sqlDal = new SqlDal();
+
+            _logger.LogInformation("Hello World.");
+
+
+
+            String LocalCampaignName = campaign.CampaignName;
+
+            int iD = sqlDal.getCampaignId(LocalCampaignName);
 
             return Ok(iD);
         }
         [HttpGet(Name = "GetAllowedRaces")]
         public async Task<List<int>> GetAllowedRaces()
         {
-            DndServer.Campaign.CampaignPreferences camp = new DndServer.Campaign.CampaignPreferences();
+            CampaignPreferencesModel camp = new CampaignPreferencesModel();
             List<int> Response = camp.AllowedRaces;
 
             return Response;

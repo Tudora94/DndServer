@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "c5bf3341-4de7-4933-9d70-22157f76bff2",
+		"name": "DndServer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23733331"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.environment.set(\"bearerToken\", jsonResponse.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"{{user}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/auth/Login",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RegisterUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{user}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"confirmPassword\": \"{{password}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/auth/Register",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"Register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campaign",
+			"item": [
+				{
+					"name": "SetCampaignId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"campaignId\": 0,\r\n  \"userName1\": \"{{user}}\",\r\n  \"name\": \"string2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/CreateCampaign",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"CreateCampaign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCampaigns",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaigns/{{user}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetCampaigns",
+								"{{user}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCampaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaign/1",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetCampaign",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GenerateCampaignCode",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"campaignId\": {{campaignId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GenerateCampaignCode",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GenerateCampaignCode"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
