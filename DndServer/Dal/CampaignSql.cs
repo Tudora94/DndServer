@@ -10,41 +10,30 @@ namespace DndServer.Dal
 {
     public class CampaignSql
     {
-        private SqlConnection conn = new SqlConnection();
         ConnectionsSql connections = new ConnectionsSql();
 
         public int CreateCampaign(CreateCampaignModel model)
         {
             try
             {
+                SqlConnection conn = new SqlConnection();
                 connections.SqlOpenConnection(conn);
 
-                string SetCampaignId = @"INSERT INTO DndDb.dbo.CampaignName VALUES ((SELECT Id FROM DndDb.dbo.Users WHERE username = @username), @CampaignName)";
-                SqlCommand cmdSetCampaignId = new SqlCommand(SetCampaignId, conn);
+                int CampaignId = 0;
+
+                string setCampaignId = @"DndDb.dbo.CreateCampaign";
+                SqlCommand cmdSetCampaignId = new SqlCommand(setCampaignId, conn);
+                cmdSetCampaignId.CommandType = CommandType.StoredProcedure;
 
                 cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName1;
                 cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = model.Name;
 
-                cmdSetCampaignId.ExecuteNonQuery();
+                cmdSetCampaignId.Parameters.Add("@CampaignId", SqlDbType.Int);
+                cmdSetCampaignId.Parameters["@CampaignId"].Direction = ParameterDirection.Output;
 
-                string getCampaignId = @"SELECT Id FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username) AND CampaignName = @CampaignName";
-                SqlCommand cmdGetCampaignId = new SqlCommand(getCampaignId, conn);
+                int i = cmdSetCampaignId.ExecuteNonQuery();
 
-                cmdGetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName1;
-                cmdGetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = model.Name;
-
-                DataTable dt = new DataTable();
-
-                SqlDataAdapter da = new SqlDataAdapter(cmdGetCampaignId);
-                da.Fill(dt);
-                connections.SQLCloseConnection(conn);
-
-                int CampaignId = 0;
-
-                foreach(DataRow dr in dt.Rows)
-                {
-                    CampaignId = Convert.ToInt32(dr[0]);
-                }
+                CampaignId = Convert.ToInt32(cmdSetCampaignId.Parameters["@CampaignId"].Value);
 
                 return CampaignId;
             }
@@ -56,6 +45,7 @@ namespace DndServer.Dal
 
         public CampaignListModel getCampaigns(string userName)
         {
+            SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
             string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username)";
@@ -80,6 +70,30 @@ namespace DndServer.Dal
             }
 
             return campaignListModel;
+        }
+
+        public DataSet GetCampaign(int campaignId)
+        {
+
+            SqlConnection conn = new SqlConnection();
+            CampaignModel campaign = new CampaignModel();
+
+            connections.SqlOpenConnection(conn);
+
+            string sqlString = @"SELECT CN.Id, CN.CampaignName, CD.advancementType, CD.hpType, CD.weightType, CD.goldWeight FROM DndDb.dbo.CampaignName AS CN  JOIN Dnddb.dbo.CampaignData AS CD ON CN.Id = CD.CampaignId WHERE CN.Id = @campaignId ;" +
+                @"SELECT PHB_5TH_EDITION_CONTENT, HOMEBREW_CONTENT, ONLINE_CONTENT, OTHER_SOURCE_CONTENT FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @campaignId";
+            SqlCommand CmdGetCampaign = new SqlCommand(sqlString, conn);
+
+            CmdGetCampaign.Parameters.Add("@campaignId", SqlDbType.Int).Value=campaignId;
+
+            SqlDataAdapter adapter = new SqlDataAdapter(CmdGetCampaign);
+
+            DataSet ds = new DataSet();
+            adapter.Fill(ds);
+
+            connections.SQLCloseConnection(conn);
+
+            return ds;
         }
 
     }

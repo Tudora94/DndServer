@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using DndServer.Dal;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using DndServer.Campaign.Models;
 
 namespace DndServer.Controllers
 {
@@ -46,9 +47,9 @@ namespace DndServer.Controllers
         }
 
         [HttpPost(Name = "SetAllowedRace")]
-        public IActionResult Post([FromBody] Campaign.Campaign campaign)
+        public IActionResult Post([FromBody] CampaignModel campaign)
         {
-            DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
+            CampaignModel camp = new CampaignModel();
             SqlDal sqlDal = new SqlDal();
 
             _logger.LogInformation("Hello World.");
@@ -64,7 +65,7 @@ namespace DndServer.Controllers
         [HttpGet(Name = "GetAllowedRaces")]
         public async Task<List<int>> GetAllowedRaces()
         {
-            DndServer.Campaign.CampaignPreferences camp = new DndServer.Campaign.CampaignPreferences();
+            CampaignPreferencesModel camp = new CampaignPreferencesModel();
             List<int> Response = camp.AllowedRaces;
 
             return Response;

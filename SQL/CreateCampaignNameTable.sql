@@ -10,10 +10,17 @@ CREATE TABLE CampaignData
 (
 Id int Identity(1,1) primary key,
 CampaignId int foreign key references CampaignName(Id),
-SourcesId int,
-advancementType bit,
-hpType bit,
-weightType bit,
-goldWeight bit,
-allowedRacesId int
+advancementType bit NOT NULL DEFAULT(0),
+hpType bit NOT NULL DEFAULT(0),
+weightType bit NOT NULL DEFAULT(0),
+goldWeight bit NOT NULL DEFAULT(0)
+)
+CREATE TABLE CampaignSourceData
+(
+Id int Identity(1,1) primary key,
+CampaignId int foreign key references CampaignName(Id),
+PHB_5TH_EDITION_CONTENT bit NOT NULL DEFAULT(0),
+HOMEBREW_CONTENT bit NOT NULL DEFAULT(0),
+ONLINE_CONTENT bit NOT NULL DEFAULT(0),
+OTHER_SOURCE_CONTENT bit NOT NULL DEFAULT(0)
 )

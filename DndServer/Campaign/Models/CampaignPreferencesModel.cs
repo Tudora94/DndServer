@@ -1,6 +1,6 @@
-﻿namespace DndServer.Campaign
+﻿namespace DndServer.Campaign.Models
 {
-    public class CampaignPreferences
+    public class CampaignPreferencesModel
     {
         private List<String> sources;
         private bool advancementType;
