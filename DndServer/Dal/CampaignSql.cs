@@ -96,5 +96,26 @@ namespace DndServer.Dal
             return ds;
         }
 
+        public void setRoomCode(CampaignCode code, int campaignId)
+        {
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string sqlString = @"IF EXISTS (SELECT * FROM DndDb.dbo.CampaignRoomCode WHERE CampaignId = @CampaignId) " +
+                @"BEGIN " +
+                @"UPDATE DndDb.dbo.CampaignRoomCode SET CampaignCode = @CampaignCode, ExpiryDateTime = GetDate() " +
+                @"WHERE CampaignId = @CampaignId END " +
+                @"ELSE BEGIN INSERT INTO DndDb.dbo.CampaignRoomCode VALUES(@CampaignId, @CampaignCode, GETDATE()) END";
+
+            SqlCommand cmdSetRoomCode = new SqlCommand(sqlString, conn);
+            cmdSetRoomCode.Parameters.Add("@CampaignCode", SqlDbType.VarChar).Value = code.CampaignRoomCode;
+            cmdSetRoomCode.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
+
+            cmdSetRoomCode.ExecuteNonQuery();
+
+            connections.SQLCloseConnection(conn);
+
+        }
+
     }
 }

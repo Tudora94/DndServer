@@ -24,3 +24,9 @@ HOMEBREW_CONTENT bit NOT NULL DEFAULT(0),
 ONLINE_CONTENT bit NOT NULL DEFAULT(0),
 OTHER_SOURCE_CONTENT bit NOT NULL DEFAULT(0)
 )
+CREATE TABLE CampaignRoomCode
+(
+CampaignId INT foreign key references CampaignName(Id),
+CampaignCode VARCHAR(6),
+ExpiryDateTime DATETIME
+)
