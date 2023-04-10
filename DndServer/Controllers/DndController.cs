@@ -46,9 +46,9 @@ namespace DndServer.Controllers
         }
 
         [HttpPost(Name = "SetAllowedRace")]
-        public IActionResult Post([FromBody] Campaign.Campaign campaign)
+        public IActionResult Post([FromBody] Campaign.CampaignModel campaign)
         {
-            DndServer.Campaign.Campaign camp = new DndServer.Campaign.Campaign();
+            DndServer.Campaign.CampaignModel camp = new DndServer.Campaign.CampaignModel();
             SqlDal sqlDal = new SqlDal();
 
             _logger.LogInformation("Hello World.");
@@ -64,7 +64,7 @@ namespace DndServer.Controllers
         [HttpGet(Name = "GetAllowedRaces")]
         public async Task<List<int>> GetAllowedRaces()
         {
-            DndServer.Campaign.CampaignPreferences camp = new DndServer.Campaign.CampaignPreferences();
+            DndServer.Campaign.CampaignPreferencesModel camp = new DndServer.Campaign.CampaignPreferencesModel();
             List<int> Response = camp.AllowedRaces;
 
             return Response;

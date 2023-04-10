@@ -36,5 +36,12 @@ namespace DndServer.Controllers
 
             return Ok(responseList.CampaignModels);
         }
+
+        [HttpGet("GetCampaign/{userName}/{campaignId}")]
+        [Authorize]
+        public async Task<ActionResult<CampaignModel>> getCampaign([System.Web.Http.FromUri] string userName, int campaignId)
+        {
+            //GetCampaignModel
+        }
     }
 }
