@@ -99,7 +99,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"campaignId\": 0,\r\n  \"userName1\": \"{{user}}\",\r\n  \"name\": \"string2\"\r\n}",
+							"raw": "{\r\n  \"campaignId\": 0,\r\n  \"userName1\": \"{{user}}\",\r\n  \"name\": \"TestUserCampaign1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -166,7 +166,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_Url}}/api/CampaignNew/GetCampaign/1",
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaign/{{campaignId}}",
 							"host": [
 								"{{base_Url}}"
 							],
@@ -174,7 +174,7 @@
 								"api",
 								"CampaignNew",
 								"GetCampaign",
-								"1"
+								"{{campaignId}}"
 							]
 						}
 					},
