@@ -149,6 +149,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetCampaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaign/1",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetCampaign",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
