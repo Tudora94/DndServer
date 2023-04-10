@@ -10,13 +10,13 @@ namespace DndServer.Dal
 {
     public class CampaignSql
     {
-        private SqlConnection conn = new SqlConnection();
         ConnectionsSql connections = new ConnectionsSql();
 
         public int CreateCampaign(CreateCampaignModel model)
         {
             try
             {
+                SqlConnection conn = new SqlConnection();
                 connections.SqlOpenConnection(conn);
 
                 int CampaignId = 0;
@@ -45,6 +45,7 @@ namespace DndServer.Dal
 
         public CampaignListModel getCampaigns(string userName)
         {
+            SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
             string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username)";
@@ -69,6 +70,30 @@ namespace DndServer.Dal
             }
 
             return campaignListModel;
+        }
+
+        public DataSet GetCampaign(int campaignId)
+        {
+
+            SqlConnection conn = new SqlConnection();
+            CampaignModel campaign = new CampaignModel();
+
+            connections.SqlOpenConnection(conn);
+
+            string sqlString = @"SELECT CN.Id, CN.CampaignName, CD.advancementType, CD.hpType, CD.weightType, CD.goldWeight FROM DndDb.dbo.CampaignName AS CN  JOIN Dnddb.dbo.CampaignData AS CD ON CN.Id = CD.CampaignId WHERE CN.Id = @campaignId ;" +
+                @"SELECT PHB_5TH_EDITION_CONTENT, HOMEBREW_CONTENT, ONLINE_CONTENT, OTHER_SOURCE_CONTENT FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @campaignId";
+            SqlCommand CmdGetCampaign = new SqlCommand(sqlString, conn);
+
+            CmdGetCampaign.Parameters.Add("@campaignId", SqlDbType.Int).Value=campaignId;
+
+            SqlDataAdapter adapter = new SqlDataAdapter(CmdGetCampaign);
+
+            DataSet ds = new DataSet();
+            adapter.Fill(ds);
+
+            connections.SQLCloseConnection(conn);
+
+            return ds;
         }
 
     }

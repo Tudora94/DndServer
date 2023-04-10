@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using DndServer.Campaign.Models;
 using DndServer.Dal;
+using DndServer.Campaign.Services;
 using System.Net;
 
 namespace DndServer.Controllers
@@ -37,11 +38,15 @@ namespace DndServer.Controllers
             return Ok(responseList.CampaignModels);
         }
 
-        [HttpGet("GetCampaign/{userName}/{campaignId}")]
+        [HttpGet("GetCampaign/{campaignId}")]
         [Authorize]
-        public async Task<ActionResult<CampaignModel>> getCampaign([System.Web.Http.FromUri] string userName, int campaignId)
+        public async Task<ActionResult<CampaignModel>> getCampaign([System.Web.Http.FromUri] int campaignId)
         {
-            //GetCampaignModel
+            //GetCampaignModelServices
+            CampaignGeneratorService camp = new CampaignGeneratorService();
+            var campaignResponse = camp.Campaign(campaignId);
+            return Ok(campaignResponse);
+
         }
     }
 }
