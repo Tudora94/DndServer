@@ -117,5 +117,40 @@ namespace DndServer.Dal
 
         }
 
+        public string setCampaignAttributes(CampaignModel model)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string sqlString = @"DndDb.dbo.SetCampaignAttributes";
+                SqlCommand cmdSetAttributes = new SqlCommand(sqlString, conn);
+                cmdSetAttributes.CommandType = CommandType.StoredProcedure;
+
+
+                cmdSetAttributes.Parameters.Add("@campaignId", SqlDbType.Int).Value = model.CampaignID;
+                cmdSetAttributes.Parameters.Add("@campaign", SqlDbType.VarChar).Value = model.CampaignName;
+                cmdSetAttributes.Parameters.Add("@phb", SqlDbType.Bit).Value = model.Sources.PHB_5TH_EDITION_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@home", SqlDbType.Bit).Value = model.Sources.HOMEBREW_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@online", SqlDbType.Bit).Value = model.Sources.ONLINE_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@other", SqlDbType.Bit).Value = model.Sources.OTHER_SOURCE_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@advancement", SqlDbType.Bit).Value = model.AdvancementType;
+                cmdSetAttributes.Parameters.Add("@hpType", SqlDbType.Bit).Value = model.HpType;
+                cmdSetAttributes.Parameters.Add("@weightType", SqlDbType.Bit).Value = model.WeightType;
+                cmdSetAttributes.Parameters.Add("@goldWeight", SqlDbType.Bit).Value = model.GoldWeight;
+
+                cmdSetAttributes.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+
+                return "Update Successful";
+            }
+            catch
+            {
+                return "Update Failed";
+            }
+
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using DndServer.Campaign.Models;
 using DndServer.Dal;
 using DndServer.Campaign.Services;
 using System.Net;
+using System.Diagnostics;
 
 namespace DndServer.Controllers
 {
@@ -49,7 +50,19 @@ namespace DndServer.Controllers
 
         }
 
-        //SetCampaignDetails
+        [HttpPost("SetCampaignAttributes")]
+        [Authorize]
+        public async Task<ActionResult<Response>> setCampaignAttributes(CampaignModel model)
+        {
+            Response response = new Response();
+            CampaignSql campaignSql = new CampaignSql();
+
+            response.ResponseString = campaignSql.setCampaignAttributes(model);
+
+            response.StatusCode = HttpStatusCode.OK;
+
+            return response;
+        }
 
         [HttpPost("GenerateCampaignCode")]
         [Authorize]
@@ -65,7 +78,6 @@ namespace DndServer.Controllers
             code.CampaignRoomCode = randomCode;
 
             campaignSql.setRoomCode(code, campaignId);
-            //Insert roomCode into SQL 
 
             return Ok(code);
         }
