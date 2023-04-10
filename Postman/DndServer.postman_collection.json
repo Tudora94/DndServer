@@ -149,6 +149,74 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetCampaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaign/1",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetCampaign",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GenerateCampaignCode",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"campaignId\": {{campaignId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GenerateCampaignCode",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GenerateCampaignCode"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

@@ -48,5 +48,26 @@ namespace DndServer.Controllers
             return Ok(campaignResponse);
 
         }
+
+        //SetCampaignDetails
+
+        [HttpPost("GenerateCampaignCode")]
+        [Authorize]
+        public async Task<ActionResult<CampaignCode>> setCampaignCode(CampaignIdModel model)
+        {
+            int campaignId = model.CampaignId;
+            CampaignCode code = new CampaignCode();
+            CodeGeneratorService gen = new CodeGeneratorService();
+            CampaignSql campaignSql = new CampaignSql();
+
+            gen.generator();
+            var randomCode = gen.GeneratedCode;
+            code.CampaignRoomCode = randomCode;
+
+            campaignSql.setRoomCode(code, campaignId);
+            //Insert roomCode into SQL 
+
+            return Ok(code);
+        }
     }
 }
