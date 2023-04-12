@@ -103,9 +103,9 @@ namespace DndServer.Dal
 
             string sqlString = @"IF EXISTS (SELECT * FROM DndDb.dbo.CampaignRoomCode WHERE CampaignId = @CampaignId) " +
                 @"BEGIN " +
-                @"UPDATE DndDb.dbo.CampaignRoomCode SET CampaignCode = @CampaignCode, ExpiryDateTime = GetDate() " +
+                @"UPDATE DndDb.dbo.CampaignRoomCode SET CampaignCode = @CampaignCode, ExpiryDateTime = DATEADD(d,1,GETDATE()) " +
                 @"WHERE CampaignId = @CampaignId END " +
-                @"ELSE BEGIN INSERT INTO DndDb.dbo.CampaignRoomCode VALUES(@CampaignId, @CampaignCode, GETDATE()) END";
+                @"ELSE BEGIN INSERT INTO DndDb.dbo.CampaignRoomCode VALUES(@CampaignId, @CampaignCode, DATEADD(d,1,GETDATE())) END";
 
             SqlCommand cmdSetRoomCode = new SqlCommand(sqlString, conn);
             cmdSetRoomCode.Parameters.Add("@CampaignCode", SqlDbType.VarChar).Value = code.CampaignRoomCode;
@@ -115,6 +115,71 @@ namespace DndServer.Dal
 
             connections.SQLCloseConnection(conn);
 
+        }
+
+        public string setCampaignAttributes(CampaignModel model)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string sqlString = @"DndDb.dbo.SetCampaignAttributes";
+                SqlCommand cmdSetAttributes = new SqlCommand(sqlString, conn);
+                cmdSetAttributes.CommandType = CommandType.StoredProcedure;
+
+
+                cmdSetAttributes.Parameters.Add("@campaignId", SqlDbType.Int).Value = model.CampaignID;
+                cmdSetAttributes.Parameters.Add("@campaign", SqlDbType.VarChar).Value = model.CampaignName;
+                cmdSetAttributes.Parameters.Add("@phb", SqlDbType.Bit).Value = model.Sources.PHB_5TH_EDITION_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@home", SqlDbType.Bit).Value = model.Sources.HOMEBREW_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@online", SqlDbType.Bit).Value = model.Sources.ONLINE_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@other", SqlDbType.Bit).Value = model.Sources.OTHER_SOURCE_CONTENT1;
+                cmdSetAttributes.Parameters.Add("@advancement", SqlDbType.Bit).Value = model.AdvancementType;
+                cmdSetAttributes.Parameters.Add("@hpType", SqlDbType.Bit).Value = model.HpType;
+                cmdSetAttributes.Parameters.Add("@weightType", SqlDbType.Bit).Value = model.WeightType;
+                cmdSetAttributes.Parameters.Add("@goldWeight", SqlDbType.Bit).Value = model.GoldWeight;
+
+                cmdSetAttributes.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+
+                return "Update Successful";
+            }
+            catch
+            {
+                return "Update Failed";
+            }
+
+        }
+
+        public List<CampaignPlayerModel> getPlayers(int campaignId)
+        {
+            List<CampaignPlayerModel> players = new List<CampaignPlayerModel>();
+
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string sql = @"SELECT P.Id, username, firstName, CharacterName FROM DndDb.dbo.PlayerCharacterName AS P JOIN DndDb.dbo.Users AS U ON P.UserId = U.Id JOIN DndDb.dbo.UserDetails AS UD ON P.UserId = UD.userId WHERE CampaignId = @campaignId";
+            SqlCommand cmd = new SqlCommand(sql, conn);
+
+            cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
+            DataTable dt = new DataTable();
+
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            connections.SQLCloseConnection(conn);
+
+            foreach(DataRow dr in dt.Rows)
+            {
+                CampaignPlayerModel model = new CampaignPlayerModel();
+                model.Id = Convert.ToInt32(dr[0]);
+                model.Username = Convert.ToString(dr[1]);
+                model.FirstName = Convert.ToString(dr[2]);
+                model.CharachterName = Convert.ToString(dr[3]);
+
+                players.Add(model);
+            }
+            return players;
         }
 
     }
