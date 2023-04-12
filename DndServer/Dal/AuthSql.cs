@@ -15,12 +15,14 @@ namespace DndServer.Dal
             {
                 connections.SqlOpenConnection(conn);
 
-                string createUser = @"INSERT INTO DndDb.dbo.Users VALUES (@username, @PasswordHash, @PasswordSalt)";
+                string createUser = @"INSERT INTO DndDb.dbo.Users VALUES (@username, @PasswordHash, @PasswordSalt);" +
+                    @"INSERT INTO DndDb.dbo.UserDetails VALUES ((SELECT TOP(1) Id FROM DndDb.dbo.Users WHERE username = @username), @firstName)";
                 SqlCommand cmd = new SqlCommand(createUser, conn);
 
                 cmd.Parameters.Add("@username", SqlDbType.VarChar).Value = user.UserName;
                 cmd.Parameters.Add("@PasswordHash", SqlDbType.VarBinary).Value = user.PasswordHash;
                 cmd.Parameters.Add("@PasswordSalt", SqlDbType.VarBinary).Value = user.PaswordSalt;
+                cmd.Parameters.Add("@firstName", SqlDbType.VarChar).Value = user.firstName;
 
                 cmd.ExecuteNonQuery();
                 connections.SQLCloseConnection(conn);

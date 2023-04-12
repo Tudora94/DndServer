@@ -152,5 +152,35 @@ namespace DndServer.Dal
 
         }
 
+        public List<CampaignPlayerModel> getPlayers(int campaignId)
+        {
+            List<CampaignPlayerModel> players = new List<CampaignPlayerModel>();
+
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string sql = @"SELECT P.Id, username, firstName, CharacterName FROM DndDb.dbo.PlayerCharacterName AS P JOIN DndDb.dbo.Users AS U ON P.UserId = U.Id JOIN DndDb.dbo.UserDetails AS UD ON P.UserId = UD.userId WHERE CampaignId = @campaignId";
+            SqlCommand cmd = new SqlCommand(sql, conn);
+
+            cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
+            DataTable dt = new DataTable();
+
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            connections.SQLCloseConnection(conn);
+
+            foreach(DataRow dr in dt.Rows)
+            {
+                CampaignPlayerModel model = new CampaignPlayerModel();
+                model.Id = Convert.ToInt32(dr[0]);
+                model.Username = Convert.ToString(dr[1]);
+                model.FirstName = Convert.ToString(dr[2]);
+                model.CharachterName = Convert.ToString(dr[3]);
+
+                players.Add(model);
+            }
+            return players;
+        }
+
     }
 }

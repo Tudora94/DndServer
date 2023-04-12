@@ -3,6 +3,7 @@
     public class UserModel
     {
         public string UserName { get; set; } = string.Empty;
+        public string firstName { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; }
         public byte[] PaswordSalt { get; set; }
     }

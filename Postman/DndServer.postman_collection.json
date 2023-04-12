@@ -217,6 +217,117 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "SetCampaignAttributes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"campaignID\": 1,\r\n  \"campaignName\": \"string\",\r\n  \"sources\": {\r\n    \"phB_5TH_EDITION_CONTENT1\": true,\r\n    \"homebreW_CONTENT1\": true,\r\n    \"onlinE_CONTENT1\": true,\r\n    \"otheR_SOURCE_CONTENT1\": true\r\n  },\r\n  \"advancementType\": true,\r\n  \"hpType\": true,\r\n  \"weightType\": true,\r\n  \"goldWeight\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/SetCampaignAttributes",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"SetCampaignAttributes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPlayers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/CampaignNew/GetPlayers/{{campaignId}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"CampaignNew",
+								"GetPlayers",
+								"{{campaignId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Player",
+			"item": [
+				{
+					"name": "CreateNewPlayer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roomCode\": \"670475\",\r\n  \"name\": \"PlayerName\",\r\n  \"userName\": \"{{user}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Player/CreatePlayer",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Player",
+								"CreatePlayer"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
