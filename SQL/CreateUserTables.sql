@@ -12,3 +12,7 @@ id int Identity(1,1) primary key,
 userId int foreign key references Users(Id),
 Email Varchar(255)
 );
+CREATE TABLE UserDetails(
+userId int foreign key references Users(Id),
+firstName varchar(255) NOT NULL
+);

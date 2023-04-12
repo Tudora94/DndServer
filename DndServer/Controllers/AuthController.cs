@@ -32,6 +32,7 @@ namespace DndServer.Controllers
 
             passwordHashing.CreatePasswordHash(request.password, out byte[] passwordHash, out byte[] passwordSalt);
 
+            user.firstName = request.firstName;
             user.UserName = request.username;
             user.PasswordHash = passwordHash;
             user.PaswordSalt = passwordSalt;

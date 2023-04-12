@@ -81,5 +81,16 @@ namespace DndServer.Controllers
 
             return Ok(code);
         }
+
+        [HttpGet("GetPlayers/{campaignId}")]
+        [Authorize]
+        public async Task<ActionResult<List<CampaignPlayerModel>>> getPlayers([System.Web.Http.FromUri] int campaignId)
+        {
+            List<CampaignPlayerModel> players = new List<CampaignPlayerModel>();
+            CampaignSql campaignSql = new CampaignSql();
+            players = campaignSql.getPlayers(campaignId);
+
+            return Ok(players);
+        }
     }
 }
