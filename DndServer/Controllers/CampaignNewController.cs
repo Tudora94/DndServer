@@ -20,6 +20,14 @@ namespace DndServer.Controllers
         [Authorize]
         public async Task<ActionResult<int>> createCampaign(CreateCampaignModel request)
         {
+            //Check if CampaignName Exists
+
+            var nameCheck = campaignSql.checkCampaignName(request.Name, request.UserName1);
+
+            if (!nameCheck)
+            {
+                return BadRequest("Campaign Name already exists");
+            }
 
             int CampaignId = campaignSql.CreateCampaign(request);
 
