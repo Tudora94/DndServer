@@ -182,5 +182,32 @@ namespace DndServer.Dal
             return players;
         }
 
+        public bool checkCampaignName(string campaignName, string username)
+        {
+            var ret = false;
+
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string Sql = @"IF EXISTS(SELECT * FROM DndDb.dbo.CampaignName WHERE CampaignName = @campaignName)SELECT 1";
+
+            var cmd = new SqlCommand(Sql, conn);
+            cmd.Parameters.Add("@campaignName", SqlDbType.VarChar).Value = campaignName;
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                connections.SQLCloseConnection(conn);
+                ret = false;
+            }
+            else
+            {
+                connections.SQLCloseConnection(conn);
+                ret = true;
+            }
+
+            return ret;
+        }
+
     }
 }
