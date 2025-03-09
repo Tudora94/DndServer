@@ -25,10 +25,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
+import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.navigation.GetLoginButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen() {
@@ -43,7 +48,22 @@ private fun MainLoginWindow(debugVersion: String? = null) {
     var password by remember { mutableStateOf("") }
 
     fun loginRequest() {
-        Log.d("LoginScreen", "username: $username, password: $password")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetroFitHttpClient.api.login(LoginRequest(username, password))
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("LoginScreen", "Token: ${body?.token}")
+                } else {
+                    Log.e("LoginScreen", "Login Failed: ${response.code()} - ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("LoginScreen", "Error: ${e.message}")
+            }
+        }
+
+        //Log.d("LoginScreen", "username: $username, password: $password")
     }
 
     DndApplicationTheme {
