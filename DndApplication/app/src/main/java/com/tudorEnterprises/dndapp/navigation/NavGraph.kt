@@ -21,7 +21,7 @@ fun NavigationController() {
             LoginScreen { navController.navigate(Screen.CreateUser.route) }
         }
         composable(route = Screen.CreateUser.route) {
-            CreateUserScreen()
+            CreateUserScreen(navController = navController)
         }
     }
 }
