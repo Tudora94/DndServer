@@ -12,7 +12,8 @@ namespace DndServer.User.Services
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim("name", user.UserName),
+                new Claim("GeneratedTime", DateTime.Now.ToString("HH:mm:ss"))
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(privateKey));
