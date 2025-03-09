@@ -29,6 +29,7 @@ import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetCreateUserButton
 import com.tudorEnterprises.dndapp.ui.navigation.GetLoginButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
@@ -36,13 +37,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onCreateUserClick: () -> Unit) {
 
-    MainLoginWindow()
+    MainLoginWindow(onCreateUserClick = onCreateUserClick)
 }
 
 @Composable
-private fun MainLoginWindow(debugVersion: String? = null) {
+private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -110,7 +111,10 @@ private fun MainLoginWindow(debugVersion: String? = null) {
                     GetLoginButton {
                         loginRequest()
                     }
+                    Spacer(modifier = Modifier.height(18.dp))
+
                 }
+                GetCreateUserButton { onCreateUserClick() }
             }
 
         }
@@ -120,5 +124,5 @@ private fun MainLoginWindow(debugVersion: String? = null) {
 @Preview
 @Composable
 private fun LoginPreview(){
-    MainLoginWindow("TestVersion")
+    MainLoginWindow("TestVersion") {}
 }
