@@ -44,13 +44,13 @@ namespace DndServer.Controllers
             {
                 responseModel.success = false;
                 responseModel.message = "UserName already in use";
-                return BadRequest(responseModel);
+                return Ok(responseModel);
             }
             if (!authentication.CheckEmail(email))
             {
                 responseModel.success = false;
                 responseModel.message = "Email already in use";
-                return BadRequest(responseModel);
+                return Ok(responseModel);
             }
 
             if (authentication.AddUser(user) && authentication.AddEmail(user, email))

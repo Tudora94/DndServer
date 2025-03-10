@@ -13,8 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,9 +39,11 @@ import com.tudorEnterprises.dndapp.dataModels.requests.CreateUserRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun CreateUserScreen(debugVersion: String? = null, navController: NavController) {
@@ -49,118 +53,178 @@ fun CreateUserScreen(debugVersion: String? = null, navController: NavController)
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    var showDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+    var responseMessage by remember { mutableStateOf("") }
+    var isSuccess by remember { mutableStateOf(false) }
+
     fun registerUserRequest() {
 
-        if(password != confirmPassword) {
+        if (password != confirmPassword) {
             Log.d("CreateUserScreen", "Passwords do not match")
+            responseMessage = "Passwords do not match"
+            showDialog = true
             return
         }
 
+        showDialog = true
+        isLoading = true
+        responseMessage = ""
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = RetroFitHttpClient.api.register(CreateUserRequest(email, username, password, confirmPassword))
+                val response = RetroFitHttpClient.api.register(
+                    CreateUserRequest(
+                        email,
+                        username,
+                        password,
+                        confirmPassword
+                    )
+                )
 
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d("CreateUserScreen", "body: ${body?.message}")
-                } else {
-                    Log.e("CreateUserScreen", "Register Failed: ${response.code()} - ${response.errorBody()?.string()}")
+                withContext(Dispatchers.Main) {
+                    isLoading = false
+                    if(response.isSuccessful) {
+                        if (response.body()?.success == true) {
+                            responseMessage = "Registration successful!"
+                            isSuccess = true
+                        } else {
+                            responseMessage = "Register Failed: ${
+                                response.body()?.message
+                            }"
+                            isSuccess = false
+                        }
+                    } else {
+                        responseMessage = "Register Failed: ${response.code()} - ${
+                            response.errorBody()?.string()
+                        }"
+                        isSuccess = false
+                    }
                 }
             } catch (e: Exception) {
-                Log.e("CreateUserScreen", "Error: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    isLoading = false
+                    responseMessage = "Error: ${e.message}"
+                    isSuccess = false
+                }
             }
         }
     }
 
-    Scaffold(topBar = {
-        GetAppBarTop()
-    }, bottomBar = {
-        GetBottomAppBar(debugVersion)
-    }) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Create a New User",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Spacer(modifier = Modifier.height(18.dp))
-                TextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
+    DndApplicationTheme {
+        Scaffold(topBar = {
+            GetAppBarTop()
+        }, bottomBar = {
+            GetBottomAppBar(debugVersion)
+        }) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Create a New User",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(top = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(18.dp))
-                TextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Username") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                TextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password") },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                TextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm Password") },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-                ElevatedButton(
-                    onClick = {
-                        registerUserRequest()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp, bottom = 4.dp, start = 30.dp, end = 30.dp)
-                        .height(60.dp),
-                    shape = RoundedCornerShape(25),
-                    elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    Spacer(modifier = Modifier.height(18.dp))
+                    TextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Email") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    TextField(
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Username") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    TextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text("Confirm Password") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
+                    )
+                    Spacer(modifier = Modifier.height(18.dp))
+                    ElevatedButton(
+                        onClick = {
+                            registerUserRequest()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp, bottom = 4.dp, start = 30.dp, end = 30.dp)
+                            .height(60.dp),
+                        shape = RoundedCornerShape(25),
+                        elevation = ButtonDefaults.elevatedButtonElevation(3.dp),
                     ) {
-                        Row {
-                            Text(
-                                text = "Create User",
-                                style = MaterialTheme.typography.headlineMedium,
-                            )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Row {
+                                Text(
+                                    text = "Create User",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-            Button(
-                onClick = { navController.popBackStack() }, // Go back to previous screen
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Back")
+                Button(
+                    onClick = { navController.popBackStack() }, // Go back to previous screen
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text("Back")
+                }
             }
         }
+    }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { },
+            confirmButton = {
+                Button(onClick = {
+                    showDialog = false
+                    if (isSuccess) {
+                        navController.popBackStack() // Navigate back on success
+                    }
+                }) {
+                    Text("Dismiss")
+                }
+            },
+            title = { Text("Register User") },
+            text = {
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(responseMessage)
+                }
+            }
+        )
     }
 }
 
