@@ -64,7 +64,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
             }
         }
 
-        //Log.d("LoginScreen", "username: $username, password: $password")
+        Log.d("LoginScreen", "username: $username, password: $password")
     }
 
     DndApplicationTheme {
