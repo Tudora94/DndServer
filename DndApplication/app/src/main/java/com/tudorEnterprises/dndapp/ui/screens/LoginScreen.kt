@@ -1,6 +1,5 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,8 +24,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
+import com.tudorEnterprises.dndapp.ui.Dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.navigation.GetCreateUserButton
@@ -35,36 +37,57 @@ import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginScreen(onCreateUserClick: () -> Unit) {
+fun LoginScreen(onCreateUserClick: () -> Unit, navController: NavController) {
 
-    MainLoginWindow(onCreateUserClick = onCreateUserClick)
+    MainLoginWindow(onCreateUserClick = onCreateUserClick, navController = navController)
 }
 
 @Composable
-private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit) {
+private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit, navController: NavController) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    fun loginRequest() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = RetroFitHttpClient.api.login(LoginRequest(username, password))
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogMessage by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
 
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d("LoginScreen", "Token: ${body?.token}")
-                } else {
-                    Log.e("LoginScreen", "Login Failed: ${response.code()} - ${response.errorBody()?.string()}")
+    fun loginRequest(navController: NavController, showDialog: (Boolean, String?) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            showDialog(true, "Logging in...") // Show spinner
+
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetroFitHttpClient.api.login(LoginRequest(username, password))
                 }
+
+                val message = if (response.isSuccessful) {
+                    val body = response.body()
+                    "$body? ?: Login Successful"
+                } else {
+                    "Login Failed: ${response.code()} - ${response.errorBody()?.string()}"
+                }
+
+                showDialog(false, message) // Stop spinner, show message
+
+//                if (response.isSuccessful) {
+//       //TODO do something here eventually to nav to new page
+//                }
             } catch (e: Exception) {
-                Log.e("LoginScreen", "Error: ${e.message}")
+                showDialog(false, "Error: ${e.message}")
             }
         }
+    }
 
-        Log.d("LoginScreen", "username: $username, password: $password")
+    fun showLoginDialog(loading: Boolean, message: String?) {
+        showDialog = true
+        isLoading = loading
+        if (message != null) {
+            dialogMessage = message
+        }
     }
 
     DndApplicationTheme {
@@ -108,9 +131,14 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     )
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    GetLoginButton {
-                        loginRequest()
+                    if (showDialog) {
+                        LoadingDialog(isLoading, dialogMessage) { showDialog = false }
                     }
+
+                    GetLoginButton {
+                        loginRequest(navController, ::showLoginDialog)
+                    }
+
                     Spacer(modifier = Modifier.height(18.dp))
 
                 }
@@ -124,5 +152,6 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
 @Preview
 @Composable
 private fun LoginPreview(){
-    MainLoginWindow("TestVersion") {}
+    val navController = rememberNavController()
+    MainLoginWindow("TestVersion", {}, navController)
 }
