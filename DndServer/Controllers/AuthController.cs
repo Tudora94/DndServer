@@ -79,16 +79,21 @@ namespace DndServer.Controllers
 
             if (user.UserName == "")
             {
-                return BadRequest("Invalid Login Credentials");
+                token.Message = "Invalid Login Credentials";
+                return BadRequest(token);
             }
             if (!passwordHashing.VerifyPasswordHash(login.Password, user.PasswordHash, user.PaswordSalt))
             {
-                return BadRequest("Invalid Login Credentials");
+                token.Message = "Invalid Login Credentials";
+                return BadRequest(token);
             }
 
             var privateKey = _configuration.GetSection("AppSettings:Token").Value;
             string tokenString = tokenGenerator.CreateToken(user, privateKey);
             token.Token = tokenString;
+            token.Message = "Login successful";
+            token.Success = true;
+
             return Ok(token);
         }
     }

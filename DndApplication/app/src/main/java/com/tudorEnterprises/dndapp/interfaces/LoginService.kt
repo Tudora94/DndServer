@@ -1,7 +1,7 @@
 package com.tudorEnterprises.dndapp.interfaces
 
-import com.tudorEnterprises.dndapp.dataModels.Responses.CreateUserResponse
-import com.tudorEnterprises.dndapp.dataModels.Responses.LoginResponse
+import com.tudorEnterprises.dndapp.dataModels.responses.CreateUserResponse
+import com.tudorEnterprises.dndapp.dataModels.responses.LoginResponse
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateUserRequest
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import retrofit2.Response

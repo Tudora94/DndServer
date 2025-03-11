@@ -1,5 +1,7 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
+import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.Dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
@@ -41,12 +45,13 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun LoginScreen(onCreateUserClick: () -> Unit, navController: NavController) {
+    val context = LocalContext.current
 
-    MainLoginWindow(onCreateUserClick = onCreateUserClick, navController = navController)
+    MainLoginWindow(onCreateUserClick = onCreateUserClick, navController = navController, context = context)
 }
 
 @Composable
-private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit, navController: NavController) {
+private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit, navController: NavController, context: Context) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -55,7 +60,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
     var dialogMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
 
-    fun loginRequest(navController: NavController, showDialog: (Boolean, String?) -> Unit) {
+    fun loginRequest(context: Context, navController: NavController, showDialog: (Boolean, String?) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             showDialog(true, "Logging in...") // Show spinner
 
@@ -66,16 +71,25 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
 
                 val message = if (response.isSuccessful) {
                     val body = response.body()
-                    "$body? ?: Login Successful"
+                    body?.token?.let {
+                        SecureStorage.saveToken(context, it)
+                    }
+                    body?.refreshToken?.let {
+                        SecureStorage.saveRefreshToken(context, it)
+                    }
+                    response.body()?.message
                 } else {
                     "Login Failed: ${response.code()} - ${response.errorBody()?.string()}"
                 }
 
                 showDialog(false, message) // Stop spinner, show message
 
-//                if (response.isSuccessful) {
-//       //TODO do something here eventually to nav to new page
-//                }
+                if (response.isSuccessful) {
+                    Log.d("getToken", SecureStorage.getToken(context) ?: "no token found")
+                    Log.d("getToken", SecureStorage.getRefreshToken(context) ?: "no refresh token found")
+
+                    onCreateUserClick() //TODO change this to the next page
+                }
             } catch (e: Exception) {
                 showDialog(false, "Error: ${e.message}")
             }
@@ -136,7 +150,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     }
 
                     GetLoginButton {
-                        loginRequest(navController, ::showLoginDialog)
+                        loginRequest(context, navController, ::showLoginDialog)
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
@@ -153,5 +167,6 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
 @Composable
 private fun LoginPreview(){
     val navController = rememberNavController()
-    MainLoginWindow("TestVersion", {}, navController)
+    val context = LocalContext.current
+    MainLoginWindow("TestVersion", {}, navController, context)
 }

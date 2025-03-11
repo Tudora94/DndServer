@@ -69,4 +69,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.coroutines.android)
+    implementation(libs.androidx.security)
 }
