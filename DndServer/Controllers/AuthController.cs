@@ -80,12 +80,12 @@ namespace DndServer.Controllers
             if (user.UserName == "")
             {
                 token.Message = "Invalid Login Credentials";
-                return BadRequest(token);
+                return Ok(token);
             }
             if (!passwordHashing.VerifyPasswordHash(login.Password, user.PasswordHash, user.PaswordSalt))
             {
                 token.Message = "Invalid Login Credentials";
-                return BadRequest(token);
+                return Ok(token);
             }
 
             var privateKey = _configuration.GetSection("AppSettings:Token").Value;
@@ -93,6 +93,7 @@ namespace DndServer.Controllers
             token.Token = tokenString;
             token.Message = "Login successful";
             token.Success = true;
+            token.User = user.Id;
 
             return Ok(token);
         }

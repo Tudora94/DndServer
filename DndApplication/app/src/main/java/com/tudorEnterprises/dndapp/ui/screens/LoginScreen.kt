@@ -69,7 +69,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     RetroFitHttpClient.api.login(LoginRequest(username, password))
                 }
 
-                val message = if (response.isSuccessful) {
+                if (response.isSuccessful && response.body()?.success == true) {
                     val body = response.body()
                     body?.token?.let {
                         SecureStorage.saveToken(context, it)
@@ -77,18 +77,16 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     body?.refreshToken?.let {
                         SecureStorage.saveRefreshToken(context, it)
                     }
-                    response.body()?.message
-                } else {
-                    "Login Failed: ${response.code()} - ${response.errorBody()?.string()}"
-                }
+                    showDialog(false, response.body()?.message)
 
-                showDialog(false, message) // Stop spinner, show message
-
-                if (response.isSuccessful) {
                     Log.d("getToken", SecureStorage.getToken(context) ?: "no token found")
                     Log.d("getToken", SecureStorage.getRefreshToken(context) ?: "no refresh token found")
+                    Log.d("getToken", response.body()?.user.toString())
 
                     onCreateUserClick() //TODO change this to the next page
+                } else {
+                    Log.d("login Request", "Login Failed: ${response.code()} - ${response.errorBody()?.string()}")
+                    showDialog(false, response.body()?.message ?: "Unknown Error")
                 }
             } catch (e: Exception) {
                 showDialog(false, "Error: ${e.message}")
