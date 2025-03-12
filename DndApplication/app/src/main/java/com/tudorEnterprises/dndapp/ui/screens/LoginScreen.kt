@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -60,7 +61,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
     var dialogMessage by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
 
-    fun loginRequest(context: Context, navController: NavController, showDialog: (Boolean, String?) -> Unit) {
+    fun loginRequest(context: Context, showDialog: (Boolean, String?) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             showDialog(true, "Logging in...") // Show spinner
 
@@ -83,7 +84,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     Log.d("getToken", SecureStorage.getRefreshToken(context) ?: "no refresh token found")
                     Log.d("getToken", response.body()?.user.toString())
 
-                    onCreateUserClick() //TODO change this to the next page
+                    navController.navigate(Screen.DmOrPlayer.route)
                 } else {
                     Log.d("login Request", "Login Failed: ${response.code()} - ${response.errorBody()?.string()}")
                     showDialog(false, response.body()?.message ?: "Unknown Error")
@@ -148,7 +149,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     }
 
                     GetLoginButton {
-                        loginRequest(context, navController, ::showLoginDialog)
+                        loginRequest(context, ::showLoginDialog)
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
