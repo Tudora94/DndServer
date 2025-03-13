@@ -6,12 +6,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.ui.screens.CreateUserScreen
+import com.tudorEnterprises.dndapp.ui.screens.DmOrPlayerScreen
 import com.tudorEnterprises.dndapp.ui.screens.LoginScreen
 
 
 @Composable
 fun NavigationController() {
     val navController = rememberNavController()
+
+    //TODO add token check to confirm if access token exists and
 
     NavHost(
         navController = navController,
@@ -25,6 +28,9 @@ fun NavigationController() {
         }
         composable(route = Screen.CreateUser.route) {
             CreateUserScreen(navController = navController)
+        }
+        composable( route = Screen.DmOrPlayer.route) {
+            DmOrPlayerScreen(navController = navController)
         }
     }
 }

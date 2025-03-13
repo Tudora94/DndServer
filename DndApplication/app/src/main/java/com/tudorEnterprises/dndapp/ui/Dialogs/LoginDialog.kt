@@ -35,6 +35,9 @@ fun LoadingDialog(isLoading: Boolean, message: String?, onDismiss: () -> Unit) {
             }
         }
     )
+    if(message == "Login successful") {
+        onDismiss()
+    }
 }
 
 @Preview

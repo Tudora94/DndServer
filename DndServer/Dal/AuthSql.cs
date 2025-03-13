@@ -108,7 +108,7 @@ namespace DndServer.Dal
         {
             DataTable dt = new DataTable();
             connections.SqlOpenConnection(conn);
-            String login = @"SELECT username, Hash, Salt FROM DndDb.dbo.Users WHERE username = @user";
+            String login = @"SELECT Id, username, Hash, Salt FROM DndDb.dbo.Users WHERE username = @user";
 
             SqlCommand cmd = new SqlCommand(login, conn);
 
@@ -119,9 +119,10 @@ namespace DndServer.Dal
             connections.SQLCloseConnection(conn);
             foreach(DataRow dr in dt.Rows)
             {
-                user.UserName = dr[0].ToString();
-                user.PasswordHash = (byte[])dr[1];
-                user.PaswordSalt = (byte[])dr[2];
+                user.Id = (int)dr[0];
+                user.UserName = (string)dr[1];
+                user.PasswordHash = (byte[])dr[2];
+                user.PaswordSalt = (byte[])dr[3];
             }
         }
     }
