@@ -1,8 +1,11 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -42,7 +45,9 @@ fun DmOrPlayerScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 16.dp),
                     text = "Player or Dungeon Master?",
                 )
-                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Spacer(modifier = Modifier.height(18.dp))
+                Column(modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(18.dp)) {
                     GetGenericNavButton(navController, Buttons.DungeonMaster)
                     GetGenericNavButton(navController, Buttons.Player)
                 }

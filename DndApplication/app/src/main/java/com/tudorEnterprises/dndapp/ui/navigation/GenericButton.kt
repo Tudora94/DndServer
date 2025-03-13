@@ -3,7 +3,6 @@ package com.tudorEnterprises.dndapp.ui.navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,10 +22,9 @@ import com.tudorEnterprises.dndapp.constants.Buttons
 
 @Composable
 fun GetGenericNavButton(navController: NavController, button: Buttons) {
-    Spacer(modifier = Modifier.height(18.dp))
     ElevatedButton(
         onClick = {
-            button.buttonRoute?.route?.let { navController.navigate(it) }
+            button.buttonRoute.route.let { navController.navigate(it) }
         },
         modifier = Modifier
             .fillMaxWidth()

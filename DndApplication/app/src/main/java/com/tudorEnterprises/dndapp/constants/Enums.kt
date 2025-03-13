@@ -8,7 +8,7 @@ enum class Screen(val route: String) {
     PlayerLanding("Player_Landing")
 }
 
-enum class Buttons(val buttonText: String, val buttonRoute: Screen?) {
+enum class Buttons(val buttonText: String, val buttonRoute: Screen) {
     DungeonMaster("Dungeon Master", Screen.DMLanding),
     Player("Player", Screen.PlayerLanding),
     NewCampaign("Add New Campaign", Screen.DMLanding)
