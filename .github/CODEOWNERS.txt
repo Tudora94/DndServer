@@ -1,0 +1,2 @@
+# Set Tudora94 as the sole code owner for the entire repository
+* @Tudora94
