@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.coroutines.android)
     implementation(libs.androidx.security)
+    implementation(libs.systemUI.controller)
 }
