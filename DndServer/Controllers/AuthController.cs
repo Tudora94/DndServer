@@ -89,7 +89,7 @@ namespace DndServer.Controllers
             }
 
             var privateKey = _configuration.GetSection("AppSettings:Token").Value;
-            string tokenString = tokenGenerator.CreateToken(user, privateKey);
+            string tokenString = tokenGenerator.CreateAccessToken(user, privateKey);
             token.Token = tokenString;
             token.Message = "Login successful";
             token.Success = true;

@@ -90,7 +90,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     showDialog(false, response.body()?.message ?: "Unknown Error")
                 }
             } catch (e: Exception) {
-                showDialog(false, "Error: ${e.message}")
+                showDialog(false, "Error: failed to connect")
             }
         }
     }
@@ -118,7 +118,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
             ) {
                 Text(
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     text = "Login Page",
                 )
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

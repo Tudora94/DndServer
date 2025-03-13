@@ -132,17 +132,17 @@ fun CreateUserScreen(debugVersion: String? = null, navController: NavController)
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     Spacer(modifier = Modifier.height(18.dp))
                     TextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email") },
+                        value = username,
+                        onValueChange = { username = it },
+                        label = { Text("Username") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
                     )
                     Spacer(modifier = Modifier.height(18.dp))
                     TextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        label = { Text("Username") },
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Email") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
                     )
