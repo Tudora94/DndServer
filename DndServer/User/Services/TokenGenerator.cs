@@ -7,7 +7,7 @@ namespace DndServer.User.Services
 {
     public class TokenGenerator
     {
-        public string CreateToken(UserModel user, string privateKey)
+        public string CreateAccessToken(UserModel user, string privateKey)
         {
 
             List<Claim> claims = new List<Claim>

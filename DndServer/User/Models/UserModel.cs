@@ -2,6 +2,7 @@
 {
     public class UserModel
     {
+        public int Id { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string firstName { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; }

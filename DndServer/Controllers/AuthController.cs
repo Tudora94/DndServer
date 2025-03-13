@@ -38,22 +38,32 @@ namespace DndServer.Controllers
             user.PaswordSalt = passwordSalt;
             string email = request.email;
 
+            RegistrationResponseModel responseModel = new RegistrationResponseModel();
+
             if (!authentication.CheckUser(user.UserName))
             {
-                return BadRequest("UserName already in use");
+                responseModel.success = false;
+                responseModel.message = "UserName already in use";
+                return Ok(responseModel);
             }
             if (!authentication.CheckEmail(email))
             {
-                return BadRequest("Email already in use");
+                responseModel.success = false;
+                responseModel.message = "Email already in use";
+                return Ok(responseModel);
             }
 
             if (authentication.AddUser(user) && authentication.AddEmail(user, email))
             {
-                return Ok("user Registered Successfully");
+                responseModel.success = true;
+                responseModel.message = "User Registered Successfully";
+                return Ok(responseModel);
             }
             else
             {
-                return BadRequest("user Was not added");
+                responseModel.success = false;
+                responseModel.message = "User was not added";
+                return BadRequest(responseModel);
             }
 
 
@@ -69,16 +79,22 @@ namespace DndServer.Controllers
 
             if (user.UserName == "")
             {
-                return BadRequest("Invalid Login Credentials");
+                token.Message = "Invalid Login Credentials";
+                return Ok(token);
             }
             if (!passwordHashing.VerifyPasswordHash(login.Password, user.PasswordHash, user.PaswordSalt))
             {
-                return BadRequest("Invalid Login Credentials");
+                token.Message = "Invalid Login Credentials";
+                return Ok(token);
             }
 
             var privateKey = _configuration.GetSection("AppSettings:Token").Value;
-            string tokenString = tokenGenerator.CreateToken(user, privateKey);
+            string tokenString = tokenGenerator.CreateAccessToken(user, privateKey);
             token.Token = tokenString;
+            token.Message = "Login successful";
+            token.Success = true;
+            token.User = user.Id;
+
             return Ok(token);
         }
     }
