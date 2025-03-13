@@ -6,8 +6,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.ui.screens.CreateUserScreen
+import com.tudorEnterprises.dndapp.ui.screens.DMLandingScreen
 import com.tudorEnterprises.dndapp.ui.screens.DmOrPlayerScreen
 import com.tudorEnterprises.dndapp.ui.screens.LoginScreen
+import com.tudorEnterprises.dndapp.ui.screens.PlayerLandingScreen
 
 
 @Composable
@@ -31,6 +33,12 @@ fun NavigationController() {
         }
         composable( route = Screen.DmOrPlayer.route) {
             DmOrPlayerScreen(navController = navController)
+        }
+        composable(route = Screen.DMLanding.route) {
+            DMLandingScreen(navController = navController)
+        }
+        composable(route = Screen.PlayerLanding.route) {
+            PlayerLandingScreen(navController = navController)
         }
     }
 }
