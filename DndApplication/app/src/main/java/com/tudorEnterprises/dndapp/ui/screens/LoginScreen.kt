@@ -33,7 +33,7 @@ import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
-import com.tudorEnterprises.dndapp.ui.Dialogs.LoadingDialog
+import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.navigation.GetCreateUserButton
