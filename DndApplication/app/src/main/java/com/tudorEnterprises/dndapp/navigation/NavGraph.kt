@@ -23,15 +23,12 @@ fun NavigationController() {
         startDestination = Screen.Home.route, // Starts at Login
     ) {
         composable(route = Screen.Home.route) {
-            LoginScreen(
-                navController = navController,
-                onCreateUserClick = { navController.navigate(Screen.CreateUser.route) }
-            )
+            LoginScreen(navController = navController)
         }
         composable(route = Screen.CreateUser.route) {
             CreateUserScreen(navController = navController)
         }
-        composable( route = Screen.DmOrPlayer.route) {
+        composable(route = Screen.DmOrPlayer.route) {
             DmOrPlayerScreen(navController = navController)
         }
         composable(route = Screen.DMLanding.route) {
