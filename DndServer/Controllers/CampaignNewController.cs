@@ -26,7 +26,6 @@ namespace DndServer.Controllers
         {
             //Check if CampaignName Exists
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
             var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
 
             if (claimAccepted)
@@ -50,13 +49,16 @@ namespace DndServer.Controllers
             return BadRequest("invalid User");
         }
 
-        [HttpGet("GetCampaigns/{userName}")]
+        [HttpGet("GetCampaigns")]
         [Authorize]
-        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] string userName) //pass in UserId
+        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins(GetCampaignsRequest request) //pass in UserId
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
             CampaignListModel responseList = new CampaignListModel();
 
-            responseList = campaignSql.getCampaigns(userName);
+            responseList = campaignSql.getCampaigns(request.UserId);
 
             return Ok(responseList.CampaignModels);
         }

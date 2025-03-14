@@ -1,5 +1,6 @@
 package com.tudorEnterprises.dndapp.dataStorage.interfaces
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -15,4 +16,7 @@ interface CampaignDao {
 
     @Query("DELETE FROM CampaignNameData")
     suspend fun clearCampaigns()
+
+    @Query("SELECT * FROM CampaignNameData WHERE userId = :userId")
+    fun getAllCampaigns(userId: String) : LiveData<List<CampaignNameData>>
 }
