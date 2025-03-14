@@ -8,13 +8,13 @@ import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 
 class CampaignSqlActivity(context: Context) {
 
-    val db = Room.databaseBuilder(
+    private val db = Room.databaseBuilder(
         context,
         CampaignDatabase::class.java,
         "campaign_database"
     ).build()
 
-    suspend fun InsertAndRetrieveCampaignData(campaignName: String, syncCampaignId: Int) {
+    suspend fun insertAndRetrieveCampaignData(campaignName: String, syncCampaignId: Int) {
         db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId))
         val campaignData = db.campaignDao.getCampaignByName(campaignName)
         if(campaignData != null){

@@ -42,6 +42,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun DMLandingScreen(navController: NavController) {
 
+    val sql = CampaignSqlActivity(LocalContext.current)
+
     //TODO setup call to sqlLite DB to check for stored campaigns and make call to online thing async
 
     DndApplicationTheme {
@@ -91,7 +93,7 @@ fun DMLandingScreen(navController: NavController) {
                 onConfirm = { enteredName ->
                     campaignName = enteredName
                     showDialog = false
-                    launchCampaignCreation(campaignName, context)
+                    launchCampaignCreation(campaignName, context, sql)
                 }
             )
         }
@@ -124,15 +126,13 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
-private fun launchCampaignCreation(campaignName: String, context: Context) {
+private fun launchCampaignCreation(campaignName: String, context: Context, sql: CampaignSqlActivity) {
     CoroutineScope(Dispatchers.IO).launch {
-
-        val sql = CampaignSqlActivity(context)
 
         val syncCampaignId = CampaignHttp().newCampaign(campaignName, 0, context) //TODO remove the localId as not needed to send to db
 
         if(syncCampaignId != 0) {
-            sql.InsertAndRetrieveCampaignData(campaignName, syncCampaignId)
+            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)
         }
     }
 }
