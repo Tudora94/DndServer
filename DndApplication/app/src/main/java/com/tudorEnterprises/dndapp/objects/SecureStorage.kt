@@ -27,6 +27,7 @@ object SecureStorage {
     fun clearToken(context: Context) {
         getPreferences(context).edit().remove("jwt_token").apply()
     }
+
     fun saveRefreshToken(context: Context, token: String) {
         getPreferences(context).edit().putString("refresh_token", token).apply()
     }
@@ -37,6 +38,18 @@ object SecureStorage {
 
     fun clearRefreshToken(context: Context) {
         getPreferences(context).edit().remove("refresh_token").apply()
+    }
+
+    fun saveUserId(context: Context, userId: String) {
+        getPreferences(context).edit().putString("userId", userId).apply()
+    }
+
+    fun getUserId(context: Context): String {
+        return getPreferences(context).getString("userId", null) ?: "0"
+    }
+
+    fun clearUserId(context: Context) {
+        getPreferences(context).edit().remove("userId").apply()
     }
 
 }

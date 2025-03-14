@@ -25,7 +25,6 @@ namespace DndServer.Controllers
         public async Task<ActionResult<int>> createCampaign(CreateCampaignModel request)
         {
             //Check if CampaignName Exists
-            //TODO check that userId matches claim and pull back the userName for the ID to pass into below request
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
             var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);

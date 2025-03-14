@@ -71,6 +71,7 @@ fun GetAppBarTopLoggedIn(navController: NavController) {
                         Log.d("LogOut", SecureStorage.getToken(context).toString())
                         SecureStorage.clearToken(context)
                         SecureStorage.clearRefreshToken(context)
+                        SecureStorage.clearUserId(context)
                         navController.navigate(Screen.Home.route)
                     }
                 )
