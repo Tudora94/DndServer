@@ -12,7 +12,7 @@ namespace DndServer.Dal
     {
         ConnectionsSql connections = new ConnectionsSql();
 
-        public int CreateCampaign(CreateCampaignModel model)
+        public int CreateCampaign(string username, string campaignName)
         {
             try
             {
@@ -25,8 +25,8 @@ namespace DndServer.Dal
                 SqlCommand cmdSetCampaignId = new SqlCommand(setCampaignId, conn);
                 cmdSetCampaignId.CommandType = CommandType.StoredProcedure;
 
-                cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName1;
-                cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = model.Name;
+                cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = username;
+                cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = campaignName;
 
                 cmdSetCampaignId.Parameters.Add("@CampaignId", SqlDbType.Int);
                 cmdSetCampaignId.Parameters["@CampaignId"].Direction = ParameterDirection.Output;
