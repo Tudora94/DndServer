@@ -3,7 +3,7 @@ package com.tudorEnterprises.dndapp.dataStorage.interfaces
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.tudorEnterprises.dndapp.dataStorage.CampaignNameData
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 
 @Dao
 interface CampaignDao {

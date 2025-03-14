@@ -1,4 +1,4 @@
-package com.tudorEnterprises.dndapp.dataStorage
+package com.tudorEnterprises.dndapp.dataStorage.tables
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,7 +1,6 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,9 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import com.tudorEnterprises.dndapp.dataStorage.CampaignNameData
-import com.tudorEnterprises.dndapp.dataStorage.databases.CampaignDatabase
+import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
@@ -130,21 +127,12 @@ fun CreateCampaignButton(onClick: () -> Unit) {
 private fun launchCampaignCreation(campaignName: String, context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
 
-        val db = Room.databaseBuilder(
-                    context,
-                    CampaignDatabase::class.java,
-                    "campaign_database"
-                ).build()
+        val sql = CampaignSqlActivity(context)
 
         val syncCampaignId = CampaignHttp().newCampaign(campaignName, 0, context) //TODO remove the localId as not needed to send to db
 
         if(syncCampaignId != 0) {
-//            val campaignDao = CampaignDatabase.getDatabase(context).CampaignDao()
-            db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId))
-            val campaignData = db.campaignDao.getCampaignByName(campaignName)
-            if(campaignData != null){
-                Log.d("campaignSave", "Campaign Saved successfully - syncId: ${campaignData.syncCampaignId}, name: ${campaignData.campaignName}, Id: ${campaignData.id}")
-            }
+            sql.InsertAndRetrieveCampaignData(campaignName, syncCampaignId)
         }
     }
 }
