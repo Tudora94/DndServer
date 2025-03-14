@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateUserRequest
-import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
+import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
@@ -73,7 +73,7 @@ fun CreateUserScreen(debugVersion: String? = null, navController: NavController)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = RetroFitHttpClient.api.register(
+                val response = RetroFitHttpAuthClient.api.register(
                     CreateUserRequest(
                         email,
                         username,

@@ -1,5 +1,6 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
@@ -83,12 +86,13 @@ fun DMLandingScreen(navController: NavController) {
         }
 
         if (showDialog) {
+            val context = LocalContext.current
             CreateCampaignDialog(
                 onDismiss = { showDialog = false },
                 onConfirm = { enteredName ->
                     campaignName = enteredName
                     showDialog = false
-                    launchCampaignCreation(campaignName)
+                    launchCampaignCreation(campaignName, context)
                 }
             )
         }
@@ -121,9 +125,11 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
-private fun launchCampaignCreation(campaignName: String) {
+private fun launchCampaignCreation(campaignName: String, context: Context) {
+
     CoroutineScope(Dispatchers.IO).launch {
         // Simulate API call (replace with real API call)
+        CampaignHttp().newCampaign(campaignName, context)
         delay(1000)
         Log.d("DMLandingScreen", "Campaign Created: $campaignName")
     }

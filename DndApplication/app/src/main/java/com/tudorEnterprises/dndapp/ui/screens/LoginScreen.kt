@@ -32,7 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Buttons
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
-import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
+import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
@@ -68,7 +68,7 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
 
             try {
                 val response = withContext(Dispatchers.IO) {
-                    RetroFitHttpClient.api.login(LoginRequest(username, password))
+                    RetroFitHttpAuthClient.api.login(LoginRequest(username, password))
                 }
 
                 if (response.isSuccessful && response.body()?.success == true) {
