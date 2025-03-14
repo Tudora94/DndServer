@@ -30,6 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.tudorEnterprises.dndapp.dataStorage.CampaignNameData
+import com.tudorEnterprises.dndapp.dataStorage.databases.CampaignDatabase
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
@@ -37,7 +40,6 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -126,12 +128,24 @@ fun CreateCampaignButton(onClick: () -> Unit) {
 }
 
 private fun launchCampaignCreation(campaignName: String, context: Context) {
-
     CoroutineScope(Dispatchers.IO).launch {
-        // Simulate API call (replace with real API call)
-        CampaignHttp().newCampaign(campaignName, context)
-        delay(1000)
-        Log.d("DMLandingScreen", "Campaign Created: $campaignName")
+
+        val db = Room.databaseBuilder(
+                    context,
+                    CampaignDatabase::class.java,
+                    "campaign_database"
+                ).build()
+
+        val syncCampaignId = CampaignHttp().newCampaign(campaignName, 0, context) //TODO remove the localId as not needed to send to db
+
+        if(syncCampaignId != 0) {
+//            val campaignDao = CampaignDatabase.getDatabase(context).CampaignDao()
+            db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId))
+            val campaignData = db.campaignDao.getCampaignByName(campaignName)
+            if(campaignData != null){
+                Log.d("campaignSave", "Campaign Saved successfully - syncId: ${campaignData.syncCampaignId}, name: ${campaignData.campaignName}, Id: ${campaignData.id}")
+            }
+        }
     }
 }
 

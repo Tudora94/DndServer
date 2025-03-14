@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
+    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -74,9 +76,7 @@ dependencies {
     implementation(libs.systemUI.controller)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.compiler) {
-        exclude(group = "com.intellij", module = "annotations")
-    }
+    kapt(libs.androidx.room.compiler)
 
 
 }
