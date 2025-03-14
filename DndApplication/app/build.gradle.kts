@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.dndapplication"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.1"
+        versionCode = 2
+        versionName = "0.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.coroutines.android)
     implementation(libs.androidx.security)
+    implementation(libs.systemUI.controller)
 }

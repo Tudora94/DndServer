@@ -2,6 +2,7 @@ package com.tudorEnterprises.dndapp.ui.navigation
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.constants.appName
@@ -31,12 +33,23 @@ import com.tudorEnterprises.dndapp.ui.theme.Purple40
 fun GetAppBarTopLoggedIn(navController: NavController) {
     val context = LocalContext.current
     var menuExpanded by remember { mutableStateOf(false) }
+    val currentScreen by navController.currentBackStackEntryAsState()
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Purple40,
             titleContentColor = MaterialTheme.colorScheme.inversePrimary,
         ),
+        navigationIcon = {
+            if (currentScreen?.destination?.route != Screen.DmOrPlayer.route) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "back"
+                    )
+                }
+            }
+        },
         title = {
             Text(
                 text = appName,

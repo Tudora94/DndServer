@@ -1,4 +1,4 @@
-package com.tudorEnterprises.dndapp.ui.Dialogs
+package com.tudorEnterprises.dndapp.ui.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
