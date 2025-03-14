@@ -76,7 +76,7 @@ dependencies {
     implementation(libs.systemUI.controller)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
 
 }

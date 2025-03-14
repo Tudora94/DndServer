@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.2"
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -14,6 +14,7 @@ coroutinesAndroid = "1.8.1"
 encryptedSharedPrefs = "1.1.0-alpha06"
 uiController = "0.31.1-alpha"
 androidxRoom = "2.7.0-rc02"
+ksp = "2.1.0-1.0.29"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,5 +47,6 @@ androidx-room-compiler = { module  = "androidx.room:room-compiler", version.ref 
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 
