@@ -5,10 +5,9 @@ import android.util.Log
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 
-class CampaignRefreshService(val context: Context) {
+class CampaignRefreshService(val context: Context, val dbCalls: CampaignSqlActivity) {
 
     private val httpCalls = CampaignHttp(context)
-    private val dbCalls = CampaignSqlActivity(context)
 
     suspend fun fetchFromServerAndUpdatedDb() {
         Log.d("refresh Service", "refresh service called")

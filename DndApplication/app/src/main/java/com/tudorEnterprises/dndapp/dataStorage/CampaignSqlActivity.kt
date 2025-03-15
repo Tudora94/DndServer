@@ -7,7 +7,9 @@ import com.tudorEnterprises.dndapp.dataModels.responses.CreateCampaignResponse
 import com.tudorEnterprises.dndapp.dataStorage.databases.CampaignDatabase
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.objects.SecureStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 class CampaignSqlActivity(context: Context) {
 
@@ -22,10 +24,12 @@ class CampaignSqlActivity(context: Context) {
     private val loggedInUser = SecureStorage.getUserId(context)
 
     suspend fun insertAndRetrieveCampaignData(campaignName: String, syncCampaignId: Int) {
-        db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId, userId = loggedInUser.toInt()))
-        val campaignData = db.campaignDao.getCampaignByName(campaignName)
-        if(campaignData != null){
-            Log.d("campaignSave", "Campaign Saved successfully - syncId: ${campaignData.syncCampaignId}, name: ${campaignData.campaignName},")
+        withContext(Dispatchers.IO) {
+            db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId, userId = loggedInUser.toInt()))
+            val campaignData = db.campaignDao.getCampaignByName(campaignName)
+            if(campaignData != null){
+                Log.d("campaignSave", "Campaign Saved successfully - syncId: ${campaignData.syncCampaignId}, name: ${campaignData.campaignName},")
+            }
         }
     }
 

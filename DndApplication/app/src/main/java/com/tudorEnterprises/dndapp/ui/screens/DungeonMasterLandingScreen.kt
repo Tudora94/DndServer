@@ -1,6 +1,7 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
@@ -48,18 +49,24 @@ fun DMLandingScreen(navController: NavController) {
     val context = LocalContext.current
     val sql = CampaignSqlActivity(context)
 
-    //TODO setup call to sqlLite DB to check for stored campaigns and make call to online thing async
-
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var campaignName by remember { mutableStateOf("") }
+
+        val campaigns by sql.getAllCampaigns().collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
 //            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
 //            WorkManager.getInstance(context).enqueue(workRequest)
             while(true) {
-                CampaignRefreshService(context).fetchFromServerAndUpdatedDb()
+                CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
                 delay(5000)
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            sql.getAllCampaigns().collect { campaigns ->
+                Log.d("DMLandingScreen", "Campaign list updated: ${campaigns.size}")
             }
         }
 
@@ -80,7 +87,6 @@ fun DMLandingScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 16.dp),
                     text = "Dungeon Master",
                 )
-                val campaigns by sql.getAllCampaigns().collectAsState(initial = emptyList())
 
                 // LazyColumn for handling large lists and keeping the button fixed
                 LazyColumn(
@@ -169,9 +175,7 @@ private fun launchCampaignCreation(
 
         val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
-            0,
-
-        ) //TODO remove the localId as not needed to send to db
+            )
 
         if (syncCampaignId != 0) {
             sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)

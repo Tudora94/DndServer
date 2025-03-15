@@ -2,6 +2,7 @@ package com.tudorEnterprises.dndapp.dataStorage.interfaces
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
@@ -9,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CampaignDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCampaign(campaign: CampaignNameData)
 
     @Query("SELECT * FROM CampaignNameData WHERE campaign_name = :campaignNameSelection LIMIT 1")
