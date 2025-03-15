@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
+    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -71,4 +74,9 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.androidx.security)
     implementation(libs.systemUI.controller)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+
 }

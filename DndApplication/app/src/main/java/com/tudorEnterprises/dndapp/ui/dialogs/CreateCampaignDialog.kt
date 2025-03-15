@@ -11,16 +11,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CreateCampaignDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     var campaignName by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
 
     AlertDialog(
         onDismissRequest = { },
         confirmButton = {
             ElevatedButton(onClick = { onConfirm(campaignName)
+                keyboardController?.hide()
+                focusManager.clearFocus()
                 onDismiss()}
             ) {
                 Text("Create")

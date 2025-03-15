@@ -79,6 +79,9 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
                     body?.refreshToken?.let {
                         SecureStorage.saveRefreshToken(context, it)
                     }
+                    body?.user?.let {
+                        SecureStorage.saveUserId(context, it.toString())
+                    }
                     showDialog(false, response.body()?.message)
 
                     Log.d("getToken", SecureStorage.getToken(context) ?: "no token found")

@@ -12,7 +12,7 @@ namespace DndServer.User.Services
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim("name", user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim("GeneratedTime", DateTime.Now.ToString("HH:mm:ss"))
             };
 

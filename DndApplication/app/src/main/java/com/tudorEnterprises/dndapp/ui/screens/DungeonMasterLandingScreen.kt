@@ -1,7 +1,6 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,15 +9,16 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
@@ -37,17 +39,25 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun DMLandingScreen(navController: NavController) {
+
+    val sql = CampaignSqlActivity(LocalContext.current)
+    val campaigns = remember { mutableStateOf(listOf<CampaignNameData>()) }
 
     //TODO setup call to sqlLite DB to check for stored campaigns and make call to online thing async
 
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var campaignName by remember { mutableStateOf("") }
+
+        LaunchedEffect(Unit) {
+            sql.getAllCampaigns().observeForever {
+                campaigns.value = it
+            }
+        }
 
         Scaffold(topBar = {
             GetAppBarTopLoggedIn(navController)
@@ -66,22 +76,41 @@ fun DMLandingScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 16.dp),
                     text = "Dungeon Master",
                 )
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-//                        .weight(0.1f, false)
-                ) {
 
-                }
-                Spacer(modifier = Modifier.weight(10f))
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween
+                // LazyColumn for handling large lists and keeping the button fixed
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f) // Take up available space
+                        .fillMaxWidth()
                 ) {
-                    CreateCampaignButton {showDialog = true}
+                    items(campaigns.value) { campaignName ->
+                        ElevatedButton(
+                            onClick = {
+                                // Handle button click
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text(text = campaignName.campaignName)
+                        }
+                    }
+
+                    // Use an item in LazyColumn to add spacing
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
-                Spacer(modifier = Modifier.padding(16.dp))
+
+                // CreateCampaignButton at the bottom of the screen
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CreateCampaignButton { showDialog = true }
+                }
             }
         }
 
@@ -92,7 +121,7 @@ fun DMLandingScreen(navController: NavController) {
                 onConfirm = { enteredName ->
                     campaignName = enteredName
                     showDialog = false
-                    launchCampaignCreation(campaignName, context)
+                    launchCampaignCreation(campaignName, context, sql)
                 }
             )
         }
@@ -125,13 +154,24 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
-private fun launchCampaignCreation(campaignName: String, context: Context) {
-
+private fun launchCampaignCreation(
+    campaignName: String,
+    context: Context,
+    sql: CampaignSqlActivity
+) {
     CoroutineScope(Dispatchers.IO).launch {
-        // Simulate API call (replace with real API call)
-        CampaignHttp().newCampaign(campaignName, context)
-        delay(1000)
-        Log.d("DMLandingScreen", "Campaign Created: $campaignName")
+
+        CampaignHttp(context).getCampaigns()
+
+        val syncCampaignId = CampaignHttp(context).newCampaign(
+            campaignName,
+            0,
+
+        ) //TODO remove the localId as not needed to send to db
+
+        if (syncCampaignId != 0) {
+            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)
+        }
     }
 }
 

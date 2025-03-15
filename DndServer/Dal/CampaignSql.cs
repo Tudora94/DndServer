@@ -12,7 +12,7 @@ namespace DndServer.Dal
     {
         ConnectionsSql connections = new ConnectionsSql();
 
-        public int CreateCampaign(CreateCampaignModel model)
+        public int CreateCampaign(string username, string campaignName)
         {
             try
             {
@@ -25,8 +25,8 @@ namespace DndServer.Dal
                 SqlCommand cmdSetCampaignId = new SqlCommand(setCampaignId, conn);
                 cmdSetCampaignId.CommandType = CommandType.StoredProcedure;
 
-                cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName1;
-                cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = model.Name;
+                cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = username;
+                cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = campaignName;
 
                 cmdSetCampaignId.Parameters.Add("@CampaignId", SqlDbType.Int);
                 cmdSetCampaignId.Parameters["@CampaignId"].Direction = ParameterDirection.Output;
@@ -43,15 +43,15 @@ namespace DndServer.Dal
             }
         }
 
-        public CampaignListModel getCampaigns(string userName)
+        public CampaignListModel getCampaigns(int userId)
         {
             SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
-            string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = (SELECT Id FROM DndDb.dbo.Users WHERE username = @username)";
+            string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = @userId";
             SqlCommand CmdGetCampaigns = new SqlCommand(sqlString, conn);
 
-            CmdGetCampaigns.Parameters.Add("@username", SqlDbType.VarChar).Value=userName;
+            CmdGetCampaigns.Parameters.Add("userId", SqlDbType.Int).Value=userId;
 
             DataTable dt = new DataTable();
 
@@ -64,8 +64,9 @@ namespace DndServer.Dal
             foreach(DataRow dr in dt.Rows)
             {
                 GetCampaignModel getCampaignModel = new GetCampaignModel();
-                getCampaignModel.Id = Convert.ToInt32(dr[0]);
-                getCampaignModel.CampaignName = dr[1].ToString();
+                getCampaignModel.CampaignId = Convert.ToInt32(dr[0]);
+                getCampaignModel.Name = dr[1].ToString() ?? "";
+                getCampaignModel.userId = userId;
                 campaignListModel.CampaignModels.Add(getCampaignModel);
             }
 
