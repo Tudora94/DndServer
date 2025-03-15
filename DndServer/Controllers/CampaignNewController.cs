@@ -6,6 +6,8 @@ using DndServer.Dal;
 using DndServer.Campaign.Services;
 using System.Net;
 using System.Diagnostics;
+using DndServer.User.Services;
+using System.Security.Claims;
 
 namespace DndServer.Controllers
 {
@@ -14,6 +16,8 @@ namespace DndServer.Controllers
     public class CampaignNewController : ControllerBase
     {
         CampaignSql campaignSql = new CampaignSql();
+        AuthSql authSql = new AuthSql();
+        ClaimValidator claimValidator = new ClaimValidator();
 
 
         [HttpPost("CreateCampaign")]
@@ -21,28 +25,40 @@ namespace DndServer.Controllers
         public async Task<ActionResult<int>> createCampaign(CreateCampaignModel request)
         {
             //Check if CampaignName Exists
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
 
-            var nameCheck = campaignSql.checkCampaignName(request.Name, request.UserName1);
-
-            if (!nameCheck)
+            if (claimAccepted)
             {
-                return BadRequest("Campaign Name already exists");
+
+                var username = authSql.getUserNameFromId(request.UserId);
+
+                var nameCheck = campaignSql.checkCampaignName(request.Name, username);
+
+                if (!nameCheck)
+                {
+                    return BadRequest("Campaign Name already exists");
+                }
+
+                int CampaignId = campaignSql.CreateCampaign(username, request.Name);
+
+                request.CampaignId = CampaignId;
+
+                return Ok(request);
             }
-
-            int CampaignId = campaignSql.CreateCampaign(request);
-
-            request.CampaignId = CampaignId;
-
-            return Ok(request);
+            return BadRequest("invalid User");
         }
 
-        [HttpGet("GetCampaigns/{userName}")]
+        [HttpGet("GetCampaigns/{userId}")]
         [Authorize]
-        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] string userName) //pass in UserId
+        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] int userId) //pass in UserId
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
+
             CampaignListModel responseList = new CampaignListModel();
 
-            responseList = campaignSql.getCampaigns(userName);
+            responseList = campaignSql.getCampaigns(userId);
 
             return Ok(responseList.CampaignModels);
         }

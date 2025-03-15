@@ -125,5 +125,27 @@ namespace DndServer.Dal
                 user.PaswordSalt = (byte[])dr[3];
             }
         }
+
+        public string getUserNameFromId(int id)
+        {
+            var userNameResponse = "";
+            DataTable dt = new DataTable();
+            connections.SqlOpenConnection(conn);
+            String getUserName = @"SELECT TOP (1) username FROM DndDb.dbo.Users WHERE Id = @id";
+
+            SqlCommand cmd = new SqlCommand(getUserName, conn);
+
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+
+            connections.SQLCloseConnection (conn);
+            foreach(DataRow dr in dt.Rows)
+            {
+                userNameResponse = (string)dr[0];
+            }
+
+            return userNameResponse;
+        }
     }
 }

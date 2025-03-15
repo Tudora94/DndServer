@@ -29,14 +29,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Buttons
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
-import com.tudorEnterprises.dndapp.objects.RetroFitHttpClient
+import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
-import com.tudorEnterprises.dndapp.ui.Dialogs.LoadingDialog
+import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
-import com.tudorEnterprises.dndapp.ui.navigation.GetCreateUserButton
+import com.tudorEnterprises.dndapp.ui.navigation.GetGenericNavButton
 import com.tudorEnterprises.dndapp.ui.navigation.GetLoginButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
@@ -45,14 +46,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun LoginScreen(onCreateUserClick: () -> Unit, navController: NavController) {
+fun LoginScreen(navController: NavController) {
     val context = LocalContext.current
 
-    MainLoginWindow(onCreateUserClick = onCreateUserClick, navController = navController, context = context)
+    MainLoginWindow(navController = navController, context = context)
 }
 
 @Composable
-private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () -> Unit, navController: NavController, context: Context) {
+private fun MainLoginWindow(debugVersion: String? = null, navController: NavController, context: Context) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -67,7 +68,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
 
             try {
                 val response = withContext(Dispatchers.IO) {
-                    RetroFitHttpClient.api.login(LoginRequest(username, password))
+                    RetroFitHttpAuthClient.api.login(LoginRequest(username, password))
                 }
 
                 if (response.isSuccessful && response.body()?.success == true) {
@@ -77,6 +78,9 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     }
                     body?.refreshToken?.let {
                         SecureStorage.saveRefreshToken(context, it)
+                    }
+                    body?.user?.let {
+                        SecureStorage.saveUserId(context, it.toString())
                     }
                     showDialog(false, response.body()?.message)
 
@@ -139,8 +143,6 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = 30.dp)
-
-
                     )
                     Spacer(modifier = Modifier.height(18.dp))
 
@@ -155,7 +157,7 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
                     Spacer(modifier = Modifier.height(18.dp))
 
                 }
-                GetCreateUserButton { onCreateUserClick() }
+                GetGenericNavButton(navController, Buttons.CreateNewUser)
             }
 
         }
@@ -167,5 +169,5 @@ private fun MainLoginWindow(debugVersion: String? = null, onCreateUserClick: () 
 private fun LoginPreview(){
     val navController = rememberNavController()
     val context = LocalContext.current
-    MainLoginWindow("TestVersion", {}, navController, context)
+    MainLoginWindow("TestVersion", navController, context)
 }

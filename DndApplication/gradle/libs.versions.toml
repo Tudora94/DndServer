@@ -1,17 +1,20 @@
 [versions]
 agp = "8.8.2"
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-composeBom = "2025.02.00"
-navigationCompose = "2.8.8"
+composeBom = "2025.03.00"
+navigationCompose = "2.8.9"
 gsonConverter = "2.11.0"
 coroutinesAndroid = "1.8.1"
 encryptedSharedPrefs = "1.1.0-alpha06"
+uiController = "0.31.1-alpha"
+androidxRoom = "2.7.0-rc02"
+ksp = "2.1.0-1.0.29"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,9 +37,16 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "gsonConv
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "gsonConverter" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesAndroid" }
 androidx-security = {module = "androidx.security:security-crypto", version.ref = "encryptedSharedPrefs"}
+systemUI-controller = {module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "uiController"}
+androidx-room-runtime = {module = "androidx.room:room-runtime", version.ref = "androidxRoom"}
+androidx-room-ktx = {module = "androidx.room:room-ktx", version.ref = "androidxRoom"}
+androidx-room-compiler = { module  = "androidx.room:room-compiler", version.ref = "androidxRoom"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
 
