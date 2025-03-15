@@ -35,6 +35,12 @@ class CampaignHttp(val context: Context) {
 
         return if(response.isSuccessful) {
             Log.d("CampaignHttp", "${response.body()}")
+            if(response.body() != null){
+                for(campaignResponse in response.body()!!) {
+                    val name = campaignResponse.name
+                    Log.d("CampaignHttp", name)
+                }
+            }
             response.body()
         } else {
             null
