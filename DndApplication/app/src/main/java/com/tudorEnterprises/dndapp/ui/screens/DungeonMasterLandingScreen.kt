@@ -1,6 +1,7 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,34 +29,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
-import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
+import com.tudorEnterprises.dndapp.services.CampaignRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun DMLandingScreen(navController: NavController) {
-
-    val sql = CampaignSqlActivity(LocalContext.current)
-    val campaigns = remember { mutableStateOf(listOf<CampaignNameData>()) }
-
-    //TODO setup call to sqlLite DB to check for stored campaigns and make call to online thing async
+    val context = LocalContext.current
+    val sql = CampaignSqlActivity(context)
 
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var campaignName by remember { mutableStateOf("") }
 
+        val campaigns by sql.getAllCampaigns().collectAsStateWithLifecycle(initialValue = emptyList())
+
         LaunchedEffect(Unit) {
-            sql.getAllCampaigns().observeForever {
-                campaigns.value = it
+//            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
+//            WorkManager.getInstance(context).enqueue(workRequest)
+            while(true) {
+                CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
+                delay(5000)
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            sql.getAllCampaigns().collect { campaigns ->
+                Log.d("DMLandingScreen", "Campaign list updated: ${campaigns.size}")
             }
         }
 
@@ -83,7 +94,7 @@ fun DMLandingScreen(navController: NavController) {
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-                    items(campaigns.value) { campaignName ->
+                    items(campaigns) { campaignName ->
                         ElevatedButton(
                             onClick = {
                                 // Handle button click
@@ -115,7 +126,6 @@ fun DMLandingScreen(navController: NavController) {
         }
 
         if (showDialog) {
-            val context = LocalContext.current
             CreateCampaignDialog(
                 onDismiss = { showDialog = false },
                 onConfirm = { enteredName ->
@@ -165,9 +175,7 @@ private fun launchCampaignCreation(
 
         val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
-            0,
-
-        ) //TODO remove the localId as not needed to send to db
+            )
 
         if (syncCampaignId != 0) {
             sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.dataStorage.interfaces.CampaignDao
 
-@Database(entities = [CampaignNameData:: class], version = 3)
+@Database(entities = [CampaignNameData:: class], version = 5)
 abstract class CampaignDatabase : RoomDatabase() {
     abstract val campaignDao: CampaignDao
 }

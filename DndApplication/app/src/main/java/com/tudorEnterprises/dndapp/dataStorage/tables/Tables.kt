@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class CampaignNameData (
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "campaign_name") val campaignName: String,
-    @ColumnInfo(name = "sync_Campaign_Id") val syncCampaignId: Int = 0,
+    @PrimaryKey @ColumnInfo(name = "sync_Campaign_Id") val syncCampaignId: Int = 0,
     @ColumnInfo(name = "userId") val userId: Int = 0
 )

@@ -22,11 +22,15 @@ namespace DndServer.Controllers
 
         [HttpPost("CreateCampaign")]
         [Authorize]
-        public async Task<ActionResult<int>> createCampaign(CreateCampaignModel request)
+        public async Task<ActionResult<int>> createCampaign(CreateCampaignRequestModel request)
         {
             //Check if CampaignName Exists
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            var response = new CreateCampaignResponseModel();
+            response.UserId = request.UserId;
+            response.Name = request.Name;
 
             if (claimAccepted)
             {
@@ -42,16 +46,16 @@ namespace DndServer.Controllers
 
                 int CampaignId = campaignSql.CreateCampaign(username, request.Name);
 
-                request.CampaignId = CampaignId;
+                response.CampaignId = CampaignId;
 
-                return Ok(request);
+                return Ok(response);
             }
             return BadRequest("invalid User");
         }
 
         [HttpGet("GetCampaigns/{userId}")]
         [Authorize]
-        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] int userId) //pass in UserId
+        public async Task<ActionResult<List<CreateCampaignResponseModel>>> getCampagins([System.Web.Http.FromUri] int userId) //pass in UserId
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
