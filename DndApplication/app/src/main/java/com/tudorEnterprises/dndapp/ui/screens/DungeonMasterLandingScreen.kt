@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,21 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
-import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
+import com.tudorEnterprises.dndapp.services.CampaignRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun DMLandingScreen(navController: NavController) {
-
-    val sql = CampaignSqlActivity(LocalContext.current)
-    val campaigns = remember { mutableStateOf(listOf<CampaignNameData>()) }
+    val context = LocalContext.current
+    val sql = CampaignSqlActivity(context)
 
     //TODO setup call to sqlLite DB to check for stored campaigns and make call to online thing async
 
@@ -54,8 +55,11 @@ fun DMLandingScreen(navController: NavController) {
         var campaignName by remember { mutableStateOf("") }
 
         LaunchedEffect(Unit) {
-            sql.getAllCampaigns().observeForever {
-                campaigns.value = it
+//            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
+//            WorkManager.getInstance(context).enqueue(workRequest)
+            while(true) {
+                CampaignRefreshService(context).fetchFromServerAndUpdatedDb()
+                delay(5000)
             }
         }
 
@@ -76,6 +80,7 @@ fun DMLandingScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 16.dp),
                     text = "Dungeon Master",
                 )
+                val campaigns by sql.getAllCampaigns().collectAsState(initial = emptyList())
 
                 // LazyColumn for handling large lists and keeping the button fixed
                 LazyColumn(
@@ -83,7 +88,7 @@ fun DMLandingScreen(navController: NavController) {
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-                    items(campaigns.value) { campaignName ->
+                    items(campaigns) { campaignName ->
                         ElevatedButton(
                             onClick = {
                                 // Handle button click
@@ -115,7 +120,6 @@ fun DMLandingScreen(navController: NavController) {
         }
 
         if (showDialog) {
-            val context = LocalContext.current
             CreateCampaignDialog(
                 onDismiss = { showDialog = false },
                 onConfirm = { enteredName ->

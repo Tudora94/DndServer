@@ -1,10 +1,11 @@
 package com.tudorEnterprises.dndapp.dataStorage.interfaces
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Upsert
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CampaignDao {
@@ -18,5 +19,8 @@ interface CampaignDao {
     suspend fun clearCampaigns()
 
     @Query("SELECT * FROM CampaignNameData WHERE userId = :userId")
-    fun getAllCampaigns(userId: String) : LiveData<List<CampaignNameData>>
+    fun getAllCampaigns(userId: String) : Flow<List<CampaignNameData>>
+
+    @Upsert
+    suspend fun upsertCampaign(campaign: CampaignNameData)
 }
