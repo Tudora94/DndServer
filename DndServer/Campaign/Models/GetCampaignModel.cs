@@ -2,10 +2,12 @@
 {
     public class GetCampaignModel
     {
-        private int _id;
-        private string _campaignName;
+        private int _campaignId;
+        private int _userId;
+        private string _Name;
 
-        public int Id { get => _id; set => _id = value; }
-        public string CampaignName { get => _campaignName; set => _campaignName = value; }
+        public int CampaignId { get => _campaignId; set => _campaignId = value; }
+        public int userId { get => _userId; set => _userId = value; }
+        public string Name { get => _Name; set => _Name = value; }
     }
 }

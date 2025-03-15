@@ -49,16 +49,16 @@ namespace DndServer.Controllers
             return BadRequest("invalid User");
         }
 
-        [HttpGet("GetCampaigns")]
+        [HttpGet("GetCampaigns/{userId}")]
         [Authorize]
-        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins(GetCampaignsRequest request) //pass in UserId
+        public async Task<ActionResult<List<CreateCampaignModel>>> getCampagins([System.Web.Http.FromUri] int userId) //pass in UserId
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
 
             CampaignListModel responseList = new CampaignListModel();
 
-            responseList = campaignSql.getCampaigns(request.UserId);
+            responseList = campaignSql.getCampaigns(userId);
 
             return Ok(responseList.CampaignModels);
         }

@@ -161,10 +161,12 @@ private fun launchCampaignCreation(
 ) {
     CoroutineScope(Dispatchers.IO).launch {
 
-        val syncCampaignId = CampaignHttp().newCampaign(
+        CampaignHttp(context).getCampaigns()
+
+        val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
             0,
-            context
+
         ) //TODO remove the localId as not needed to send to db
 
         if (syncCampaignId != 0) {

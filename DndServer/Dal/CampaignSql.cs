@@ -64,8 +64,9 @@ namespace DndServer.Dal
             foreach(DataRow dr in dt.Rows)
             {
                 GetCampaignModel getCampaignModel = new GetCampaignModel();
-                getCampaignModel.Id = Convert.ToInt32(dr[0]);
-                getCampaignModel.CampaignName = dr[1].ToString() ?? "";
+                getCampaignModel.CampaignId = Convert.ToInt32(dr[0]);
+                getCampaignModel.Name = dr[1].ToString() ?? "";
+                getCampaignModel.userId = userId;
                 campaignListModel.CampaignModels.Add(getCampaignModel);
             }
 
