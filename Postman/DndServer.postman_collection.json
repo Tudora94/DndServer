@@ -17,9 +17,12 @@
 							"script": {
 								"exec": [
 									"const jsonResponse = pm.response.json();\r",
-									"pm.environment.set(\"bearerToken\", jsonResponse.token);"
+									"pm.environment.set(\"bearerToken\", jsonResponse.token);\r",
+									"pm.environment.set(\"userId\", jsonResponse.user)\r",
+									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -56,7 +59,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"{{user}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"confirmPassword\": \"{{password}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
+							"raw": "{\r\n  \"username\": \"Josh'); DROP TABLE Users;--\",\r\n  \"password\": \"{{password}}\",\r\n  \"confirmPassword\": \"{{password}}1\",\r\n  \"email\": \"' or 1=1 --\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -99,7 +102,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"campaignId\": 0,\r\n  \"userName1\": \"{{user}}\",\r\n  \"name\": \"TestUserCampaign1\"\r\n}",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"name\": \"TestUserCampaign13\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -122,6 +125,9 @@
 				},
 				{
 					"name": "GetCampaigns",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -135,8 +141,17 @@
 						},
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_Url}}/api/CampaignNew/GetCampaigns/{{user}}",
+							"raw": "{{base_Url}}/api/CampaignNew/GetCampaigns/{{userId}}",
 							"host": [
 								"{{base_Url}}"
 							],
@@ -144,7 +159,7 @@
 								"api",
 								"CampaignNew",
 								"GetCampaigns",
-								"{{user}}"
+								"{{userId}}"
 							]
 						}
 					},
@@ -182,6 +197,19 @@
 				},
 				{
 					"name": "GenerateCampaignCode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonResponse = pm.response.json();\r",
+									"pm.environment.set(\"campaignCode\", jsonResponse.campaignRoomCode);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -308,7 +336,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"roomCode\": \"670475\",\r\n  \"name\": \"PlayerName\",\r\n  \"userName\": \"{{user}}\"\r\n}",
+							"raw": "{\r\n  \"roomCode\": \"{{campaignCode}}\",\r\n  \"name\": \"PlayerName3\",\r\n  \"userName\": \"{{user}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
