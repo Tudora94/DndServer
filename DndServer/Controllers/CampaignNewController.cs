@@ -37,7 +37,7 @@ namespace DndServer.Controllers
 
                 var username = authSql.getUserNameFromId(request.UserId);
 
-                var nameCheck = campaignSql.checkCampaignName(request.Name, username);
+                var nameCheck = campaignSql.checkCampaignName(request.Name, request.UserId);
 
                 if (!nameCheck)
                 {

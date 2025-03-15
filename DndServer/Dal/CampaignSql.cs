@@ -183,17 +183,18 @@ namespace DndServer.Dal
             return players;
         }
 
-        public bool checkCampaignName(string campaignName, string username)
+        public bool checkCampaignName(string campaignName, int userId)
         {
             var ret = false;
 
             SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
-            string Sql = @"IF EXISTS(SELECT * FROM DndDb.dbo.CampaignName WHERE CampaignName = @campaignName)SELECT 1";
+            string Sql = @"IF EXISTS(SELECT * FROM DndDb.dbo.CampaignName WHERE CampaignName = @campaignName AND UserId = @userId)SELECT 1";
 
             var cmd = new SqlCommand(Sql, conn);
             cmd.Parameters.Add("@campaignName", SqlDbType.VarChar).Value = campaignName;
+            cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
 
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
