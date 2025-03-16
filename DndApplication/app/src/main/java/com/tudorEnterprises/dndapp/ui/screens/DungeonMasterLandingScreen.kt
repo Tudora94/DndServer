@@ -38,6 +38,7 @@ import com.tudorEnterprises.dndapp.services.CampaignRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetCampaignButtons
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -95,16 +96,7 @@ fun DMLandingScreen(navController: NavController) {
                         .fillMaxWidth()
                 ) {
                     items(campaigns) { campaignName ->
-                        ElevatedButton(
-                            onClick = {
-                                // Handle button click
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        ) {
-                            Text(text = campaignName.campaignName)
-                        }
+                        GetCampaignButtons(campaignName)
                     }
 
                     // Use an item in LazyColumn to add spacing
