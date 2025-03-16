@@ -12,17 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 
 
 @Composable
-fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit) {
+fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit, navController: NavController) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ElevatedButton(
-            onClick = {},
+            onClick = {navController.navigate(Screen.DmOrPlayer.route)},
             modifier = Modifier.weight(4f)
         ) {
             Text(campaignName.campaignName)
@@ -40,6 +43,7 @@ fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit) {
 @Preview
 @Composable
 private fun GetCampaignButtonsPreview() {
+    val navController = rememberNavController()
     val campaignName = CampaignNameData("test name value")
-    GetCampaignButtons(campaignName) { }
+    GetCampaignButtons(campaignName, { }, navController)
 }
