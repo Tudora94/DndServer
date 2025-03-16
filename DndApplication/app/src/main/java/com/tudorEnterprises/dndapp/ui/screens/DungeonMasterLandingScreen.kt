@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.services.CampaignRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
@@ -96,7 +97,7 @@ fun DMLandingScreen(navController: NavController) {
                         .fillMaxWidth()
                 ) {
                     items(campaigns) { campaignName ->
-                        GetCampaignButtons(campaignName)
+                        GetCampaignButtons(campaignName) { deleteCampaign(campaignName) }
                     }
 
                     // Use an item in LazyColumn to add spacing
@@ -154,6 +155,12 @@ fun CreateCampaignButton(onClick: () -> Unit) {
             }
         }
     }
+}
+
+private fun deleteCampaign(campaignNameData: CampaignNameData) {
+
+    Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
+
 }
 
 private fun launchCampaignCreation(

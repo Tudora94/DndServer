@@ -16,7 +16,7 @@ import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 
 
 @Composable
-fun GetCampaignButtons(campaignName: CampaignNameData) {
+fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -29,7 +29,7 @@ fun GetCampaignButtons(campaignName: CampaignNameData) {
         }
 
         ElevatedButton(
-            onClick = {},
+            onClick = { onDelete() },
             modifier = Modifier.weight(1f)
         ) {
             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
@@ -39,7 +39,7 @@ fun GetCampaignButtons(campaignName: CampaignNameData) {
 
 @Preview
 @Composable
-private fun GetCampaignButtons() {
+private fun GetCampaignButtonsPreview() {
     val campaignName = CampaignNameData("test name value")
-    GetCampaignButtons(campaignName)
+    GetCampaignButtons(campaignName) { }
 }
