@@ -40,4 +40,8 @@ class CampaignSqlActivity(context: Context) {
     suspend fun upsertCampaign(campaignData: CreateCampaignResponse) {
         db.campaignDao.upsertCampaign(CampaignNameData(campaignName = campaignData.name, syncCampaignId = campaignData.campaignId, userId = loggedInUser.toInt()))
     }
+
+    suspend fun deleteCampaignById(campaignId: Int) {
+        db.campaignDao.deleteCampaignById(campaignId)
+    }
 }

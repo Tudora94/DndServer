@@ -19,7 +19,7 @@ import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 
 
 @Composable
-fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit, navController: NavController) {
+fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit, navController: NavController,) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)

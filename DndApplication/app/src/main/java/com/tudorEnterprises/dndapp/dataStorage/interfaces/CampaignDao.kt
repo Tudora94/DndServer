@@ -24,4 +24,7 @@ interface CampaignDao {
 
     @Upsert
     suspend fun upsertCampaign(campaign: CampaignNameData)
+
+    @Query("DELETE FROM CampaignNameData WHERE sync_Campaign_Id = :campaignId")
+    suspend fun deleteCampaignById(campaignId: Int)
 }

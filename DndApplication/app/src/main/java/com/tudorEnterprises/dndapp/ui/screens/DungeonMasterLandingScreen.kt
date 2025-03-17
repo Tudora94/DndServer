@@ -55,12 +55,13 @@ fun DMLandingScreen(navController: NavController) {
         var showDialog by remember { mutableStateOf(false) }
         var campaignName by remember { mutableStateOf("") }
 
-        val campaigns by sql.getAllCampaigns().collectAsStateWithLifecycle(initialValue = emptyList())
+        val campaigns by sql.getAllCampaigns()
+            .collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
 //            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
 //            WorkManager.getInstance(context).enqueue(workRequest)
-            while(true) {
+            while (true) {
                 CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
                 delay(5000)
             }
@@ -97,7 +98,11 @@ fun DMLandingScreen(navController: NavController) {
                         .fillMaxWidth()
                 ) {
                     items(campaigns) { campaignName ->
-                        GetCampaignButtons(campaignName, { deleteCampaign(campaignName) }, navController)
+                        GetCampaignButtons(
+                            campaignName,
+                            { deleteCampaign(campaignName, sql) },
+                            navController
+                        )
                     }
 
                     // Use an item in LazyColumn to add spacing
@@ -157,9 +162,12 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
-private fun deleteCampaign(campaignNameData: CampaignNameData) {
-
-    Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
+private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlActivity) {
+    CoroutineScope(Dispatchers.IO).launch {
+        //TODO make delete HTTP Call
+        sql.deleteCampaignById(campaignNameData.syncCampaignId)
+        Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
+    }
 
 }
 
@@ -174,7 +182,7 @@ private fun launchCampaignCreation(
 
         val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
-            )
+        )
 
         if (syncCampaignId != 0) {
             sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)
