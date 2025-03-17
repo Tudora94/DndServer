@@ -120,5 +120,33 @@ namespace DndServer.Controllers
 
             return Ok(players);
         }
+
+        [HttpPost("DeleteCampaign")]
+        [Authorize]
+        public async Task<ActionResult<List<BaseResponse>>> deleteCampaign(CampaignDeleteRequest request)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            var response = new BaseResponse();
+
+            if (claimAccepted) {
+
+                CampaignSql campaignSql = new CampaignSql();
+                campaignSql.deleteCampaign(request.CampaignId);
+
+                response.Success = true;
+                response.Message = "Campaign Deleted";
+
+                return Ok(response);
+
+            }
+            else {
+                response.Success = false;
+                response.Message = "Invalid User";
+            return BadRequest(response);
+            }
+
+        }
     }
 }
