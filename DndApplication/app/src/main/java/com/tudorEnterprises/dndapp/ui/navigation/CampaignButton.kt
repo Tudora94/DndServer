@@ -25,7 +25,7 @@ fun GetCampaignButtons(campaignName: CampaignNameData, onDelete: () -> Unit, nav
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ElevatedButton(
-            onClick = {navController.navigate(Screen.DmOrPlayer.route)},
+            onClick = {navController.navigate(Screen.Campaign.route + "/${campaignName.syncCampaignId}")},
             modifier = Modifier.weight(4f)
         ) {
             Text(campaignName.campaignName)

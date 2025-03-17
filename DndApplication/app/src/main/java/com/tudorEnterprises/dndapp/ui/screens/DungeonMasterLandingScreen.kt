@@ -97,7 +97,7 @@ fun DMLandingScreen(navController: NavController) {
                         .fillMaxWidth()
                 ) {
                     items(campaigns) { campaignName ->
-                        GetCampaignButtons(campaignName) { deleteCampaign(campaignName) }
+                        GetCampaignButtons(campaignName, { deleteCampaign(campaignName) }, navController)
                     }
 
                     // Use an item in LazyColumn to add spacing
