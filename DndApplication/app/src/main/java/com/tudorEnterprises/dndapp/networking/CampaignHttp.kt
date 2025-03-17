@@ -34,7 +34,7 @@ class CampaignHttp(val context: Context) {
             campaignService.getCampaignsForUser(userId)
         }
 
-        return if(response.isSuccessful) {
+        return if(response.isSuccessful) { //TODO amend to contain body()?.Successful also, to stop accidental deletions
             Log.d("CampaignHttp", "${response.body()}")
             if(response.body() != null){
                     Log.d("CampaignHttp", "getCallMade")
