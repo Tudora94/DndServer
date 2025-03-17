@@ -211,5 +211,31 @@ namespace DndServer.Dal
             return ret;
         }
 
+        public bool deleteCampaign(int campaignId)
+        {
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string Sql = @"DELETE FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @CampaignId;
+                            DELETE FROM DndDb.dbo.CampaignData WHERE CampaignId = @CampaignId;
+                            DELETE FROM DndDb.dbo.CampaignName WHERE Id = @CampaignId";
+
+            var cmd = new SqlCommand(Sql, conn);
+            cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+
+                return true;
+            } catch(Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                connections.SQLCloseConnection(conn);
+                return false;
+            }
+        }
+
     }
 }
