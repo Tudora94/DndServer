@@ -100,7 +100,7 @@ fun DMLandingScreen(navController: NavController) {
                     items(campaigns) { campaignName ->
                         GetCampaignButtons(
                             campaignName,
-                            { deleteCampaign(campaignName, sql) },
+                            { deleteCampaign(campaignName, sql, context) },
                             navController
                         )
                     }
@@ -162,11 +162,15 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
-private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlActivity) {
+private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlActivity, context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
         //TODO make delete HTTP Call
+
+        if (CampaignHttp(context).deleteCampaign(campaignNameData.syncCampaignId))
+        {
         sql.deleteCampaignById(campaignNameData.syncCampaignId)
         Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
+        }
     }
 
 }
