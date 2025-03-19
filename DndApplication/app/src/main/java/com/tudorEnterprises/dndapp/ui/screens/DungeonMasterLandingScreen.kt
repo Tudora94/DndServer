@@ -45,6 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 @Composable
 fun DMLandingScreen(navController: NavController) {
@@ -182,14 +183,16 @@ private fun launchCampaignCreation(
 ) {
     CoroutineScope(Dispatchers.IO).launch {
 
-        CampaignHttp(context).getCampaigns()
+//        CampaignHttp(context).getCampaigns()
+        val updateTime = Instant.now().epochSecond
 
         val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
+            updateTime
         )
 
         if (syncCampaignId != 0) {
-            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)
+            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId, updateTime)
         }
     }
 }

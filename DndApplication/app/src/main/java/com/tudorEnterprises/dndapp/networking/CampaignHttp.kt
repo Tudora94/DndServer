@@ -13,10 +13,10 @@ import kotlinx.coroutines.withContext
 class CampaignHttp(val context: Context) {
     private val campaignService = RetroFitHttpCampaignClient.create(context)
 
-    suspend fun newCampaign(campaignName: String,) : Int {
+    suspend fun newCampaign(campaignName: String, updateTime: Long) : Int {
         val userId = SecureStorage.getUserId(context).toInt()
         val response = withContext(Dispatchers.IO) {
-            campaignService.createCampaign(CreateCampaignRequest(userId, campaignName))
+            campaignService.createCampaign(CreateCampaignRequest(userId, campaignName, updateTime))
         }
 
         return if(response.isSuccessful) {

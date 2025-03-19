@@ -27,9 +27,16 @@ class CampaignRefreshService(val context: Context, val dbCalls: CampaignSqlActiv
             }
 
             for (campaign in campaignList) {
+                val localCampaign = dbCalls.getCampaignById(campaignId = campaign.campaignId)
+                var localCampaignId: Long = 0
+                if(localCampaign != null) {
+                    localCampaignId = localCampaign.updateTime
+                }
+                if(campaign.updateTime > localCampaignId) {
+                    dbCalls.upsertCampaign(campaign)
+                }
 
                 //TODO api and local change needed to include last Updated Date as epoch time
-                dbCalls.upsertCampaign(campaign)
             }
         }
     }
