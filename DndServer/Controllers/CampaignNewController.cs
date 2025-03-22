@@ -31,6 +31,7 @@ namespace DndServer.Controllers
             var response = new CreateCampaignResponseModel();
             response.UserId = request.UserId;
             response.Name = request.Name;
+            response.UpdateTime = request.UpdateTime;
 
             if (claimAccepted)
             {
@@ -44,7 +45,7 @@ namespace DndServer.Controllers
                     return BadRequest("Campaign Name already exists");
                 }
 
-                int CampaignId = campaignSql.CreateCampaign(username, request.Name);
+                int CampaignId = campaignSql.CreateCampaign(username, request.Name, request.UpdateTime);
 
                 response.CampaignId = CampaignId;
 
@@ -60,11 +61,19 @@ namespace DndServer.Controllers
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
 
-            CampaignListModel responseList = new CampaignListModel();
+            if (claimAccepted)
+            {
 
-            responseList = campaignSql.getCampaigns(userId);
+                CampaignListModel responseList = new CampaignListModel();
 
-            return Ok(responseList.CampaignModels);
+                responseList = campaignSql.getCampaigns(userId);
+
+                return Ok(responseList.CampaignModels);
+            } else
+            {
+                return BadRequest();
+                //TODO update bad request to be better.
+            }
         }
 
         [HttpGet("GetCampaign/{campaignId}")]
