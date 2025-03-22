@@ -60,8 +60,6 @@ fun DMLandingScreen(navController: NavController) {
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
-//            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
-//            WorkManager.getInstance(context).enqueue(workRequest)
             while (true) {
                 CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
                 delay(5000)
@@ -165,8 +163,6 @@ fun CreateCampaignButton(onClick: () -> Unit) {
 
 private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlActivity, context: Context) {
     CoroutineScope(Dispatchers.IO).launch {
-        //TODO make delete HTTP Call
-
         if (CampaignHttp(context).deleteCampaign(campaignNameData.syncCampaignId))
         {
         sql.deleteCampaignById(campaignNameData.syncCampaignId)
