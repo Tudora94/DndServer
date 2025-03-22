@@ -1,13 +1,16 @@
 package com.tudorEnterprises.dndapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.ui.screens.CreateUserScreen
 import com.tudorEnterprises.dndapp.ui.screens.DMLandingScreen
 import com.tudorEnterprises.dndapp.ui.screens.DmOrPlayerScreen
+import com.tudorEnterprises.dndapp.ui.screens.GetCampaignBaseScreen
 import com.tudorEnterprises.dndapp.ui.screens.LoginScreen
 import com.tudorEnterprises.dndapp.ui.screens.PlayerLandingScreen
 
@@ -36,6 +39,12 @@ fun NavigationController() {
         }
         composable(route = Screen.PlayerLanding.route) {
             PlayerLandingScreen(navController = navController)
+        }
+        composable(route = Screen.Campaign.route + "/{campaignId}",
+            arguments = listOf(navArgument("campaignId") { type = NavType.IntType })) {
+            backStackEntry ->
+            val campaignId = backStackEntry.arguments?.getInt("campaignId") ?: 0
+            GetCampaignBaseScreen(navController = navController, campaignId = campaignId)
         }
     }
 }

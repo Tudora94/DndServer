@@ -21,9 +21,10 @@ fun CreateCampaignDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    //TODO validate campaign name is not blank, display tooltip if it is.
 
     AlertDialog(
-        onDismissRequest = { },
+        onDismissRequest = { onDismiss() },
         confirmButton = {
             ElevatedButton(onClick = { onConfirm(campaignName)
                 keyboardController?.hide()
@@ -33,12 +34,20 @@ fun CreateCampaignDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
                 Text("Create")
             }
         },
-        title = {Text("Login")},
+        title = {Text("New Campaign")},
         text = {
             Column(verticalArrangement = Arrangement.Center) {
                 OutlinedTextField(value = campaignName,
                     onValueChange = { campaignName = it},
                     label = { Text("campaign Name")})
+            }
+        },
+        dismissButton = {
+            ElevatedButton(onClick = { keyboardController?.hide()
+                focusManager.clearFocus()
+                onDismiss()}
+            ) {
+                Text("Cancel")
             }
         }
     )

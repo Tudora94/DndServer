@@ -12,7 +12,7 @@ namespace DndServer.Dal
     {
         ConnectionsSql connections = new ConnectionsSql();
 
-        public int CreateCampaign(string username, string campaignName)
+        public int CreateCampaign(string username, string campaignName, long updateTime)
         {
             try
             {
@@ -27,6 +27,7 @@ namespace DndServer.Dal
 
                 cmdSetCampaignId.Parameters.Add("@username", SqlDbType.VarChar).Value = username;
                 cmdSetCampaignId.Parameters.Add("@CampaignName", SqlDbType.VarChar).Value = campaignName;
+                cmdSetCampaignId.Parameters.Add("@updateTime", SqlDbType.BigInt).Value = updateTime;
 
                 cmdSetCampaignId.Parameters.Add("@CampaignId", SqlDbType.Int);
                 cmdSetCampaignId.Parameters["@CampaignId"].Direction = ParameterDirection.Output;
@@ -48,7 +49,7 @@ namespace DndServer.Dal
             SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
-            string sqlString = @"Select Id, CampaignName FROM DndDb.dbo.CampaignName WHERE UserId = @userId";
+            string sqlString = @"Select Id, CampaignName, UpdateTime FROM DndDb.dbo.CampaignName WHERE UserId = @userId";
             SqlCommand CmdGetCampaigns = new SqlCommand(sqlString, conn);
 
             CmdGetCampaigns.Parameters.Add("userId", SqlDbType.Int).Value=userId;
@@ -66,6 +67,7 @@ namespace DndServer.Dal
                 GetCampaignModel getCampaignModel = new GetCampaignModel();
                 getCampaignModel.CampaignId = Convert.ToInt32(dr[0]);
                 getCampaignModel.Name = dr[1].ToString() ?? "";
+                getCampaignModel.UpdateTime = (long)(dr[2] ?? 0);
                 getCampaignModel.userId = userId;
                 campaignListModel.CampaignModels.Add(getCampaignModel);
             }
@@ -209,6 +211,32 @@ namespace DndServer.Dal
             }
 
             return ret;
+        }
+
+        public bool deleteCampaign(int campaignId)
+        {
+            SqlConnection conn = new SqlConnection();
+            connections.SqlOpenConnection(conn);
+
+            string Sql = @"DELETE FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @CampaignId;
+                            DELETE FROM DndDb.dbo.CampaignData WHERE CampaignId = @CampaignId;
+                            DELETE FROM DndDb.dbo.CampaignName WHERE Id = @CampaignId";
+
+            var cmd = new SqlCommand(Sql, conn);
+            cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+
+                return true;
+            } catch(Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                connections.SQLCloseConnection(conn);
+                return false;
+            }
         }
 
     }

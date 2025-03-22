@@ -7,6 +7,7 @@ CREATE TABLE CampaignName
 Id int Identity(1,1) primary key,
 UserId int foreign key references Users(Id),
 CampaignName varchar(255),
+UpdateTime BIGINT DEFAULT 0
 )
 END;
 IF OBJECT_ID('DndDb.dbo.CampaignData')

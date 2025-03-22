@@ -23,9 +23,9 @@ class CampaignSqlActivity(context: Context) {
 
     private val loggedInUser = SecureStorage.getUserId(context)
 
-    suspend fun insertAndRetrieveCampaignData(campaignName: String, syncCampaignId: Int) {
+    suspend fun insertAndRetrieveCampaignData(campaignName: String, syncCampaignId: Int, updateTime: Long) {
         withContext(Dispatchers.IO) {
-            db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId, userId = loggedInUser.toInt()))
+            db.campaignDao.insertCampaign(CampaignNameData(campaignName = campaignName, syncCampaignId = syncCampaignId, userId = loggedInUser.toInt(), updateTime = updateTime))
             val campaignData = db.campaignDao.getCampaignByName(campaignName)
             if(campaignData != null){
                 Log.d("campaignSave", "Campaign Saved successfully - syncId: ${campaignData.syncCampaignId}, name: ${campaignData.campaignName},")
@@ -38,6 +38,14 @@ class CampaignSqlActivity(context: Context) {
     }
 
     suspend fun upsertCampaign(campaignData: CreateCampaignResponse) {
-        db.campaignDao.upsertCampaign(CampaignNameData(campaignName = campaignData.name, syncCampaignId = campaignData.campaignId, userId = loggedInUser.toInt()))
+        db.campaignDao.upsertCampaign(CampaignNameData(campaignName = campaignData.name, syncCampaignId = campaignData.campaignId, userId = loggedInUser.toInt(), updateTime = campaignData.updateTime))
+    }
+
+    suspend fun deleteCampaignById(campaignId: Int) {
+        db.campaignDao.deleteCampaignById(campaignId)
+    }
+
+    suspend fun getCampaignById(campaignId: Int) : CampaignNameData? {
+        return db.campaignDao.getCampaignById(campaignId)
     }
 }

@@ -1,6 +1,8 @@
 package com.tudorEnterprises.dndapp.interfaces
 
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateCampaignRequest
+import com.tudorEnterprises.dndapp.dataModels.requests.DeleteCampaignRequest
+import com.tudorEnterprises.dndapp.dataModels.responses.BaseResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.CreateCampaignResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -14,4 +16,7 @@ interface CampaignService {
 
     @GET("api/CampaignNew/GetCampaigns/{userId}")
     suspend fun getCampaignsForUser(@Path("userId") userId: Int): Response<List<CreateCampaignResponse>?>
+
+    @POST("api/CampaignNew/DeleteCampaign")
+    suspend fun deleteCampaignById(@Body request: DeleteCampaignRequest): Response<BaseResponse>
 }

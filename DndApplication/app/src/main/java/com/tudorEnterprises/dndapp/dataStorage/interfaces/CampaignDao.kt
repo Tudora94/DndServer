@@ -16,6 +16,9 @@ interface CampaignDao {
     @Query("SELECT * FROM CampaignNameData WHERE campaign_name = :campaignNameSelection LIMIT 1")
     suspend fun getCampaignByName(campaignNameSelection: String): CampaignNameData?
 
+    @Query("SELECT * FROM CampaignNameData WHERE sync_Campaign_Id = :campaignId")
+    suspend fun  getCampaignById(campaignId: Int) : CampaignNameData?
+
     @Query("DELETE FROM CampaignNameData")
     suspend fun clearCampaigns()
 
@@ -24,4 +27,7 @@ interface CampaignDao {
 
     @Upsert
     suspend fun upsertCampaign(campaign: CampaignNameData)
+
+    @Query("DELETE FROM CampaignNameData WHERE sync_Campaign_Id = :campaignId")
+    suspend fun deleteCampaignById(campaignId: Int)
 }

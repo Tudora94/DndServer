@@ -33,16 +33,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.services.CampaignRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetCampaignButtons
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 @Composable
 fun DMLandingScreen(navController: NavController) {
@@ -53,12 +56,11 @@ fun DMLandingScreen(navController: NavController) {
         var showDialog by remember { mutableStateOf(false) }
         var campaignName by remember { mutableStateOf("") }
 
-        val campaigns by sql.getAllCampaigns().collectAsStateWithLifecycle(initialValue = emptyList())
+        val campaigns by sql.getAllCampaigns()
+            .collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
-//            val workRequest = PeriodicWorkRequestBuilder<CampaignRefreshWorker>(5, TimeUnit.SECONDS).build()
-//            WorkManager.getInstance(context).enqueue(workRequest)
-            while(true) {
+            while (true) {
                 CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
                 delay(5000)
             }
@@ -95,16 +97,11 @@ fun DMLandingScreen(navController: NavController) {
                         .fillMaxWidth()
                 ) {
                     items(campaigns) { campaignName ->
-                        ElevatedButton(
-                            onClick = {
-                                // Handle button click
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                        ) {
-                            Text(text = campaignName.campaignName)
-                        }
+                        GetCampaignButtons(
+                            campaignName,
+                            { deleteCampaign(campaignName, sql, context) },
+                            navController
+                        )
                     }
 
                     // Use an item in LazyColumn to add spacing
@@ -164,6 +161,17 @@ fun CreateCampaignButton(onClick: () -> Unit) {
     }
 }
 
+private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlActivity, context: Context) {
+    CoroutineScope(Dispatchers.IO).launch {
+        if (CampaignHttp(context).deleteCampaign(campaignNameData.syncCampaignId))
+        {
+        sql.deleteCampaignById(campaignNameData.syncCampaignId)
+        Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
+        }
+    }
+
+}
+
 private fun launchCampaignCreation(
     campaignName: String,
     context: Context,
@@ -171,14 +179,16 @@ private fun launchCampaignCreation(
 ) {
     CoroutineScope(Dispatchers.IO).launch {
 
-        CampaignHttp(context).getCampaigns()
+//        CampaignHttp(context).getCampaigns()
+        val updateTime = Instant.now().epochSecond
 
         val syncCampaignId = CampaignHttp(context).newCampaign(
             campaignName,
-            )
+            updateTime
+        )
 
         if (syncCampaignId != 0) {
-            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId)
+            sql.insertAndRetrieveCampaignData(campaignName, syncCampaignId, updateTime)
         }
     }
 }
