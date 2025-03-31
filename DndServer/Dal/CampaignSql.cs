@@ -99,24 +99,32 @@ namespace DndServer.Dal
             return ds;
         }
 
-        public void setRoomCode(CampaignCode code, int campaignId)
+        public bool setRoomCode(CampaignCode code, int campaignId)
         {
             SqlConnection conn = new SqlConnection();
-            connections.SqlOpenConnection(conn);
+            try
+            {
+                connections.SqlOpenConnection(conn);
 
-            string sqlString = @"IF EXISTS (SELECT * FROM DndDb.dbo.CampaignRoomCode WHERE CampaignId = @CampaignId) " +
-                @"BEGIN " +
-                @"UPDATE DndDb.dbo.CampaignRoomCode SET CampaignCode = @CampaignCode, ExpiryDateTime = DATEADD(d,1,GETDATE()) " +
-                @"WHERE CampaignId = @CampaignId END " +
-                @"ELSE BEGIN INSERT INTO DndDb.dbo.CampaignRoomCode VALUES(@CampaignId, @CampaignCode, DATEADD(d,1,GETDATE())) END";
+                string sqlString = @"IF EXISTS (SELECT * FROM DndDb.dbo.CampaignRoomCode WHERE CampaignId = @CampaignId) " +
+                    @"BEGIN " +
+                    @"UPDATE DndDb.dbo.CampaignRoomCode SET CampaignCode = @CampaignCode, ExpiryDateTime = DATEADD(d,1,GETDATE()) " +
+                    @"WHERE CampaignId = @CampaignId END " +
+                    @"ELSE BEGIN INSERT INTO DndDb.dbo.CampaignRoomCode VALUES(@CampaignId, @CampaignCode, DATEADD(d,1,GETDATE())) END";
 
-            SqlCommand cmdSetRoomCode = new SqlCommand(sqlString, conn);
-            cmdSetRoomCode.Parameters.Add("@CampaignCode", SqlDbType.VarChar).Value = code.CampaignRoomCode;
-            cmdSetRoomCode.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
+                SqlCommand cmdSetRoomCode = new SqlCommand(sqlString, conn);
+                cmdSetRoomCode.Parameters.Add("@CampaignCode", SqlDbType.VarChar).Value = code.CampaignRoomCode;
+                cmdSetRoomCode.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
 
-            cmdSetRoomCode.ExecuteNonQuery();
+                cmdSetRoomCode.ExecuteNonQuery();
 
-            connections.SQLCloseConnection(conn);
+                connections.SQLCloseConnection(conn);
+                return true;
+            } catch 
+            { 
+                return false; 
+            }
+
 
         }
 

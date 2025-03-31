@@ -8,6 +8,8 @@ using System.Net;
 using System.Diagnostics;
 using DndServer.Player.Models;
 using DndServer.Player.Services;
+using System.Data;
+using System;
 
 namespace DndServer.Player.Services
 {
@@ -19,16 +21,57 @@ namespace DndServer.Player.Services
         {
             return sql.ValidateRoomCode(roomCode);
         }
-        public string AddPlayer(NewCharacterModel model)
+        public int AddPlayer(NewCharacterModel model)
         {
-            if (sql.AddPlayer(model))
+            return sql.AddPlayer(model);
+        }
+
+        public int AddPlayerToCampaign(PlayerToCampaignRequest model)
+        {
+            return sql.AddPlayerToCampaign(model);
+        }
+
+        public GetPlayersResponse GetPlayers(int userId)
+        {
+            var response = new GetPlayersResponse();
+            response.Players = new List<PlayerModel>();
+
+            //sql to return dataTable
+            var data = sql.GetPlayers(userId);
+
+            if (data is DataTable dataTable)
             {
-                return "Player Added";
+                foreach(DataRow dataRow in dataTable.Rows)
+                {
+                    var player = new PlayerModel
+                    {
+                        Id = Convert.ToInt32(dataRow["ID"]),
+                        Name = dataRow["CharacterName"].ToString() ?? "",
+                        UpdateTime = Convert.ToInt64(dataRow["UpdateTime"])
+                    };
+
+                    if (dataRow["CampaignId"] is int campaignId)
+                    {
+                        player.CampaignId = campaignId;
+                    }
+
+                    response.Players.Add(player);
+
+                }
+                return response;
+
             }
-            else
-            {
-                return "Update Failed";
-            }
+            return response;
+        }
+
+        public bool DeletePlayer(DeletePlayerModel model)
+        {
+            return sql.DeletePlayer(model);
+        }
+
+        public bool UpdatePlayer(UpdateCharacterRequest request)
+        {
+            return sql.UpdatePlayer(request);
         }
 
     }

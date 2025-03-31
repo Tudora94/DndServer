@@ -28,13 +28,17 @@ namespace DndServer.Controllers
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
 
-            var response = new CreateCampaignResponseModel();
+                        var response = new CreateCampaignResponseModel();
             response.UserId = request.UserId;
             response.Name = request.Name;
             response.UpdateTime = request.UpdateTime;
 
             if (claimAccepted)
             {
+                if(request.UpdateTime == 0)
+                {
+                    return BadRequest("Cannot have timestamp of 0");
+                }
 
                 var username = authSql.getUserNameFromId(request.UserId);
 
@@ -114,9 +118,13 @@ namespace DndServer.Controllers
             var randomCode = gen.GeneratedCode;
             code.CampaignRoomCode = randomCode;
 
-            campaignSql.setRoomCode(code, campaignId);
+            var success = campaignSql.setRoomCode(code, campaignId);
 
-            return Ok(code);
+            if(success)
+            {
+                return Ok(code);
+            }
+            return BadRequest("Code generation failed");
         }
 
         [HttpGet("GetPlayers/{campaignId}")]
