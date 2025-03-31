@@ -77,12 +77,13 @@ namespace DndServer.Controllers
                 {
                     return Ok(response);
                 }
-            } else
+            }
+            else
             {
                 return BadRequest("Invalid user"); //TODO return a better response than a string.
             }
         }
-        //TODO getPlayers, editPlayer, deletePlayer, addPlayerToCampaign, getPlayer
+        //TODO editPlayer, deletePlayer, addPlayerToCampaign, getPlayer
         [HttpGet("GetPlayers/{userId}")]
         public async Task<ActionResult<Response>> GetPlayers([System.Web.Http.FromUri] int userId)
         {
@@ -96,11 +97,42 @@ namespace DndServer.Controllers
                 var response = services.GetPlayers(userId);
 
                 return Ok(response);
-            } else
+            }
+            else
             {
                 return BadRequest("Invalid user");
             }
         }
 
+        [HttpDelete("DeletePlayer")]
+        public async Task<ActionResult<Response>> DeletePlayer(DeletePlayerModel request)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            if (claimAccepted)
+            {
+                PlayerServices services = new PlayerServices();
+
+                var response = new PlayerBaseResponse();
+                var sqlResponse = services.DeletePlayer(request);
+                if(sqlResponse)
+                {
+                    response.Success = true;
+                    response.Message = "Character Deleted";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Character not deleted";
+                }
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest("Invalid user");
+            }
+
+        }
     }
 }

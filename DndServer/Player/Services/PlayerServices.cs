@@ -59,6 +59,11 @@ namespace DndServer.Player.Services
             return response;
         }
 
+        public bool DeletePlayer(DeletePlayerModel model)
+        {
+            return sql.DeletePlayer(model);
+        }
+
     }
 
 }

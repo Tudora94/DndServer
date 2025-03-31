@@ -96,5 +96,26 @@ namespace DndServer.Dal
             }
         }
 
+        public bool DeletePlayer(DeletePlayerModel model)
+        {
+            SqlConnection conn = new SqlConnection();
+            try
+            {
+                connections.SqlOpenConnection( conn );
+                string sqlString = @"DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
+                SqlCommand command = new SqlCommand( sqlString, conn);
+
+                command.Parameters.Add("userId", SqlDbType.Int).Value=model.UserId;
+                command.Parameters.Add("charId", SqlDbType.Int).Value = model.PlayerId;
+
+                command.ExecuteNonQuery();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
