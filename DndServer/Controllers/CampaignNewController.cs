@@ -118,9 +118,13 @@ namespace DndServer.Controllers
             var randomCode = gen.GeneratedCode;
             code.CampaignRoomCode = randomCode;
 
-            campaignSql.setRoomCode(code, campaignId);
+            var success = campaignSql.setRoomCode(code, campaignId);
 
-            return Ok(code);
+            if(success)
+            {
+                return Ok(code);
+            }
+            return BadRequest("Code generation failed");
         }
 
         [HttpGet("GetPlayers/{campaignId}")]

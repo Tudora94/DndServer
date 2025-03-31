@@ -30,28 +30,41 @@ namespace DndServer.Controllers
         }
 
         //TODO amend the below to eventually add player to campaign, already has the logic to validate campaign etc
-        /*[HttpPost("CreatePlayer")]
-        public async Task<ActionResult<Response>> CreatePlayer(NewCharacterModel request)
+        [HttpPatch("AddPlayerToCampaign")]
+        public async Task<ActionResult<Response>> AddPlayerToCampaign(PlayerToCampaignRequest request)
         {
 
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
 
-            PlayerServices services = new PlayerServices();
-            Response response = new Response();
-
-            if (services.ValidateRoomCode(request.RoomCode))
+            if (claimAccepted)
             {
-                response.ResponseString = services.AddPlayer(request);
+
+                PlayerServices services = new PlayerServices();
+                PlayerToCampaignResponse response = new PlayerToCampaignResponse();
+
+                if (services.ValidateRoomCode(request.RoomCode))
+                {
+                    var campaignId = services.AddPlayerToCampaign(request);
+                    if (campaignId != 0)
+                    {
+                        response.Success = true;
+                        response.CampaignId = campaignId;
+                        return Ok(response);
+                    }
+                }
+                else
+                {
+                    return Ok(response);
+                }
             }
             else
             {
-                response.ResponseString = "Invalid room Code";
+                return BadRequest("invalid User");
             }
-            response.StatusCode = HttpStatusCode.OK;
-            return response;
+            return BadRequest("invalid User checking");
 
-        }*/
+        }
 
         [HttpPost("CreatePlayer")]
         public async Task<ActionResult<Response>> CreatePlayer(NewCharacterModel request)
@@ -83,7 +96,7 @@ namespace DndServer.Controllers
                 return BadRequest("Invalid user"); //TODO return a better response than a string.
             }
         }
-        //TODO editPlayer, addPlayerToCampaign, getPlayer
+        //TODO addPlayerToCampaign, getPlayer
         [HttpGet("GetPlayers/{userId}")]
         public async Task<ActionResult<Response>> GetPlayers([System.Web.Http.FromUri] int userId)
         {

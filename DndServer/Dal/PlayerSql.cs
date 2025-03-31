@@ -37,6 +37,39 @@ namespace DndServer.Dal
                 return false;
             }
         }
+
+        public int AddPlayerToCampaign(PlayerToCampaignRequest request)
+        {
+            SqlConnection conn = new SqlConnection();
+            try
+            {
+                connections.SqlOpenConnection(conn);
+
+                string query = @"DndDb.dbo.AddPlayerToCampaign";
+                SqlCommand command = new SqlCommand(query, conn);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add("@userId", SqlDbType.Int).Value = request.UserId;
+                command.Parameters.Add("@updateTime", SqlDbType.BigInt).Value = request.UpdateTime;
+                command.Parameters.Add("@characterId", SqlDbType.Int).Value = request.CharacterId;
+                command.Parameters.Add("@roomCode", SqlDbType.VarChar).Value = request.RoomCode;
+
+                command.Parameters.Add("@campaignId", SqlDbType.Int);
+                command.Parameters["@campaignId"].Direction = ParameterDirection.Output;
+
+                command.ExecuteNonQuery();
+                int campaignId = Convert.ToInt32(command.Parameters["@campaignId"].Value);
+
+                connections.SQLCloseConnection(conn);
+                return campaignId;
+
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+
+        }
         public int AddPlayer(NewCharacterModel model)
         {
             SqlConnection conn = new SqlConnection();
@@ -57,10 +90,10 @@ namespace DndServer.Dal
                 command.Parameters["@playerId"].Direction = ParameterDirection.Output;
 
                 int i = command.ExecuteNonQuery();
-                int campaignId = Convert.ToInt32(command.Parameters["@playerId"].Value);
+                int playerId = Convert.ToInt32(command.Parameters["@playerId"].Value);
 
                 connections.SQLCloseConnection(conn);
-                return campaignId;
+                return playerId;
             }
             catch
             {

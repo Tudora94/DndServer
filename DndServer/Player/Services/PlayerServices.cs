@@ -26,6 +26,11 @@ namespace DndServer.Player.Services
             return sql.AddPlayer(model);
         }
 
+        public int AddPlayerToCampaign(PlayerToCampaignRequest model)
+        {
+            return sql.AddPlayerToCampaign(model);
+        }
+
         public GetPlayersResponse GetPlayers(int userId)
         {
             var response = new GetPlayersResponse();
