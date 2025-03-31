@@ -3,6 +3,7 @@ using System.Data;
 using DndServer.User.Models;
 using DndServer.Campaign.Models;
 using DndServer.Player.Models;
+using System.Reflection;
 
 
 namespace DndServer.Dal
@@ -112,6 +113,28 @@ namespace DndServer.Dal
                 return true;
             }
             catch
+            {
+                return false;
+            }
+        }
+
+        public bool UpdatePlayer(UpdateCharacterRequest request)
+        {
+            SqlConnection conn = new SqlConnection();
+            try
+            {
+                connections.SqlOpenConnection( conn );
+                string sqlString = @"UPDATE DndDb.dbo.PlayerCharacterName SET CharacterName = @charName, UpdateTime = @updateTime WHERE ID = @playerId AND UserId = @userId";
+                SqlCommand command = new SqlCommand(sqlString, conn);
+
+                command.Parameters.Add("charName", SqlDbType.VarChar).Value = request.Name;
+                command.Parameters.Add("updateTime", SqlDbType.BigInt).Value = request.UpdateTime;
+                command.Parameters.Add("playerId", SqlDbType.Int).Value = request.Id;
+                command.Parameters.Add("userId", SqlDbType.Int).Value = request.UserId;
+
+                command.ExecuteNonQuery();
+                return true;
+            } catch
             {
                 return false;
             }

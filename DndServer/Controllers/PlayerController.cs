@@ -83,7 +83,7 @@ namespace DndServer.Controllers
                 return BadRequest("Invalid user"); //TODO return a better response than a string.
             }
         }
-        //TODO editPlayer, deletePlayer, addPlayerToCampaign, getPlayer
+        //TODO editPlayer, addPlayerToCampaign, getPlayer
         [HttpGet("GetPlayers/{userId}")]
         public async Task<ActionResult<Response>> GetPlayers([System.Web.Http.FromUri] int userId)
         {
@@ -133,6 +133,38 @@ namespace DndServer.Controllers
                 return BadRequest("Invalid user");
             }
 
+        }
+
+        [HttpPut("UpdatePlayer")]
+        public async Task<ActionResult<Response>> UpdatePlayer(UpdateCharacterRequest request)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            if (claimAccepted)
+            {
+                PlayerServices services = new PlayerServices();
+                var response = new PlayerBaseResponse();
+
+                var sqlResponse = services.UpdatePlayer(request);
+
+                if(sqlResponse)
+                {
+                    response.Success = true;
+                    response.Message = "Character Updated";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Character failed to update";
+                }
+                return Ok(response);
+
+            }
+            else 
+            {
+                return BadRequest("Invalid user");
+            }
         }
     }
 }

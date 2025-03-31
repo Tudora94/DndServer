@@ -42,7 +42,7 @@ namespace DndServer.Player.Services
                     {
                         Id = Convert.ToInt32(dataRow["ID"]),
                         Name = dataRow["CharacterName"].ToString() ?? "",
-                        UpdateTime = Convert.ToUInt32(dataRow["UpdateTime"])
+                        UpdateTime = Convert.ToInt64(dataRow["UpdateTime"])
                     };
 
                     if (dataRow["CampaignId"] is int campaignId)
@@ -62,6 +62,11 @@ namespace DndServer.Player.Services
         public bool DeletePlayer(DeletePlayerModel model)
         {
             return sql.DeletePlayer(model);
+        }
+
+        public bool UpdatePlayer(UpdateCharacterRequest request)
+        {
+            return sql.UpdatePlayer(request);
         }
 
     }
