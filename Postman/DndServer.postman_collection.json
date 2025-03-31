@@ -87,6 +87,20 @@
 			"item": [
 				{
 					"name": "SetCampaignId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"campaignId\", jsonData.campaignId)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -102,7 +116,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"name\": \"TestUserCampaign15\"\r\n}",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"name\": \"TestUserCampaign22\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -327,7 +341,7 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -359,6 +373,34 @@
 			"item": [
 				{
 					"name": "CreateNewPlayer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"if(jsonData.success == true) {\r",
+									"    pm.environment.set(\"characterId\", jsonData.playerId)\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -374,7 +416,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"roomCode\": \"{{campaignCode}}\",\r\n  \"name\": \"PlayerName3\",\r\n  \"userName\": \"{{user}}\"\r\n}",
+							"raw": "{\r\n  \"name\": \"PlayerName5\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -390,6 +432,150 @@
 								"api",
 								"Player",
 								"CreatePlayer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPlayers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/Player/GetPlayers/{{userId}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Player",
+								"GetPlayers",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePlayer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserId\": {{userId}},\r\n    \"PlayerId\": {{characterId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Player/DeletePlayer",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Player",
+								"DeletePlayer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Character",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"PlayerName6\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}},\r\n  \"Id\": {{characterId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Player/UpdatePlayer",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Player",
+								"UpdatePlayer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Player to Campaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}},\r\n  \"CharacterId\": {{characterId}},\r\n  \"RoomCode\": \"{{campaignCode}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Player/AddPlayerToCampaign",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Player",
+								"AddPlayerToCampaign"
 							]
 						}
 					},
