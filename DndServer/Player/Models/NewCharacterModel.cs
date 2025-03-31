@@ -2,12 +2,12 @@
 {
     public class NewCharacterModel
     {
-        private string _roomCode;
-        private string _name;
-        private string _userName;
+        private string _playerName;
+        private int _userId;
+        private long _updateTime;
 
-        public string RoomCode { get => _roomCode; set => _roomCode = value; }
-        public string Name { get => _name; set => _name = value; }
-        public string UserName { get => _userName; set => _userName = value; }
+        public string Name { get => _playerName; set => _playerName = value; }
+        public int UserId { get => _userId; set => _userId = value; }
+        public long UpdateTime { get => _updateTime; set => _updateTime = value; }
     }
 }

@@ -19,16 +19,9 @@ namespace DndServer.Player.Services
         {
             return sql.ValidateRoomCode(roomCode);
         }
-        public string AddPlayer(NewCharacterModel model)
+        public int AddPlayer(NewCharacterModel model)
         {
-            if (sql.AddPlayer(model))
-            {
-                return "Player Added";
-            }
-            else
-            {
-                return "Update Failed";
-            }
+            return sql.AddPlayer(model);
         }
 
     }

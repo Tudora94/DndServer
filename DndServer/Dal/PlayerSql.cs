@@ -36,7 +36,7 @@ namespace DndServer.Dal
                 return false;
             }
         }
-        public bool AddPlayer(NewCharacterModel model)
+        public int AddPlayer(NewCharacterModel model)
         {
             try
             {
@@ -47,16 +47,21 @@ namespace DndServer.Dal
                 SqlCommand command = new SqlCommand(query, conn);
                 command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.Add("@roomCode", SqlDbType.VarChar).Value = model.RoomCode;
                 command.Parameters.Add("@name", SqlDbType.VarChar).Value = model.Name;
-                command.Parameters.Add("@username", SqlDbType.VarChar).Value = model.UserName;
+                command.Parameters.Add("@userId", SqlDbType.Int).Value = model.UserId;
+                command.Parameters.Add("@updateTime", SqlDbType.BigInt).Value = model.UpdateTime;
 
-                command.ExecuteNonQuery();
-                return true;
+                command.Parameters.Add("@playerId", SqlDbType.Int);
+                command.Parameters["@playerId"].Direction = ParameterDirection.Output;
+
+                int i = command.ExecuteNonQuery();
+                int campaignId = Convert.ToInt32(command.Parameters["@playerId"].Value);
+
+                return campaignId;
             }
             catch
             {
-                return false;
+                return 0;
             }
 
 

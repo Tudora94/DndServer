@@ -8,6 +8,7 @@ using System.Net;
 using System.Diagnostics;
 using DndServer.Player.Models;
 using DndServer.Player.Services;
+using DndServer.User.Services;
 
 namespace DndServer.Controllers
 {
@@ -16,6 +17,9 @@ namespace DndServer.Controllers
     [Authorize]
     public class PlayerController : ControllerBase
     {
+        AuthSql authSql = new AuthSql();
+        ClaimValidator claimValidator = new ClaimValidator();
+
         private readonly ILogger<PlayerController> _logger;
 
         public PlayerController(ILogger<PlayerController> logger)
@@ -24,15 +28,21 @@ namespace DndServer.Controllers
                 _logger = logger;
             }
         }
-        [HttpPost("CreatePlayer")]
-        public async Task<ActionResult<Response>> CreatePlayer(NewCharacterModel model)
+
+        //TODO amend the below to eventually add player to campaign, already has the logic to validate campaign etc
+        /*[HttpPost("CreatePlayer")]
+        public async Task<ActionResult<Response>> CreatePlayer(NewCharacterModel request)
         {
+
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
             PlayerServices services = new PlayerServices();
             Response response = new Response();
 
-            if (services.ValidateRoomCode(model.RoomCode))
+            if (services.ValidateRoomCode(request.RoomCode))
             {
-                response.ResponseString = services.AddPlayer(model);
+                response.ResponseString = services.AddPlayer(request);
             }
             else
             {
@@ -41,6 +51,36 @@ namespace DndServer.Controllers
             response.StatusCode = HttpStatusCode.OK;
             return response;
 
+        }*/
+
+        [HttpPost("CreatePlayer")]
+        public async Task<ActionResult<Response>> CreatePlayer(NewCharacterModel request)
+        {
+
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            if (claimAccepted)
+            {
+
+                PlayerServices services = new PlayerServices();
+                CreatePlayerResponse response = new CreatePlayerResponse();
+
+                var playerId = services.AddPlayer(request);
+                if (playerId != 0)
+                {
+                    response.PlayerId = playerId;
+                    response.Success = true;
+                    return Ok(response);
+                }
+                else
+                {
+                    return Ok(response);
+                }
+            } else
+            {
+                return BadRequest("Invalid user"); //TODO return a better response than a string.
+            }
         }
     }
 }
