@@ -38,9 +38,10 @@ namespace DndServer.Dal
         }
         public int AddPlayer(NewCharacterModel model)
         {
+            SqlConnection conn = new SqlConnection();
+
             try
             {
-                SqlConnection conn = new SqlConnection();
                 connections.SqlOpenConnection(conn);
 
                 string query = @"DndDb.dbo.AddNewPlayer";
@@ -57,14 +58,42 @@ namespace DndServer.Dal
                 int i = command.ExecuteNonQuery();
                 int campaignId = Convert.ToInt32(command.Parameters["@playerId"].Value);
 
+                connections.SQLCloseConnection(conn);
                 return campaignId;
             }
             catch
             {
+                connections.SQLCloseConnection(conn);
                 return 0;
             }
 
 
+        }
+
+        public object GetPlayers(int UserId)
+        {
+            SqlConnection conn = new SqlConnection();
+
+            try
+            {
+                connections.SqlOpenConnection(conn);
+
+                string sqlString = @"SELECT ID, UserId, CampaignId, CharacterName, UpdateTime FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId";
+                SqlCommand command = new SqlCommand(sqlString, conn);
+
+                command.Parameters.Add("userId", SqlDbType.Int).Value=UserId;
+
+                DataTable dt = new DataTable();
+
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(dt);
+                connections.SQLCloseConnection(conn);
+                return dt;
+            }
+            catch 
+            {
+                return false;
+            }
         }
 
     }

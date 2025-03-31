@@ -8,6 +8,8 @@ using System.Net;
 using System.Diagnostics;
 using DndServer.Player.Models;
 using DndServer.Player.Services;
+using System.Data;
+using System;
 
 namespace DndServer.Player.Services
 {
@@ -22,6 +24,39 @@ namespace DndServer.Player.Services
         public int AddPlayer(NewCharacterModel model)
         {
             return sql.AddPlayer(model);
+        }
+
+        public GetPlayersResponse GetPlayers(int userId)
+        {
+            var response = new GetPlayersResponse();
+            response.Players = new List<PlayerModel>();
+
+            //sql to return dataTable
+            var data = sql.GetPlayers(userId);
+
+            if (data is DataTable dataTable)
+            {
+                foreach(DataRow dataRow in dataTable.Rows)
+                {
+                    var player = new PlayerModel
+                    {
+                        Id = Convert.ToInt32(dataRow["ID"]),
+                        Name = dataRow["CharacterName"].ToString() ?? "",
+                        UpdateTime = Convert.ToUInt32(dataRow["UpdateTime"])
+                    };
+
+                    if (dataRow["CampaignId"] is int campaignId)
+                    {
+                        player.CampaignId = campaignId;
+                    }
+
+                    response.Players.Add(player);
+
+                }
+                return response;
+
+            }
+            return response;
         }
 
     }
