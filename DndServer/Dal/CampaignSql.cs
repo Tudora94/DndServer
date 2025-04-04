@@ -226,9 +226,11 @@ namespace DndServer.Dal
             SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
-            string Sql = @"DELETE FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @CampaignId;
-                            DELETE FROM DndDb.dbo.CampaignData WHERE CampaignId = @CampaignId;
-                            DELETE FROM DndDb.dbo.CampaignName WHERE Id = @CampaignId";
+            string Sql = @"  DELETE FROM DndDb.dbo.CampaignSourceData WHERE CampaignId = @CampaignId;
+  DELETE FROM DndDb.dbo.CampaignData WHERE CampaignId = @CampaignId;
+  UPDATE DndDb.dbo.PlayerCharacterName SET CampaignId = NULL WHERE CampaignId = @CampaignID;
+  DELETE FROM DndDb.dbo.CampaignRoomCode WHERE CampaignId = @CampaignID;
+  DELETE FROM DndDb.dbo.CampaignName WHERE Id = @CampaignId;";
 
             var cmd = new SqlCommand(Sql, conn);
             cmd.Parameters.Add("@CampaignId", SqlDbType.Int).Value = campaignId;
