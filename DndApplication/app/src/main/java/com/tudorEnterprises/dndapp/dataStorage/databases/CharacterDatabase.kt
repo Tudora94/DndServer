@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.tudorEnterprises.dndapp.dataStorage.interfaces.CharacterDao
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 
-@Database(entities = [CharacterNameData:: class], version = 1)
+@Database(entities = [CharacterNameData:: class], version = 2)
 abstract class CharacterDatabase : RoomDatabase() {
     abstract val characterDao: CharacterDao
 }

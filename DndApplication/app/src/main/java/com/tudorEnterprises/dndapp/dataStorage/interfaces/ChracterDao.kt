@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 import kotlinx.coroutines.flow.Flow
 
@@ -17,4 +18,10 @@ interface CharacterDao {
 
     @Query("DELETE FROM CharacterNameData WHERE sync_Character_Id = :characterId")
     suspend fun deleteCharacterById(characterId: Int)
+
+    @Query("SELECT * FROM CharacterNameData WHERE sync_Character_Id = :characterId")
+    suspend fun  getCharacterById(characterId: Int) : CharacterNameData?
+
+    @Upsert
+    suspend fun upsertCharacter(character: CharacterNameData)
 }

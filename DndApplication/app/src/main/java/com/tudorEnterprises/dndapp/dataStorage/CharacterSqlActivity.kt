@@ -3,6 +3,7 @@ package com.tudorEnterprises.dndapp.dataStorage
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import com.tudorEnterprises.dndapp.dataModels.responses.Player
 import com.tudorEnterprises.dndapp.dataStorage.databases.CharacterDatabase
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -46,5 +47,12 @@ class CharacterSqlActivity(context: Context) {
 
     suspend fun deleteCharacterById(id: Int) {
         db.characterDao.deleteCharacterById(id)
+    }
+
+    suspend fun getCharacterById(characterId: Int) : CharacterNameData? {
+        return db.characterDao.getCharacterById(characterId)
+    }
+    suspend fun upsertCharacter(characterData: Player) {
+        db.characterDao.upsertCharacter(CharacterNameData(characterName = characterData.name, syncCharacterId = characterData.id, userId = loggedInUser.toInt(), updateTime = characterData.updateTime, campaignId = characterData.campaignId))
     }
 }

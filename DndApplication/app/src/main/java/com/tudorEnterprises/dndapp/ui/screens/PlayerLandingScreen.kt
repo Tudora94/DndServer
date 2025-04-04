@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 import com.tudorEnterprises.dndapp.networking.CharacterHttp
+import com.tudorEnterprises.dndapp.services.CharacterRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCharacterDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
@@ -42,6 +43,7 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetCharacterButtons
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
 
@@ -60,17 +62,11 @@ fun PlayerLandingScreen(navController: NavController) {
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
-//            while (true) {
-//                CampaignRefreshService(context, sql).fetchFromServerAndUpdatedDb()
-//                delay(5000)
-//            }
+            while (true) {
+                CharacterRefreshService(context, sql).fetchAndUpdateCharacter()
+                delay(5000)
+            }
         }
-
-//        LaunchedEffect(Unit) {
-//            sql.getAllCharacters().collect { campaigns ->
-//                Log.d("DMLandingScreen", "Campaign list updated: ${campaigns.size}")
-//            }
-//        }
 
         Scaffold(topBar = {
             GetAppBarTopLoggedIn(navController)

@@ -57,10 +57,8 @@ namespace DndServer.Player.Services
                     }
 
                     response.Players.Add(player);
-
                 }
-                return response;
-
+                response.Success = true;
             }
             return response;
         }
