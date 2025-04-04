@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 import com.tudorEnterprises.dndapp.networking.CharacterHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCharacterDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
@@ -65,11 +66,11 @@ fun PlayerLandingScreen(navController: NavController) {
 //            }
         }
 
-        LaunchedEffect(Unit) {
+//        LaunchedEffect(Unit) {
 //            sql.getAllCharacters().collect { campaigns ->
 //                Log.d("DMLandingScreen", "Campaign list updated: ${campaigns.size}")
 //            }
-        }
+//        }
 
         Scaffold(topBar = {
             GetAppBarTopLoggedIn(navController)
@@ -97,7 +98,7 @@ fun PlayerLandingScreen(navController: NavController) {
                         GetCharacterButtons(
                             characterName,
                             {
-
+                                deleteCharacter(characterName, sql, context)
                             },
                             navController
                         )
@@ -152,6 +153,16 @@ fun CreatePlayerButton(onClick: () -> Unit) {
                     style = MaterialTheme.typography.headlineMedium,
                 )
             }
+        }
+    }
+}
+
+private fun deleteCharacter(characterNameData: CharacterNameData, sql: CharacterSqlActivity, context: Context) {
+    CoroutineScope(Dispatchers.IO).launch {
+        if (CharacterHttp(context).deleteCharacter(characterNameData.syncCharacterId))
+        {
+            sql.deleteCharacterById(characterNameData.syncCharacterId)
+            Log.d("DMLandingScreen", "campaign to delete is: ${characterNameData.syncCharacterId}")
         }
     }
 }

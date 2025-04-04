@@ -43,4 +43,8 @@ class CharacterSqlActivity(context: Context) {
     fun getAllCharacters() : Flow<List<CharacterNameData>> {
         return db.characterDao.getAllCharacters(loggedInUser)
     }
+
+    suspend fun deleteCharacterById(id: Int) {
+        db.characterDao.deleteCharacterById(id)
+    }
 }

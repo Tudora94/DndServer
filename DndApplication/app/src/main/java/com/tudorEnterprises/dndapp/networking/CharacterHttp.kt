@@ -1,6 +1,7 @@
 package com.tudorEnterprises.dndapp.networking
 
 import android.content.Context
+import android.util.Log
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateCharacterRequest
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpCharacterClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -25,5 +26,12 @@ class CharacterHttp(val context: Context) {
         } else {
             null
         }
+    }
+    suspend fun deleteCharacter(characterId: Int): Boolean {
+        Log.d(this::class.java.simpleName,"character sent for deletion $characterId")
+        val response = withContext(Dispatchers.IO) {
+            characterService.deleteCharacterById(SecureStorage.getUserId(context).toInt(), characterId)
+        }
+        return response.body()?.success == true
     }
 }

@@ -169,7 +169,6 @@ private fun deleteCampaign(campaignNameData: CampaignNameData, sql: CampaignSqlA
         Log.d("DMLandingScreen", "campaign to delete is: ${campaignNameData.syncCampaignId}")
         }
     }
-
 }
 
 private fun launchCampaignCreation(

@@ -14,4 +14,7 @@ interface CharacterDao {
 
     @Query("SELECT * FROM CharacterNameData WHERE userId = :userId")
     fun getAllCharacters(userId: String) : Flow<List<CharacterNameData>>
+
+    @Query("DELETE FROM CharacterNameData WHERE sync_Character_Id = :characterId")
+    suspend fun deleteCharacterById(characterId: Int)
 }
