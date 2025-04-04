@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -28,13 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.networking.CharacterHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateCharacterDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetCharacterButtons
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,13 +47,16 @@ import java.time.Instant
 @Composable
 fun PlayerLandingScreen(navController: NavController) {
     val context = LocalContext.current
-    val sql = CampaignSqlActivity(context) //TODO change this
+    val sql = CharacterSqlActivity(context)
 
 
     DndApplicationTheme {
 
         var showDialog by remember { mutableStateOf(false) }
         var playerName by remember { mutableStateOf("") }
+
+        val characters by sql.getAllCharacters()
+            .collectAsStateWithLifecycle(initialValue = emptyList())
 
         LaunchedEffect(Unit) {
 //            while (true) {
@@ -60,7 +66,7 @@ fun PlayerLandingScreen(navController: NavController) {
         }
 
         LaunchedEffect(Unit) {
-//            sql.getAllCampaigns().collect { campaigns ->
+//            sql.getAllCharacters().collect { campaigns ->
 //                Log.d("DMLandingScreen", "Campaign list updated: ${campaigns.size}")
 //            }
         }
@@ -83,9 +89,20 @@ fun PlayerLandingScreen(navController: NavController) {
                     text = "Player",
                 )
                 LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth()
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 ) {
-                    //TODO fill with players from DB
+                    items(characters) { characterName ->
+                        GetCharacterButtons(
+                            characterName,
+                            {
+
+                            },
+                            navController
+                        )
+                    }
+
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -142,7 +159,7 @@ fun CreatePlayerButton(onClick: () -> Unit) {
 private fun launchCharacterCreation(
     characterName: String,
     context: Context,
-    sql: CampaignSqlActivity
+    sql: CharacterSqlActivity
 ) {
     CoroutineScope(Dispatchers.IO).launch {
 
@@ -155,9 +172,9 @@ private fun launchCharacterCreation(
 
         Log.i("character", "new character ID: $syncCharacterId")
 
-//        if (syncCampaignId != 0) {
-//            sql.insertAndRetrieveCampaignData(characterName, syncCampaignId, updateTime)
-//        }
+        if (syncCharacterId != null) {
+            sql.insertCharacterData(characterName, syncCharacterId, updateTime)
+        }
     }
 }
 

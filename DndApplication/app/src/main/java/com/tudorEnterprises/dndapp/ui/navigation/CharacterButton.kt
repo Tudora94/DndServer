@@ -15,9 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
+import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 
 @Composable
-fun GetCharacterButtons(campaignName: CampaignNameData, onDelete: () -> Unit, navController: NavController,) {
+fun GetCharacterButtons(characterName: CharacterNameData, onDelete: () -> Unit, navController: NavController,) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -26,7 +27,7 @@ fun GetCharacterButtons(campaignName: CampaignNameData, onDelete: () -> Unit, na
             onClick = {},//{navController.navigate(Screen.Campaign.route + "/${campaignName.syncCampaignId}")},
             modifier = Modifier.weight(4f)
         ) {
-            Text(campaignName.campaignName)
+            Text(characterName.characterName)
         }
 
         ElevatedButton(
