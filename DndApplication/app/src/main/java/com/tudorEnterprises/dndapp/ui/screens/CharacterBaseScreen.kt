@@ -1,25 +1,71 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 
 @Composable
 fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
+    val context = LocalContext.current
+    val sql = CharacterSqlActivity(context)
+
+    val character by sql.getCharacterByIdFlow(characterId)
+        .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
+
     Scaffold(
         topBar = { GetAppBarTopLoggedIn(navController) },
         bottomBar = { GetBottomAppBar("Test") }
     ) { innerPadding ->
-        Text(text = "CharacterId = $characterId",
-            modifier = Modifier
-                .padding(innerPadding))
+                Column(
+                    modifier = Modifier.padding(innerPadding) .fillMaxWidth() .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = character.characterName,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .weight(5f), // Use weight to make the Text take up remaining space
+                            style = MaterialTheme.typography.headlineMedium,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.weight(1f)) // Pushes text to center
+                        ElevatedButton(
+                            onClick = { },
+                        ) {
+                            Text(text = "Edit")
+                        }
+                    }
+                    //TODO add new row for join campaign - Add in campaignSQL to pull the campaignName once campaignID has been pulled and saved to character db
+                    //TODO add inventory button - Inventory should be new table containing character ID, ItemID, name, descr, detail, call should return list of items for characterID and campaignCharacterId
+                }
     }
 }
 
@@ -27,5 +73,5 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
 @Composable
 private fun GetCharacterScreen() {
     val navController = rememberNavController()
-    GetCharacterBaseScreen(navController, 1)
+    GetCharacterBaseScreen(navController, 18)
 }
