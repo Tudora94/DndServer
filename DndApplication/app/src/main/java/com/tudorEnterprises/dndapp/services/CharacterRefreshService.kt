@@ -5,14 +5,14 @@ import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.networking.CharacterHttp
 import kotlinx.coroutines.flow.first
 
-class CharacterRefreshService(val context: Context, val dbCalls: CharacterSqlActivity) {
+class CharacterRefreshService(val context: Context, private val dbCalls: CharacterSqlActivity) {
     private val httpCalls = CharacterHttp(context)
 
     suspend fun fetchAndUpdateCharacter() {
         val characterList = httpCalls.getCharacters()
         if (characterList?.success == true) {
             val localCharacters = dbCalls.getAllCharacters()
-            val serverIds = characterList.players.map() { it.id}.toSet()
+            val serverIds = characterList.players.map { it.id}.toSet()
 
            val charactersToDelete =
                localCharacters.first().filter { it.syncCharacterId !in serverIds }

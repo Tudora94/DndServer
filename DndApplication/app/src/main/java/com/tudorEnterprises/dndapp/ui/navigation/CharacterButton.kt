@@ -18,7 +18,7 @@ import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 
 @Composable
-fun GetCharacterButtons(characterName: CharacterNameData, onDelete: () -> Unit, navController: NavController,) {
+fun GetCharacterButtons(characterName: CharacterNameData, onDelete: () -> Unit, navController: NavController) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
