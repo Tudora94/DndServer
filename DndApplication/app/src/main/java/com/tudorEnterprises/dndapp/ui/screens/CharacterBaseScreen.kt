@@ -29,10 +29,12 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 @Composable
 fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
     val context = LocalContext.current
-    val sql = CharacterSqlActivity(context)
+    //val sql = CharacterSqlActivity(context)
 
-    val character by sql.getCharacterByIdFlow(characterId)
-        .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
+    //val character by sql.getCharacterByIdFlow(characterId)
+    //    .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
+
+    //TODO reset back to using sql
 
     Scaffold(
         topBar = { GetAppBarTopLoggedIn(navController) },
@@ -42,27 +44,75 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                     modifier = Modifier.padding(innerPadding) .fillMaxWidth() .fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Character Name",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = character.characterName,
+                            text = "Test name", //character.characterName,
                             maxLines = 1,
                             modifier = Modifier
                                 .weight(5f), // Use weight to make the Text take up remaining space
                             style = MaterialTheme.typography.headlineMedium,
                             overflow = TextOverflow.Ellipsis
                         )
-                        Spacer(modifier = Modifier.weight(1f)) // Pushes text to center
+                        Spacer(modifier = Modifier.weight(1f))
                         ElevatedButton(
                             onClick = { },
                         ) {
                             Text(text = "Edit")
                         }
                     }
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Campaign Name",
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Test name", //character.characterName,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .weight(5f), // Use weight to make the Text take up remaining space
+                            style = MaterialTheme.typography.headlineMedium,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        ElevatedButton(
+                            onClick = { },
+                        ) {
+                            Text(text = "Join")
+                        }
+                    }
+                    ElevatedButton(
+                        onClick = { },
+                        modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, end = 8.dp)
+                    ) {
+                        Text(text = "Inventory")
+                    }
+
                     //TODO add new row for join campaign - Add in campaignSQL to pull the campaignName once campaignID has been pulled and saved to character db
                     //TODO add inventory button - Inventory should be new table containing character ID, ItemID, name, descr, detail, call should return list of items for characterID and campaignCharacterId
                 }
