@@ -29,12 +29,13 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 @Composable
 fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
     val context = LocalContext.current
-    //val sql = CharacterSqlActivity(context)
+    val characterSql = CharacterSqlActivity(context)
 
-    //val character by sql.getCharacterByIdFlow(characterId)
-    //    .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
+    val character by characterSql.getCharacterByIdFlow(characterId)
+        .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
 
-    //TODO reset back to using sql
+    val campaignName by characterSql.getCharacterCampaign(characterId)
+        .collectAsStateWithLifecycle(initialValue = "")
 
     Scaffold(
         topBar = { GetAppBarTopLoggedIn(navController) },
@@ -61,10 +62,10 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Test name", //character.characterName,
+                            text = character.characterName,
                             maxLines = 1,
                             modifier = Modifier
-                                .weight(5f), // Use weight to make the Text take up remaining space
+                                .weight(5f),
                             style = MaterialTheme.typography.headlineMedium,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -92,10 +93,10 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Test name", //character.characterName,
+                            text = campaignName,
                             maxLines = 1,
                             modifier = Modifier
-                                .weight(5f), // Use weight to make the Text take up remaining space
+                                .weight(5f),
                             style = MaterialTheme.typography.headlineMedium,
                             overflow = TextOverflow.Ellipsis
                         )

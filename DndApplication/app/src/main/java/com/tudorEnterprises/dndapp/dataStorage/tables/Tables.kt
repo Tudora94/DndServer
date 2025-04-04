@@ -18,5 +18,6 @@ data class CharacterNameData (
     @PrimaryKey @ColumnInfo(name = "sync_Character_Id") val syncCharacterId: Int,
     @ColumnInfo(name = "userId") val userId: Int = 0,
     @ColumnInfo(name = "updateTime") val updateTime: Long = 0,
-    @ColumnInfo(name = "campaign_Id") val campaignId: Int? = null
+    @ColumnInfo(name = "campaign_Id") val campaignId: Int? = null,
+    @ColumnInfo(name = "campaign_name") val campaignName: String = ""
 )

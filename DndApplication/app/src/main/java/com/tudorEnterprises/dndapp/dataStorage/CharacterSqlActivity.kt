@@ -47,6 +47,9 @@ class CharacterSqlActivity(context: Context) {
     fun getCharacterByIdFlow(characterId: Int) : Flow<CharacterNameData> {
         return db.characterDao.getCharacterByIdFlow(characterId)
     }
+    fun getCharacterCampaign(characterId: Int) : Flow<String> {
+        return db.characterDao.getCharacterCampaign(characterId)
+    }
     suspend fun deleteCharacterById(id: Int) {
         db.characterDao.deleteCharacterById(id)
     }
