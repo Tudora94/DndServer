@@ -130,7 +130,7 @@ namespace DndServer.Dal
             }
         }
 
-        public bool DeletePlayer(DeletePlayerModel model)
+        public bool DeletePlayer(int characterId, int userId)
         {
             SqlConnection conn = new SqlConnection();
             try
@@ -139,8 +139,8 @@ namespace DndServer.Dal
                 string sqlString = @"DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
                 SqlCommand command = new SqlCommand( sqlString, conn);
 
-                command.Parameters.Add("userId", SqlDbType.Int).Value=model.UserId;
-                command.Parameters.Add("charId", SqlDbType.Int).Value = model.PlayerId;
+                command.Parameters.Add("userId", SqlDbType.Int).Value=userId;
+                command.Parameters.Add("charId", SqlDbType.Int).Value = characterId;
 
                 command.ExecuteNonQuery();
                 return true;
