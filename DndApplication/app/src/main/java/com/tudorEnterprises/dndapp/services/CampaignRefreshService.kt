@@ -6,7 +6,7 @@ import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import kotlinx.coroutines.flow.first
 
-class CampaignRefreshService(val context: Context, val dbCalls: CampaignSqlActivity) {
+class CampaignRefreshService(val context: Context, private val dbCalls: CampaignSqlActivity) {
 
     private val httpCalls = CampaignHttp(context)
 

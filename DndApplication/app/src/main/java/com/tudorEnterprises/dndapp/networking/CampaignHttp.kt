@@ -42,8 +42,8 @@ class CampaignHttp(val context: Context) {
             response = null
         }
 
-        if(response != null) {
-            return if (response.isSuccessful) { //TODO amend to contain body()?.Successful also, to stop accidental deletions
+        return if(response != null) {
+            if (response.isSuccessful) { //TODO amend to contain body()?.Successful also, to stop accidental deletions
                 Log.d("CampaignHttp", "${response.body()}")
                 if (response.body() != null) {
                     Log.d("CampaignHttp", "getCallMade")
@@ -53,7 +53,7 @@ class CampaignHttp(val context: Context) {
                 null
             }
         } else {
-            return null
+            null
         }
     }
 
