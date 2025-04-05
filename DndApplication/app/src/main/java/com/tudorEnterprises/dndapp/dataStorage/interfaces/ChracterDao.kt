@@ -16,6 +16,12 @@ interface CharacterDao {
     @Query("SELECT * FROM CharacterNameData WHERE userId = :userId")
     fun getAllCharacters(userId: String) : Flow<List<CharacterNameData>>
 
+    @Query("SELECT * FROM CharacterNameData WHERE sync_Character_Id = :characterId")
+    fun  getCharacterByIdFlow(characterId: Int) : Flow<CharacterNameData>
+
+    @Query("SELECT campaign_name FROM CharacterNameData WHERE sync_Character_Id = :characterId")
+    fun getCharacterCampaign(characterId: Int) : Flow<String>
+
     @Query("DELETE FROM CharacterNameData WHERE sync_Character_Id = :characterId")
     suspend fun deleteCharacterById(characterId: Int)
 

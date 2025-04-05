@@ -6,7 +6,8 @@ enum class Screen(val route: String) {
     DmOrPlayer("Dm_Or_Player"),
     DMLanding("DM_Landing"),
     PlayerLanding("Player_Landing"),
-    Campaign("Dm_Campaign")
+    Campaign("Dm_Campaign"),
+    Character("Player_Character")
 }
 
 enum class Buttons(val buttonText: String, val buttonRoute: Screen) {

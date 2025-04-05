@@ -44,15 +44,16 @@ class CharacterSqlActivity(context: Context) {
     fun getAllCharacters() : Flow<List<CharacterNameData>> {
         return db.characterDao.getAllCharacters(loggedInUser)
     }
-
+    fun getCharacterByIdFlow(characterId: Int) : Flow<CharacterNameData> {
+        return db.characterDao.getCharacterByIdFlow(characterId)
+    }
     suspend fun deleteCharacterById(id: Int) {
         db.characterDao.deleteCharacterById(id)
     }
-
     suspend fun getCharacterById(characterId: Int) : CharacterNameData? {
         return db.characterDao.getCharacterById(characterId)
     }
     suspend fun upsertCharacter(characterData: Player) {
-        db.characterDao.upsertCharacter(CharacterNameData(characterName = characterData.name, syncCharacterId = characterData.id, userId = loggedInUser.toInt(), updateTime = characterData.updateTime, campaignId = characterData.campaignId))
+        db.characterDao.upsertCharacter(CharacterNameData(characterName = characterData.name, syncCharacterId = characterData.id, userId = loggedInUser.toInt(), updateTime = characterData.updateTime, campaignId = characterData.campaignId, campaignName = characterData.campaignName))
     }
 }

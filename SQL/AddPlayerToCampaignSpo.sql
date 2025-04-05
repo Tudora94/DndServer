@@ -5,7 +5,8 @@ CREATE PROCEDURE AddPlayerToCampaign
 @updateTime BIGINT,
 @characterId INT,
 @roomCode VARCHAR(6),
-@campaignId INT OUTPUT
+@campaignId INT OUTPUT,
+@campaignName VARCHAR(255) OUTPUT
 AS
 BEGIN
 
@@ -20,4 +21,8 @@ WHERE Id = @characterId
 AND UserId = @userId
 
 SET @campaignId = @tempCampaignId
+SET @campaignName = (SELECT
+CampaignName
+FROM CampaignName
+WHERE Id = @campaignId)
 END;

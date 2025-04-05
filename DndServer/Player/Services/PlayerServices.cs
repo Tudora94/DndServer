@@ -27,7 +27,7 @@ namespace DndServer.Player.Services
             return sql.AddPlayer(model);
         }
 
-        public int AddPlayerToCampaign(PlayerToCampaignRequest model)
+        public (int campaignId, string campaignName) AddPlayerToCampaign(PlayerToCampaignRequest model)
         {
             return sql.AddPlayerToCampaign(model);
         }

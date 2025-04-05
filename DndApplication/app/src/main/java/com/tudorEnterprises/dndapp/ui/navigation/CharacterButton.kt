@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
 
@@ -24,7 +25,7 @@ fun GetCharacterButtons(characterName: CharacterNameData, onDelete: () -> Unit, 
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ElevatedButton(
-            onClick = {},//{navController.navigate(Screen.Campaign.route + "/${campaignName.syncCampaignId}")},
+            onClick = {navController.navigate(Screen.Character.route + "/${characterName.syncCharacterId}")},
             modifier = Modifier.weight(4f)
         ) {
             Text(characterName.characterName)
