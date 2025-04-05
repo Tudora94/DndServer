@@ -132,7 +132,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
             onConfirm = { enteredName ->
                 roomCode = enteredName
                 showDialog = false
-                launchJoinCampaign(roomCode, context, characterSql) //TODO create private function
+                launchJoinCampaign(roomCode, context, characterSql)
             }
         )
     }
