@@ -38,7 +38,7 @@ namespace DndServer.Dal
             }
         }
 
-        public int AddPlayerToCampaign(PlayerToCampaignRequest request)
+        public (int campaignId, string campaignName) AddPlayerToCampaign(PlayerToCampaignRequest request)
         {
             SqlConnection conn = new SqlConnection();
             try
@@ -56,17 +56,21 @@ namespace DndServer.Dal
 
                 command.Parameters.Add("@campaignId", SqlDbType.Int);
                 command.Parameters["@campaignId"].Direction = ParameterDirection.Output;
+                command.Parameters.Add("@campaignName", SqlDbType.VarChar, 255);
+                command.Parameters["@campaignName"].Direction = ParameterDirection.Output;
+
 
                 command.ExecuteNonQuery();
                 int campaignId = Convert.ToInt32(command.Parameters["@campaignId"].Value);
+                string campaignName = command.Parameters["@campaignName"].Value.ToString()??"";
 
                 connections.SQLCloseConnection(conn);
-                return campaignId;
+                return (campaignId, campaignName);
 
             }
             catch (Exception ex)
             {
-                return 0;
+                return (0, string.Empty);
             }
 
         }

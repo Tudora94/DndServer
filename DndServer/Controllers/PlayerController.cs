@@ -45,11 +45,12 @@ namespace DndServer.Controllers
 
                 if (services.ValidateRoomCode(request.RoomCode))
                 {
-                    var campaignId = services.AddPlayerToCampaign(request);
-                    if (campaignId != 0)
+                    var campaign = services.AddPlayerToCampaign(request);
+                    if (campaign.campaignId != 0)
                     {
                         response.Success = true;
-                        response.CampaignId = campaignId;
+                        response.CampaignId = campaign.campaignId;
+                        response.CampaignName = campaign.campaignName;
                         return Ok(response);
                     }
                 }
