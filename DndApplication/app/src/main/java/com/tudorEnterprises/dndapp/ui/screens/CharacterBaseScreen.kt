@@ -144,6 +144,7 @@ private fun launchJoinCampaign(
     sql: CharacterSqlActivity
 ) {
     Log.d("roomcode", "roomcode entered: $roomCode")
+    //TODO pass room code to http return campaignID and name add to characterNameData EZ
 
 }
 
