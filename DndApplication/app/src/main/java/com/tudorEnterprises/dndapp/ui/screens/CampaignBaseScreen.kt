@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,22 +33,24 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
+import com.tudorEnterprises.dndapp.services.GenericRefreshService
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-//TODO add lazy column containing players, add refresh to pull new players, add inventory button
 
 @Composable
 fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
     val context = LocalContext.current
     val campaignSql = CampaignSqlActivity(context)
+    val characterSql = CampaignCharacterSqlActivity(context)
 
     DndApplicationTheme {
 
@@ -55,10 +59,20 @@ fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
 
         var roomCode by remember { mutableStateOf("") }
 
+        val characters by characterSql.getPlayersForCampaign(campaignId)
+            .collectAsStateWithLifecycle(initialValue = emptyList())
+
         fun setRoomCode() {
             CoroutineScope(Dispatchers.IO).launch {
                 roomCode = ""
                 roomCode = getRoomCode(context, campaignId)
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            while (true) {
+                GenericRefreshService(context).fetchAndUpdateCampaignCharacters(characterSql, campaignId)
+                delay(5000)
             }
         }
 
@@ -153,11 +167,11 @@ fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
                 ) {
                     LazyColumn(
                         modifier = Modifier
-                            .fillMaxSize() // Ensures it fills the fixed height
+                            .fillMaxSize()
                     ) {
-                        items(20) { index ->
+                        items(characters) { character ->
                             Text(
-                                text = "Item $index",
+                                text = character.characterName.toString(),
                                 modifier = Modifier.padding(16.dp),
                                 style = MaterialTheme.typography.bodyMedium
                             )
