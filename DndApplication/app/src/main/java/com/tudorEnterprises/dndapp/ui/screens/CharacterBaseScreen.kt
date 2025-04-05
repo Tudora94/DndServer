@@ -1,5 +1,7 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
+import com.tudorEnterprises.dndapp.ui.dialogs.JoinCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 
@@ -30,6 +36,8 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
     val context = LocalContext.current
     val characterSql = CharacterSqlActivity(context)
+    var showDialog by remember { mutableStateOf(false) }
+    var roomCode by remember { mutableStateOf("") }
 
     val character by characterSql.getCharacterByIdFlow(characterId)
         .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
@@ -102,7 +110,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         ElevatedButton(
-                            onClick = { },
+                            onClick = { showDialog = true },
                         ) {
                             Text(text = "Join")
                         }
@@ -118,6 +126,25 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                     //TODO add inventory button - Inventory should be new table containing character ID, ItemID, name, descr, detail, call should return list of items for characterID and campaignCharacterId
                 }
     }
+    if (showDialog) {
+        JoinCampaignDialog(
+            onDismiss = { showDialog = false },
+            onConfirm = { enteredName ->
+                roomCode = enteredName
+                showDialog = false
+                launchJoinCampaign(roomCode, context, characterSql) //TODO create private function
+            }
+        )
+    }
+}
+
+private fun launchJoinCampaign(
+    roomCode: String,
+    context: Context,
+    sql: CharacterSqlActivity
+) {
+    Log.d("roomcode", "roomcode entered: $roomCode")
+
 }
 
 @Preview
