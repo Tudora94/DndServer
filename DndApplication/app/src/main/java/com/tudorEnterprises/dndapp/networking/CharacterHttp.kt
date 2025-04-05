@@ -2,7 +2,9 @@ package com.tudorEnterprises.dndapp.networking
 
 import android.content.Context
 import android.util.Log
+import com.tudorEnterprises.dndapp.dataModels.requests.AddPlayerToCampaignRequest
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateCharacterRequest
+import com.tudorEnterprises.dndapp.dataModels.responses.AddPlayerToCampaignResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.GetCharacterResponse
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpCharacterClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -63,5 +65,17 @@ class CharacterHttp(val context: Context) {
             Log.d(this::class.java.simpleName, "getCharacters failed with exception: $ex")
         }
         return response.body()
+    }
+
+    suspend fun addCharacterToCampaign(updateTime: Long, characterId: Int, roomCode: String) : AddPlayerToCampaignResponse? {
+        val request = AddPlayerToCampaignRequest(userId = SecureStorage.getUserId(context).toInt(), updateTime = updateTime, characterId = characterId, roomCode = roomCode)
+
+        val response = withContext(Dispatchers.IO) {
+            characterService.addCharacterToCampaign(request)
+        }
+        if (response.isSuccessful && response.body() != null){
+            return response.body()
+        }
+        return AddPlayerToCampaignResponse()
     }
 }

@@ -1,7 +1,6 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,24 +25,31 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.dataModels.responses.Player
 import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
+import com.tudorEnterprises.dndapp.networking.CharacterHttp
 import com.tudorEnterprises.dndapp.ui.dialogs.JoinCampaignDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
 
 @Composable
 fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
     val context = LocalContext.current
     val characterSql = CharacterSqlActivity(context)
+
+    DndApplicationTheme {
+
     var showDialog by remember { mutableStateOf(false) }
     var roomCode by remember { mutableStateOf("") }
 
     val character by characterSql.getCharacterByIdFlow(characterId)
         .collectAsStateWithLifecycle(initialValue = CharacterNameData(characterName = "", syncCharacterId = 0, userId = 0, updateTime = 0, campaignId = null))
-
-    val campaignName by characterSql.getCharacterCampaign(characterId)
-        .collectAsStateWithLifecycle(initialValue = "")
 
     Scaffold(
         topBar = { GetAppBarTopLoggedIn(navController) },
@@ -101,7 +107,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = campaignName,
+                            text = character.campaignName,
                             maxLines = 1,
                             modifier = Modifier
                                 .weight(5f),
@@ -132,20 +138,30 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
             onConfirm = { enteredName ->
                 roomCode = enteredName
                 showDialog = false
-                launchJoinCampaign(roomCode, context, characterSql)
+                launchJoinCampaign(roomCode, context, characterSql, characterId, character.characterName)
             }
         )
+    }
     }
 }
 
 private fun launchJoinCampaign(
     roomCode: String,
     context: Context,
-    sql: CharacterSqlActivity
+    sql: CharacterSqlActivity,
+    characterId: Int,
+    characterName: String
 ) {
-    Log.d("roomcode", "roomcode entered: $roomCode")
-    //TODO pass room code to http return campaignID and name add to characterNameData EZ
+    CoroutineScope(Dispatchers.IO).launch {
+        val updateTime = Instant.now().epochSecond
 
+        val characterCampaignDetails = CharacterHttp(context).addCharacterToCampaign(updateTime, characterId, roomCode)
+        if(characterCampaignDetails != null && characterCampaignDetails.success){
+            //add name and ID to characterNameData
+            val player = Player(characterId, characterCampaignDetails.campaignId, characterName, updateTime, characterCampaignDetails.campaignName)
+            sql.upsertCharacter(player)
+        }
+    }
 }
 
 @Preview

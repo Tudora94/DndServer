@@ -9,5 +9,6 @@ data class Player(
     val id: Int,
     val campaignId: Int?, // Nullable to handle the `null` value
     val name: String,
-    val updateTime: Long
+    val updateTime: Long,
+    val campaignName: String = ""
 )
