@@ -107,7 +107,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = character.campaignName,
+                            text = character.campaignName?:"",
                             maxLines = 1,
                             modifier = Modifier
                                 .weight(5f),

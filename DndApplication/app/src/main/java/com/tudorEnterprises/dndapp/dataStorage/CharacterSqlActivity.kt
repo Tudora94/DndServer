@@ -54,6 +54,13 @@ class CharacterSqlActivity(context: Context) {
         return db.characterDao.getCharacterById(characterId)
     }
     suspend fun upsertCharacter(characterData: Player) {
-        db.characterDao.upsertCharacter(CharacterNameData(characterName = characterData.name, syncCharacterId = characterData.id, userId = loggedInUser.toInt(), updateTime = characterData.updateTime, campaignId = characterData.campaignId, campaignName = characterData.campaignName))
+        var campName: String? = characterData.campaignName
+        if(characterData.campaignId != null && characterData.campaignName == null) {
+            val existingEntry = db.characterDao.getCharacterById(characterId = characterData.id)
+            if(existingEntry != null) {
+                campName = existingEntry.campaignName
+            }
+        }
+        db.characterDao.upsertCharacter(CharacterNameData(characterName = characterData.name, syncCharacterId = characterData.id, userId = loggedInUser.toInt(), updateTime = characterData.updateTime, campaignId = characterData.campaignId, campaignName = campName))
     }
 }
