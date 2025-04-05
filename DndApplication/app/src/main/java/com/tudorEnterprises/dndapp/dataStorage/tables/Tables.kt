@@ -19,7 +19,7 @@ data class CharacterNameData (
     @ColumnInfo(name = "userId") val userId: Int = 0,
     @ColumnInfo(name = "updateTime") val updateTime: Long = 0,
     @ColumnInfo(name = "campaign_Id") val campaignId: Int? = null,
-    @ColumnInfo(name = "campaign_name") val campaignName: String = ""
+    @ColumnInfo(name = "campaign_name") val campaignName: String? = ""
 )
 
 @Entity
