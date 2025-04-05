@@ -28,8 +28,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
@@ -38,14 +41,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-//TODO add button to create room code, add lazy column containing players, add refresh to pull new players, add inventory button
+//TODO add lazy column containing players, add refresh to pull new players, add inventory button
 
 @Composable
 fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
     val context = LocalContext.current
-//    val characterSql = CharacterSqlActivity(context)
+    val campaignSql = CampaignSqlActivity(context)
 
     DndApplicationTheme {
+
+        val campaign by campaignSql.getCampaignByIdFlow(campaignId)
+            .collectAsStateWithLifecycle(initialValue = CampaignNameData(""))
 
         var roomCode by remember { mutableStateOf("") }
 
@@ -81,7 +87,7 @@ fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = campaignId.toString(),
+                        text = campaign.campaignName,
                         maxLines = 1,
                         modifier = Modifier
                             .weight(5f),
