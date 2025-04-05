@@ -107,7 +107,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = character.campaignName,
+                            text = character.campaignName?:"",
                             maxLines = 1,
                             modifier = Modifier
                                 .weight(5f),
@@ -128,7 +128,6 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         Text(text = "Inventory")
                     }
 
-                    //TODO add new row for join campaign - Add in campaignSQL to pull the campaignName once campaignID has been pulled and saved to character db
                     //TODO add inventory button - Inventory should be new table containing character ID, ItemID, name, descr, detail, call should return list of items for characterID and campaignCharacterId
                 }
     }

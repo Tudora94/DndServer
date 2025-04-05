@@ -65,7 +65,7 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
     fun loginRequest(context: Context, showDialog: (Boolean, String?) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             showDialog(true, "Logging in...") // Show spinner
-
+            context.getSharedPreferences("secure_prefs", Context.MODE_PRIVATE).edit().clear().apply()
             try {
                 val response = withContext(Dispatchers.IO) {
                     RetroFitHttpAuthClient.api.login(LoginRequest(username, password))
@@ -94,7 +94,7 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
                     showDialog(false, response.body()?.message ?: "Unknown Error")
                 }
             } catch (e: Exception) {
-                showDialog(false, "Error: failed to connect")
+                showDialog(false, "Error: failed to connect $e")
             }
         }
     }

@@ -37,6 +37,10 @@ class CampaignSqlActivity(context: Context) {
         return db.campaignDao.getAllCampaigns(loggedInUser)
     }
 
+    fun getCampaignByIdFlow(campaignId: Int) : Flow<CampaignNameData> {
+        return db.campaignDao.getCampaignByIdFlow(campaignId)
+    }
+
     suspend fun upsertCampaign(campaignData: CreateCampaignResponse) {
         db.campaignDao.upsertCampaign(CampaignNameData(campaignName = campaignData.name, syncCampaignId = campaignData.campaignId, userId = loggedInUser.toInt(), updateTime = campaignData.updateTime))
     }
