@@ -3,6 +3,7 @@ package com.tudorEnterprises.dndapp.objects
 import android.content.Context
 import com.tudorEnterprises.dndapp.constants.baseUrl
 import com.tudorEnterprises.dndapp.interfaces.CampaignService
+import com.tudorEnterprises.dndapp.interfaces.CharacterService
 import com.tudorEnterprises.dndapp.interfaces.LoginService
 import com.tudorEnterprises.dndapp.networking.JwtHandler
 import okhttp3.OkHttpClient
@@ -32,4 +33,20 @@ object RetroFitHttpCampaignClient {
             .build()
             .create(CampaignService::class.java)
     }
+}
+
+object RetroFitHttpCharacterClient {
+    fun create(context: Context): CharacterService {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(JwtHandler(context)) // Pass context
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(baseUrl) // Replace with actual base URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client) // Attach OkHttpClient with the interceptor
+            .build()
+            .create(CharacterService::class.java)
+    }
+
 }

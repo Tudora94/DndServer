@@ -10,6 +10,7 @@ using DndServer.Player.Models;
 using DndServer.Player.Services;
 using System.Data;
 using System;
+using DndServer.Character;
 
 namespace DndServer.Player.Services
 {
@@ -26,7 +27,7 @@ namespace DndServer.Player.Services
             return sql.AddPlayer(model);
         }
 
-        public int AddPlayerToCampaign(PlayerToCampaignRequest model)
+        public (int campaignId, string campaignName) AddPlayerToCampaign(PlayerToCampaignRequest model)
         {
             return sql.AddPlayerToCampaign(model);
         }
@@ -56,17 +57,15 @@ namespace DndServer.Player.Services
                     }
 
                     response.Players.Add(player);
-
                 }
-                return response;
-
+                response.Success = true;
             }
             return response;
         }
 
-        public bool DeletePlayer(DeletePlayerModel model)
+        public bool DeletePlayer(int characterId, int userId)
         {
-            return sql.DeletePlayer(model);
+            return sql.DeletePlayer(characterId, userId);
         }
 
         public bool UpdatePlayer(UpdateCharacterRequest request)

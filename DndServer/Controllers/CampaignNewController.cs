@@ -138,19 +138,19 @@ namespace DndServer.Controllers
             return Ok(players);
         }
 
-        [HttpPost("DeleteCampaign")]
+        [HttpDelete("DeleteCampaign/userId/{userId}/campaignId/{campaignId}")]
         [Authorize]
-        public async Task<ActionResult<List<BaseResponse>>> deleteCampaign(CampaignDeleteRequest request)
+        public async Task<ActionResult<List<BaseResponse>>> deleteCampaign([System.Web.Http.FromUri] int campaignId, [System.Web.Http.FromUri] int userId)
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
 
             var response = new BaseResponse();
 
             if (claimAccepted) {
 
                 CampaignSql campaignSql = new CampaignSql();
-                campaignSql.deleteCampaign(request.CampaignId);
+                campaignSql.deleteCampaign(campaignId);
 
                 response.Success = true;
                 response.Message = "Campaign Deleted";

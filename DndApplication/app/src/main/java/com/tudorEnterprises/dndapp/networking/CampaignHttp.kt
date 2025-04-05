@@ -3,7 +3,6 @@ package com.tudorEnterprises.dndapp.networking
 import android.content.Context
 import android.util.Log
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateCampaignRequest
-import com.tudorEnterprises.dndapp.dataModels.requests.DeleteCampaignRequest
 import com.tudorEnterprises.dndapp.dataModels.responses.CreateCampaignResponse
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpCampaignClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -43,8 +42,8 @@ class CampaignHttp(val context: Context) {
             response = null
         }
 
-        if(response != null) {
-            return if (response.isSuccessful) { //TODO amend to contain body()?.Successful also, to stop accidental deletions
+        return if(response != null) {
+            if (response.isSuccessful) { //TODO amend to contain body()?.Successful also, to stop accidental deletions
                 Log.d("CampaignHttp", "${response.body()}")
                 if (response.body() != null) {
                     Log.d("CampaignHttp", "getCallMade")
@@ -54,15 +53,14 @@ class CampaignHttp(val context: Context) {
                 null
             }
         } else {
-            return null
+            null
         }
     }
 
     suspend fun deleteCampaign(campaignId: Int) : Boolean {
-        val request = DeleteCampaignRequest(SecureStorage.getUserId(context).toInt(), campaignId)
-
+        Log.d(this::class.java.simpleName,"campaignId sent for deletion $campaignId")
         val response = withContext(Dispatchers.IO) {
-            campaignService.deleteCampaignById(request)
+            campaignService.deleteCampaignById(SecureStorage.getUserId(context).toInt(), campaignId)
         }
         return response.body()?.success == true
     }

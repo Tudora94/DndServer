@@ -45,11 +45,12 @@ namespace DndServer.Controllers
 
                 if (services.ValidateRoomCode(request.RoomCode))
                 {
-                    var campaignId = services.AddPlayerToCampaign(request);
-                    if (campaignId != 0)
+                    var campaign = services.AddPlayerToCampaign(request);
+                    if (campaign.campaignId != 0)
                     {
                         response.Success = true;
-                        response.CampaignId = campaignId;
+                        response.CampaignId = campaign.campaignId;
+                        response.CampaignName = campaign.campaignName;
                         return Ok(response);
                     }
                 }
@@ -117,18 +118,18 @@ namespace DndServer.Controllers
             }
         }
 
-        [HttpDelete("DeletePlayer")]
-        public async Task<ActionResult<Response>> DeletePlayer(DeletePlayerModel request)
+        [HttpDelete("DeleteCharacter/userId/{userId}/characterId/{characterId}")]
+        public async Task<ActionResult<Response>> DeleteCharacter([System.Web.Http.FromUri] int characterId, [System.Web.Http.FromUri] int userId)
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
 
             if (claimAccepted)
             {
                 PlayerServices services = new PlayerServices();
 
                 var response = new PlayerBaseResponse();
-                var sqlResponse = services.DeletePlayer(request);
+                var sqlResponse = services.DeletePlayer(characterId, userId);
                 if(sqlResponse)
                 {
                     response.Success = true;
@@ -145,7 +146,6 @@ namespace DndServer.Controllers
             {
                 return BadRequest("Invalid user");
             }
-
         }
 
         [HttpPut("UpdatePlayer")]
