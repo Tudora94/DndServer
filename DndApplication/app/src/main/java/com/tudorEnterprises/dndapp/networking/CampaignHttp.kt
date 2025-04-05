@@ -3,6 +3,8 @@ package com.tudorEnterprises.dndapp.networking
 import android.content.Context
 import android.util.Log
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateCampaignRequest
+import com.tudorEnterprises.dndapp.dataModels.requests.GetRoomCodeRequest
+import com.tudorEnterprises.dndapp.dataModels.responses.CampaignCharacterResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.CreateCampaignResponse
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpCampaignClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -63,5 +65,25 @@ class CampaignHttp(val context: Context) {
             campaignService.deleteCampaignById(SecureStorage.getUserId(context).toInt(), campaignId)
         }
         return response.body()?.success == true
+    }
+
+    suspend fun getRoomCode(campaignId: Int) : String? {
+        val response = withContext(Dispatchers.IO) {
+            campaignService.generateRoomCode(GetRoomCodeRequest(campaignId = campaignId))
+        }
+        if(response.isSuccessful) {
+            return response.body()?.campaignRoomCode
+        }
+        return ""
+    }
+
+    suspend fun getCampaignCharacters(campaignId: Int) : List<CampaignCharacterResponse>{
+        val response = withContext(Dispatchers.IO) {
+            campaignService.getPlayers(campaignId)
+        }
+        if (response.body() != null) {
+            return response.body()!!
+        }
+        return emptyList()
     }
 }

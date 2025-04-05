@@ -21,3 +21,13 @@ data class CharacterNameData (
     @ColumnInfo(name = "campaign_Id") val campaignId: Int? = null,
     @ColumnInfo(name = "campaign_name") val campaignName: String = ""
 )
+
+@Entity
+data class CampaignCharactersData (
+    @PrimaryKey val id : Int,
+    val userId: String,
+    val campaignId: Int?,
+    val playerId: Int?,
+    val characterName: String?,
+    val updateTime: Long = 0
+)

@@ -1,0 +1,16 @@
+package com.tudorEnterprises.dndapp.dataStorage.interfaces
+
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Upsert
+import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignCharactersData
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface CampaignCharactersDao {
+    @Upsert
+    suspend fun insertCampaignPlayer(character: CampaignCharactersData)
+
+    @Query("SELECT * FROM CampaignCharactersData WHERE userId = :userId AND campaignId = :campaignId")
+    fun getPlayersForCampaign(userId: String, campaignId: Int) : Flow<List<CampaignCharactersData>>
+}
