@@ -38,5 +38,35 @@ namespace DndServer.Dal
             }
 
         }
+
+        public bool UpdateInventoryItem(UpdateInventoryItemRequest request)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string UpdateInventoryItem = @"UPDATE DndDb.dbo.Inventory
+SET ItemName = @itemName, Description = @itemDescription, Detail = @itemDetail, UpdateTime = @updateTime
+WHERE Id = @itemId AND UserId = @userId";
+
+                SqlCommand cmd = new SqlCommand(UpdateInventoryItem, conn);
+
+                cmd.Parameters.Add("@userId", System.Data.SqlDbType.Int).Value = request.UserId;
+                cmd.Parameters.Add("@itemName", System.Data.SqlDbType.VarChar).Value = request.ItemName;
+                cmd.Parameters.Add("@itemDescription", System.Data.SqlDbType.VarChar).Value = request.ItemDescription;
+                cmd.Parameters.Add("@itemDetail", System.Data.SqlDbType.VarChar).Value = request.ItemDetail;
+                cmd.Parameters.Add("@updateTime", System.Data.SqlDbType.BigInt).Value = request.UpdateTime;
+                cmd.Parameters.Add("@itemId", System.Data.SqlDbType.Int).Value=request.ItemId;
+
+                cmd.ExecuteNonQuery();
+                return true;
+
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

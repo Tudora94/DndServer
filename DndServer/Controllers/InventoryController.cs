@@ -37,22 +37,60 @@ namespace DndServer.Controllers
             {
                 var itemId = inventoryService.CreateInventoryItemAndGetId(request);
 
-                response.ItemId = itemId;
-                response.Message = "item added successfully";
-                response.Success = true;
+
 
                 //TODO handle failure to add
+                if(itemId == 0)
+                {
+                    response.Message = "item failed to add";
 
-                return Ok(response);
+                    return Ok(response);
+                }
+                else
+                {
+                    response.ItemId = itemId;
+                    response.Message = "item added successfully";
+                    response.Success = true;
+
+                    return Ok(response);
+                }
+
             }
             else
             {
                 response.Message = "Invalid user";
-                return BadRequest(response); //TODO return a better response than a string.
+                return BadRequest(response);
+            }
+        }
+        [HttpPut("UpdateInventoryItem")]
+        public async Task<ActionResult<InventoryBaseResponse>> UpdateInventoryItem(UpdateInventoryItemRequest request)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            var response = new InventoryBaseResponse();
+            if (claimAccepted)
+            {
+                var success = inventoryService.UpdateInventoryItem(request);
+                if (success)
+                {
+                    response.Success = true;
+                    response.Message = "Update Successful";
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "update failed";
+                    return Ok(response);
+                }
+            }
+            else
+            {
+                response.Message = "Invalid user";
+                return BadRequest(response);
             }
         }
 
-        //EditItem
 //GetItems
 //DeleteItem
 //AddItemToCampaign

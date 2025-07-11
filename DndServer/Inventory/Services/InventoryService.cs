@@ -11,5 +11,10 @@ namespace DndServer.Inventory.Services
         {
             return sql.CreateInventoryItem(request);
         }
+
+        public bool UpdateInventoryItem(UpdateInventoryItemRequest request)
+        {
+            return sql.UpdateInventoryItem(request);
+        }
     }
 }
