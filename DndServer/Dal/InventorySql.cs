@@ -59,8 +59,9 @@ WHERE Id = @itemId AND UserId = @userId";
                 cmd.Parameters.Add("@updateTime", System.Data.SqlDbType.BigInt).Value = request.UpdateTime;
                 cmd.Parameters.Add("@itemId", System.Data.SqlDbType.Int).Value=request.ItemId;
 
-                cmd.ExecuteNonQuery();
-                return true;
+                int rowsAffected = cmd.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+                return rowsAffected > 0;
 
             }
             catch(Exception ex)
