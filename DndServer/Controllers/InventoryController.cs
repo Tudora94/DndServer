@@ -52,5 +52,11 @@ namespace DndServer.Controllers
             }
         }
 
+        //EditItem
+//GetItems
+//DeleteItem
+//AddItemToCampaign
+//AddItemToPlayer
+
     }
 }
