@@ -1,4 +1,5 @@
 ﻿using DndServer.Inventory.Models;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace DndServer.Dal
@@ -16,7 +17,7 @@ namespace DndServer.Dal
 
                 string setInventoryItemId = @"INSERT INTO DndDb.dbo.Inventory
     OUTPUT INSERTED.Id
-    VALUES(@userId, null, null, @itemName, @itemDescription, @itemDetail, @updateTime)";
+    VALUES(@userId, @campaignId, null, @itemName, @itemDescription, @itemDetail, @updateTime)";
 
                 SqlCommand cmd = new SqlCommand(setInventoryItemId, conn);
 
@@ -25,6 +26,7 @@ namespace DndServer.Dal
                 cmd.Parameters.Add("@itemDescription", System.Data.SqlDbType.VarChar).Value = request.ItemDescription;
                 cmd.Parameters.Add("@itemDetail", System.Data.SqlDbType.VarChar).Value = request.ItemDetail;
                 cmd.Parameters.Add("@updateTime", System.Data.SqlDbType.BigInt).Value = request.UpdateTime;
+                cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = request.CampaignId;
 
                 int ItemId = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -67,6 +69,36 @@ WHERE Id = @itemId AND UserId = @userId";
             catch(Exception ex)
             {
                 return false;
+            }
+        }
+
+        public DataTable? getInventoryItems(int userId, int campaignId)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string GetInventoryItems = @"SELECT Id, CampaignId, PlayerId, ItemName, Description, Detail, UpdateTime
+FROM DndDb.dbo.Inventory
+WHERE UserId = @userId AND CampaignId = @campaignId";
+
+                SqlCommand cmd = new SqlCommand(GetInventoryItems, conn);
+
+                cmd.Parameters.Add("@userId", System.Data.SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@campaignId", System.Data.SqlDbType.Int).Value = campaignId;
+
+                DataTable dt = new DataTable();
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                connections.SQLCloseConnection(conn);
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

@@ -91,10 +91,43 @@ namespace DndServer.Controllers
             }
         }
 
-//GetItems
-//DeleteItem
-//AddItemToCampaign
-//AddItemToPlayer
+        [HttpGet("GetCampaignInventory/{userId}/{campaignId}")]
+        public async Task<ActionResult<GetInventoryItemsForCampaignResponse>> GetInventoryItemsForCampaign([System.Web.Http.FromUri] int userId, [System.Web.Http.FromUri] int campaignId)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
+
+            var response = new GetInventoryItemsForCampaignResponse();
+            if (claimAccepted)
+            {
+                var itemList = inventoryService.GetInventoryItems(userId, campaignId);
+                if(itemList != null)
+                {
+                    response.Success = true;
+                    response.Message = "successfully retrieved items";
+                    response.InventoryItems = itemList;
+
+                    return Ok(response);
+                }
+                else
+                {
+                    response.Message = "unable to retrieve items";
+                    return Ok(response);
+                }
+            }
+            else
+            {
+                response.Message = "Invalid user";
+                return BadRequest(response);
+            }
+
+        }
+
+        //DeleteItem
+        //AddItemToPlayer
+        //GetPlayerInventory
+
+        //AddItemToCampaign - TODO
 
     }
 }
