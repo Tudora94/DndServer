@@ -612,18 +612,6 @@
 					"name": "CreateInventoryItem",
 					"event": [
 						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"var upTime = pm.environment.get(\"updateTime\")\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt+1);"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						},
-						{
 							"listen": "test",
 							"script": {
 								"exec": [
@@ -632,6 +620,16 @@
 									"if(jsonData.success == true) {\r",
 									"    pm.environment.set(\"itemId\", jsonData.itemId)\r",
 									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -653,7 +651,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"itemName\": \"string1\",\r\n  \"itemDescription\": \"string2\",\r\n  \"itemDetail\": \"string3\"\r\n}",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"campaignId\": {{campaignId}},\r\n  \"itemName\": \"string1\",\r\n  \"itemDescription\": \"string2\",\r\n  \"itemDetail\": \"string3\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -669,6 +667,214 @@
 								"api",
 								"Inventory",
 								"CreateInventoryItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateInventoryItem",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"itemName\": \"stringNew\",\r\n  \"itemDescription\": \"stringNewer\",\r\n  \"itemDetail\": \"stringNewest\",\r\n  \"itemId\": {{itemId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Inventory/UpdateInventoryItem",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Inventory",
+								"UpdateInventoryItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetInventoryItems",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/Inventory/GetCampaignInventory/{{userId}}/{{campaignId}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Inventory",
+								"GetCampaignInventory",
+								"{{userId}}",
+								"{{campaignId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Inventory Item",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/Inventory/DeleteInventoryItem/{{userId}}/{{itemId}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Inventory",
+								"DeleteInventoryItem",
+								"{{userId}}",
+								"{{itemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Player Inventory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_Url}}/api/Inventory/GetPlayerItems/{{userId}}/{{characterId}}/{{campaignId}}",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Inventory",
+								"GetPlayerItems",
+								"{{userId}}",
+								"{{characterId}}",
+								"{{campaignId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add item to player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"campaignId\": {{campaignId}},\r\n  \"playerId\": {{characterId}},\r\n  \"itemId\": {{itemId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_Url}}/api/Inventory/AddItemToPlayer",
+							"host": [
+								"{{base_Url}}"
+							],
+							"path": [
+								"api",
+								"Inventory",
+								"AddItemToPlayer"
 							]
 						}
 					},
