@@ -30,8 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
-import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.objects.InventoryItem
 import com.tudorEnterprises.dndapp.services.GenericRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateInventoryItemDialog
@@ -44,13 +44,13 @@ import java.time.Instant
 
 @Composable
 fun GetCampaignInventoryScreen(
-    campaignId: Int,
+    id: Int,
     navController: NavController,
-    campaignName: String
+    name: String,
+    userRole: String
 ) {
 
     val context = LocalContext.current
-    val campaignSql = CampaignSqlActivity(context) //to get campaign details if needed - name most likely
     val characterSql = CampaignCharacterSqlActivity(context) //to get characters for the campaign
 
     DndApplicationTheme {
@@ -59,14 +59,19 @@ fun GetCampaignInventoryScreen(
 
         val inventoryItems = mutableListOf<InventoryItem>() //TODO replace with actual inventory items from the database
 
+        if( userRole == UserRole.DUNGEON_MASTER.role) {
 
-        val characters by characterSql.getPlayersForCampaign(campaignId)
+        val characters by characterSql.getPlayersForCampaign(id)
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
-        LaunchedEffect(Unit) {
-            while (true) {
-                GenericRefreshService(context).fetchAndUpdateCampaignCharacters(characterSql, campaignId)
-                delay(5000)
+            LaunchedEffect(Unit) {
+                while (true) {
+                    GenericRefreshService(context).fetchAndUpdateCampaignCharacters(
+                        characterSql,
+                        id
+                    )
+                    delay(5000)
+                }
             }
         }
 
@@ -84,7 +89,7 @@ fun GetCampaignInventoryScreen(
                 Text(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "Inventory for $campaignName",
+                    text = "Inventory for $name",
                 )
 
                 LazyColumn(
@@ -92,12 +97,12 @@ fun GetCampaignInventoryScreen(
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-                    items(inventoryItems) { campaignName ->
+                    items(inventoryItems) { item ->
                         GetInventoryButton(
-                            inventoryItem.name,
+                            item.name,
                             { },
                             navController,
-                            true
+                            userRole == UserRole.DUNGEON_MASTER.role, // Enable delete button for DM
                         )
                     }
 
@@ -114,7 +119,9 @@ fun GetCampaignInventoryScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    CreateInventoryItemButton { showDialog = true }
+                    if( userRole == UserRole.DUNGEON_MASTER.role) {
+                        CreateInventoryItemButton { showDialog = true }
+                    }
                 }
             }
 

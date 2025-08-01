@@ -18,3 +18,8 @@ enum class Buttons(val buttonText: String, val buttonRoute: Screen) {
     NewCampaign("Add New Campaign", Screen.DMLanding),
     DmTools("DM Tools", Screen.DMLanding)
 }
+
+enum class UserRole(val role: String) {
+    DUNGEON_MASTER("Dungeon Master"),
+    PLAYER("Player"),
+}

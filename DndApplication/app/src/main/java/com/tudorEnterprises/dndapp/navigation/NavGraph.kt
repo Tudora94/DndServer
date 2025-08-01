@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tudorEnterprises.dndapp.constants.Screen
+import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.ui.screens.CreateUserScreen
 import com.tudorEnterprises.dndapp.ui.screens.DMLandingScreen
 import com.tudorEnterprises.dndapp.ui.screens.DmOrPlayerScreen
@@ -55,19 +56,22 @@ fun NavigationController() {
             GetCharacterBaseScreen(navController = navController, characterId = characterId)
         }
         composable(
-            route = Screen.CampaignInventory.route + "/{campaignId}/{campaignName}",
+            route = Screen.CampaignInventory.route + "/{id}/{name}/{userRole}",
             arguments = listOf(
-                navArgument("campaignId") { type = NavType.IntType },
-                navArgument("campaignName") { type = NavType.StringType }
+                navArgument("id") { type = NavType.IntType },
+                navArgument("name") { type = NavType.StringType },
+                navArgument("userRole") { type = NavType.StringType } // Assuming userRole is passed as a string
             )
         ) { backStackEntry ->
-            val campaignId = backStackEntry.arguments?.getInt("campaignId") ?: 0
-            val campaignName = backStackEntry.arguments?.getString("campaignName") ?: ""
+            val id = backStackEntry.arguments?.getInt("id") ?: 0
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val userRole = backStackEntry.arguments?.getString("userRole") ?: UserRole.PLAYER.role
 
             GetCampaignInventoryScreen(
                 navController = navController,
-                campaignId = campaignId,
-                campaignName = campaignName
+                id = id,
+                name = name,
+                userRole = userRole
             )
         }
 
