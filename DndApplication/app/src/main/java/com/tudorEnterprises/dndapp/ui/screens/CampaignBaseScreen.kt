@@ -180,7 +180,7 @@ fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
                     }
                 }
                 ElevatedButton(
-                    onClick = {navController.navigate(Screen.CampaignInventory.route + "/${campaignId}")},
+                    onClick = {navController.navigate(Screen.CampaignInventory.route + "/${campaignId}/${campaign.campaignName}")},
                     modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, end = 8.dp)
                 ) {
                     Text(text = "Inventory")

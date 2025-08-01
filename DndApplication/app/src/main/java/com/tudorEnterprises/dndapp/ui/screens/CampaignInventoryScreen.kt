@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -36,6 +37,7 @@ import com.tudorEnterprises.dndapp.services.GenericRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateInventoryItemDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetInventoryButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 import kotlinx.coroutines.delay
 import java.time.Instant
@@ -43,19 +45,19 @@ import java.time.Instant
 @Composable
 fun GetCampaignInventoryScreen(
     campaignId: Int,
-    navController: NavController
+    navController: NavController,
+    campaignName: String
 ) {
-    // Placeholder for the Campaign Inventory screen content
-    // This function will be implemented later
-    // It will display the inventory of a specific campaign
 
     val context = LocalContext.current
-    val campaignSql = CampaignSqlActivity(context)
-    val characterSql = CampaignCharacterSqlActivity(context)
+    val campaignSql = CampaignSqlActivity(context) //to get campaign details if needed - name most likely
+    val characterSql = CampaignCharacterSqlActivity(context) //to get characters for the campaign
 
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var inventoryItem by remember { mutableStateOf(InventoryItem()) }
+
+        val inventoryItems = mutableListOf<InventoryItem>() //TODO replace with actual inventory items from the database
 
 
         val characters by characterSql.getPlayersForCampaign(campaignId)
@@ -82,7 +84,7 @@ fun GetCampaignInventoryScreen(
                 Text(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "Inventory + $campaignId",
+                    text = "Inventory for $campaignName",
                 )
 
                 LazyColumn(
@@ -90,13 +92,14 @@ fun GetCampaignInventoryScreen(
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-//                    items(campaigns) { campaignName ->
-//                        GetCampaignButtons(
-//                            campaignName,
-//                            { deleteCampaign(campaignName, sql, context) },
-//                            navController
-//                        )
-//                    }
+                    items(inventoryItems) { campaignName ->
+                        GetInventoryButton(
+                            inventoryItem.name,
+                            { },
+                            navController,
+                            true
+                        )
+                    }
 
                     // Use an item in LazyColumn to add spacing
                     item {
@@ -123,7 +126,7 @@ fun GetCampaignInventoryScreen(
                 onConfirm = { enteredItem ->
                     inventoryItem = enteredItem
                     showDialog = false
-//                    launchInventoryItemCreation(inventoryItem, context, sql)
+//                    launchInventoryItemCreation(inventoryItem, context, sql) //TODO: Implement this function to handle the creation of the inventory item and create inventory database
                     Log.d("CreateInventoryItemDialog", "Item created: ${inventoryItem.name}")
                 }
             )

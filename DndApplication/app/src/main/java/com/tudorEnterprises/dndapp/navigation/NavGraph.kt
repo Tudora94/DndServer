@@ -54,11 +54,22 @@ fun NavigationController() {
             val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
             GetCharacterBaseScreen(navController = navController, characterId = characterId)
         }
-        composable(route = Screen.CampaignInventory.route + "/{campaignId}",
-            arguments = listOf(navArgument("campaignId") { type = NavType.IntType })) {
-            backStackEntry ->
+        composable(
+            route = Screen.CampaignInventory.route + "/{campaignId}/{campaignName}",
+            arguments = listOf(
+                navArgument("campaignId") { type = NavType.IntType },
+                navArgument("campaignName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
             val campaignId = backStackEntry.arguments?.getInt("campaignId") ?: 0
-            GetCampaignInventoryScreen(navController = navController, campaignId = campaignId)
+            val campaignName = backStackEntry.arguments?.getString("campaignName") ?: ""
+
+            GetCampaignInventoryScreen(
+                navController = navController,
+                campaignId = campaignId,
+                campaignName = campaignName
+            )
         }
+
     }
 }
