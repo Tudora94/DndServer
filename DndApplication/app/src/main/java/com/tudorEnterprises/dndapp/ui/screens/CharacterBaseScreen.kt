@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
+import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataModels.responses.Player
 import com.tudorEnterprises.dndapp.dataStorage.CharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CharacterNameData
@@ -122,7 +124,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         }
                     }
                     ElevatedButton(
-                        onClick = { },
+                        onClick = {navController.navigate(Screen.CampaignInventory.route + "/${characterId}/${character.characterName}/${UserRole.PLAYER.role}")},
                         modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, end = 8.dp)
                     ) {
                         Text(text = "Inventory")
