@@ -12,7 +12,11 @@ class GenericRefreshService(val context: Context) {
 
         for(character in characterList) {
 
-            dbCalls.insertCharacterData(campaignId, character.charachterName, character.id)
+            //check if the character already exists in the database with same update time
+
+//            if(!dbCalls.validateCharacterExists(campaignId, character.id, character.updateTime)){
+                dbCalls.insertCharacterData(campaignId, character.charachterName, character.id, character.updateTime)
+//            }
         }
     }
 }

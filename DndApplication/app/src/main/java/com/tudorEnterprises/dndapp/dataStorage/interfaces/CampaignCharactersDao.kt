@@ -13,4 +13,7 @@ interface CampaignCharactersDao {
 
     @Query("SELECT * FROM CampaignCharactersData WHERE userId = :userId AND campaignId = :campaignId")
     fun getPlayersForCampaign(userId: String, campaignId: Int) : Flow<List<CampaignCharactersData>>
+
+    @Query("SELECT updateTime FROM CampaignCharactersData WHERE id = :id")
+    fun getCharacterUpdateTime(id: Int) : Long
 }

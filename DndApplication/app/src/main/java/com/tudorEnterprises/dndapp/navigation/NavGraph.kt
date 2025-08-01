@@ -14,6 +14,7 @@ import com.tudorEnterprises.dndapp.ui.screens.GetCampaignBaseScreen
 import com.tudorEnterprises.dndapp.ui.screens.GetCharacterBaseScreen
 import com.tudorEnterprises.dndapp.ui.screens.LoginScreen
 import com.tudorEnterprises.dndapp.ui.screens.PlayerLandingScreen
+import com.tudorEnterprises.dndapp.ui.screens.GetCampaignInventoryScreen
 
 
 @Composable
@@ -52,6 +53,12 @@ fun NavigationController() {
             backStackEntry ->
             val characterId = backStackEntry.arguments?.getInt("characterId") ?: 0
             GetCharacterBaseScreen(navController = navController, characterId = characterId)
+        }
+        composable(route = Screen.CampaignInventory.route + "/{campaignId}",
+            arguments = listOf(navArgument("campaignId") { type = NavType.IntType })) {
+            backStackEntry ->
+            val campaignId = backStackEntry.arguments?.getInt("campaignId") ?: 0
+            GetCampaignInventoryScreen(navController = navController, campaignId = campaignId)
         }
     }
 }

@@ -22,17 +22,22 @@ class CampaignCharacterSqlActivity(context: Context) {
 
     private val loggedInUser = SecureStorage.getUserId(context)
 
-    suspend fun insertCharacterData(campaignId: Int, characterName: String, characterId: Int,) {
+    suspend fun insertCharacterData(campaignId: Int, characterName: String, characterId: Int, updateTime: Long) {
         withContext(Dispatchers.IO) {
             try {
                 val primaryKey = "$campaignId$characterId".toInt()
+                if (validateCharacterExists(campaignId, characterId, updateTime)) {
+                    Log.d(this::class.java.simpleName, "character already exists with same update time")
+                    return@withContext
+                }
                 db.campaignCharactersDao.insertCampaignPlayer(
                     CampaignCharactersData(
                         id = primaryKey,
                         userId = loggedInUser,
                         campaignId = campaignId,
                         playerId = characterId,
-                        characterName = characterName
+                        characterName = characterName,
+                        updateTime = updateTime
                     )
                 )
                 Log.d(this::class.java.simpleName, "character saved successfully with id $characterId")
@@ -44,5 +49,11 @@ class CampaignCharacterSqlActivity(context: Context) {
 
     fun getPlayersForCampaign(campaignId: Int) : Flow<List<CampaignCharactersData>> {
         return db.campaignCharactersDao.getPlayersForCampaign(loggedInUser, campaignId)
+    }
+
+    private fun validateCharacterExists(campaignId: Int, characterId: Int, updateTime: Long) : Boolean {
+        val primaryKey = "$campaignId$characterId".toInt()
+        return db.campaignCharactersDao.getCharacterUpdateTime(primaryKey)==updateTime
+
     }
 }
