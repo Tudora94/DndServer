@@ -31,3 +31,14 @@ data class CampaignCharactersData (
     val characterName: String?,
     val updateTime: Long = 0
 )
+
+@Entity
+data class InventoryItemData (
+    @PrimaryKey val itemId: Int,
+    @ColumnInfo(name = "campaign_id") val campaignId: Int,
+    @ColumnInfo(name = "character_id") val characterId: Int?,
+    @ColumnInfo(name = "item_name") val itemName: String,
+    @ColumnInfo(name = "description") val description: String? = null,
+    @ColumnInfo(name = "detail") val detail: String? = null,
+    @ColumnInfo(name = "update_time") val updateTime: Long = 0
+)

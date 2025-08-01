@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
+import com.tudorEnterprises.dndapp.networking.InventoryHttp
 import com.tudorEnterprises.dndapp.objects.InventoryItem
 import com.tudorEnterprises.dndapp.services.GenericRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateInventoryItemDialog
@@ -39,7 +41,10 @@ import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.navigation.GetInventoryButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.Instant
 
 @Composable
@@ -52,17 +57,20 @@ fun GetCampaignInventoryScreen(
 
     val context = LocalContext.current
     val characterSql = CampaignCharacterSqlActivity(context) //to get characters for the campaign
+    val inventorySql = InventorySqlActivity(context) //to get inventory items for the campaign
 
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var inventoryItem by remember { mutableStateOf(InventoryItem()) }
 
-        val inventoryItems = mutableListOf<InventoryItem>() //TODO replace with actual inventory items from the database
-
-        if( userRole == UserRole.DUNGEON_MASTER.role) {
 
         val characters by characterSql.getPlayersForCampaign(id)
             .collectAsStateWithLifecycle(initialValue = emptyList())
+
+        val inventory by inventorySql.getInventoryItemsById(id, userRole)
+            .collectAsStateWithLifecycle(initialValue = emptyList())
+
+        if( userRole == UserRole.DUNGEON_MASTER.role) {
 
             LaunchedEffect(Unit) {
                 while (true) {
@@ -72,6 +80,16 @@ fun GetCampaignInventoryScreen(
                     )
                     delay(5000)
                 }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            while (true) {
+                GenericRefreshService(context).fetchAndUpdateCampaignCharacters(
+                    characterSql,
+                    id
+                )
+                delay(5000)
             }
         }
 
@@ -97,9 +115,9 @@ fun GetCampaignInventoryScreen(
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-                    items(inventoryItems) { item ->
+                    items(inventory) { item ->
                         GetInventoryButton(
-                            item.name,
+                            item.itemName,
                             { },
                             navController,
                             userRole == UserRole.DUNGEON_MASTER.role, // Enable delete button for DM
@@ -133,7 +151,7 @@ fun GetCampaignInventoryScreen(
                 onConfirm = { enteredItem ->
                     inventoryItem = enteredItem
                     showDialog = false
-//                    launchInventoryItemCreation(inventoryItem, context, sql) //TODO: Implement this function to handle the creation of the inventory item and create inventory database
+                    launchInventoryItemCreation(inventoryItem, context, inventorySql, id) //TODO: Implement this function to handle the creation of the inventory item and create inventory database
                     Log.d("CreateInventoryItemDialog", "Item created: ${inventoryItem.name}")
                 }
             )
@@ -172,12 +190,24 @@ fun CreateInventoryItemButton(onClick: () -> Unit) {
 private fun launchInventoryItemCreation(
     inventoryItem: InventoryItem,
     context: Context,
-    sql: CampaignCharacterSqlActivity
+    sql: InventorySqlActivity,
+    campaignId: Int
 ) {
 
-    val updateTime = Instant.now().epochSecond
-
-
-
     Log.d("CampaignInventory", "Launching inventory item creation for: ${inventoryItem.name}")
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val updateTime = Instant.now().epochSecond
+
+        val syncItemId = InventoryHttp(context).createNewItem(
+            campaignId,
+            inventoryItem,
+            updateTime
+        )
+
+        if( syncItemId != 0) {
+            sql.checkAndInsertInventoryItem(campaignId, inventoryItem.name, inventoryItem.description, inventoryItem.detail, syncItemId, updateTime)
+        }
+
+    }
 }

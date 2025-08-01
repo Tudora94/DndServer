@@ -2,7 +2,9 @@ package com.tudorEnterprises.dndapp.services
 
 import android.content.Context
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
+import com.tudorEnterprises.dndapp.networking.InventoryHttp
 
 class GenericRefreshService(val context: Context) {
 
@@ -12,11 +14,16 @@ class GenericRefreshService(val context: Context) {
 
         for(character in characterList) {
 
-            //check if the character already exists in the database with same update time
-
-//            if(!dbCalls.validateCharacterExists(campaignId, character.id, character.updateTime)){
                 dbCalls.insertCharacterData(campaignId, character.charachterName, character.id, character.updateTime)
 //            }
         }
+    }
+
+    suspend fun fetchAndUpdateInventoryItems(dbCalls: InventorySqlActivity, id: Int, userRole: String) {
+        val httpCalls = InventoryHttp(context)
+
+        //check if the user is a DM, if so, fetch all items for campaign else fetch only the items for the character
+
+//        val InventoryList = httpCalls.getInventoryItemsById(id, userRole)
     }
 }
