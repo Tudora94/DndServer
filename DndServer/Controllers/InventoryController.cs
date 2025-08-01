@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using DndServer.Campaign.Models;
 using DndServer.Dal;
-using DndServer.User.Services;
 using DndServer.Inventory.Models;
 using DndServer.Inventory.Services;
+using DndServer.User.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DndServer.Controllers
 {
@@ -123,11 +124,64 @@ namespace DndServer.Controllers
 
         }
 
-        //DeleteItem
-        //AddItemToPlayer
-        //GetPlayerInventory
+        [HttpDelete("DeleteInventoryItem/{userId}/{itemId}")]
+        public async Task<ActionResult<InventoryBaseResponse>> DeleteInventoryItem([System.Web.Http.FromUri] int userId, [System.Web.Http.FromUri] int itemId)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
 
-        //AddItemToCampaign - TODO
+            var response = new InventoryBaseResponse();
+            if (claimAccepted)
+            {
+                inventoryService.DeleteInventoryItem(userId, itemId, response);
+                return Ok(response);
+            }
+            else
+            {
+                response.Message = "Invalid user";
+                return BadRequest(response);
+            }
+        }
 
+        [HttpPatch("AddItemToPlayer")]
+        public async Task<ActionResult<InventoryBaseResponse>> AddItemToPlayer(AddItemToPlayerRequest request)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(request.UserId, token, authSql);
+
+            var response = new InventoryBaseResponse();
+            if (claimAccepted)
+            {
+                inventoryService.assignItemToPlayer(request, response);
+                return Ok(response);
+            }
+            else
+            {
+                response.Message = "Invalid user";
+                return BadRequest(response);
+            }
+
+        }
+
+        [HttpGet("GetPlayerItems/{userId}/{playerId}/{campaignId}")]
+        public async Task<ActionResult<GetInventoryItemsForCampaignResponse>> GetPlayerItems([System.Web.Http.FromUri] int userId,[System.Web.Http.FromUri] int playerId, [System.Web.Http.FromUri] int campaignId)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
+
+            var response = new GetInventoryItemsForCampaignResponse();
+            if (claimAccepted)
+            {
+                inventoryService.getPlayerInventoryItems(playerId, campaignId, response);
+                return Ok(response);
+            }
+            else
+            {
+                response.Message = "Invalid user";
+                return BadRequest(response);
+            }
+
+
+        }
     }
 }

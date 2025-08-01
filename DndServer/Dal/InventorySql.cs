@@ -59,14 +59,14 @@ WHERE Id = @itemId AND UserId = @userId";
                 cmd.Parameters.Add("@itemDescription", System.Data.SqlDbType.VarChar).Value = request.ItemDescription;
                 cmd.Parameters.Add("@itemDetail", System.Data.SqlDbType.VarChar).Value = request.ItemDetail;
                 cmd.Parameters.Add("@updateTime", System.Data.SqlDbType.BigInt).Value = request.UpdateTime;
-                cmd.Parameters.Add("@itemId", System.Data.SqlDbType.Int).Value=request.ItemId;
+                cmd.Parameters.Add("@itemId", System.Data.SqlDbType.Int).Value = request.ItemId;
 
                 int rowsAffected = cmd.ExecuteNonQuery();
                 connections.SQLCloseConnection(conn);
                 return rowsAffected > 0;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -87,6 +87,91 @@ WHERE UserId = @userId AND CampaignId = @campaignId";
 
                 cmd.Parameters.Add("@userId", System.Data.SqlDbType.Int).Value = userId;
                 cmd.Parameters.Add("@campaignId", System.Data.SqlDbType.Int).Value = campaignId;
+
+                DataTable dt = new DataTable();
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+                connections.SQLCloseConnection(conn);
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public bool delteIventoryItem(int userId, int itemId)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string delteInventroryItem = @"DELETE FROM DndDb.dbo.Inventory
+WHERE UserId = @userId AND Id = @itemId";
+
+                SqlCommand cmd = new SqlCommand(delteInventroryItem, conn);
+
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@itemId", SqlDbType.Int).Value = itemId;
+
+                int rowsAffected = cmd.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+                return rowsAffected > 0;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public bool addItemToPlayer(int userId, int itemId, int campaignId, int playerId, long updateTime)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string addItemToPlayer = @"UPDATE DndDb.dbo.Inventory
+SET PlayerID = @playerId, UpdateTime = @updateTime
+WHERE UserId = @userId AND CampaignId = @campaignId AND Id = @itemId";
+
+                SqlCommand cmd = new SqlCommand(addItemToPlayer, conn);
+
+                cmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+                cmd.Parameters.Add("@itemId", SqlDbType.Int).Value = itemId;
+                cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
+
+                cmd.Parameters.Add("@playerId", SqlDbType.Int).Value = playerId;
+                cmd.Parameters.Add("@updateTime", SqlDbType.BigInt).Value = updateTime;
+
+                int rowsAffected = cmd.ExecuteNonQuery();
+                connections.SQLCloseConnection(conn);
+                return rowsAffected > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public DataTable? getPlayerInventory(int playerId, int campaignId)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection();
+                connections.SqlOpenConnection(conn);
+
+                string GetInventoryItems = @"SELECT Id, CampaignId, PlayerId, ItemName, Description, Detail, UpdateTime
+FROM DndDb.dbo.Inventory
+WHERE PlayerId = @playerId AND CampaignId = @campaignId";
+
+                SqlCommand cmd = new SqlCommand(GetInventoryItems, conn);
+
+                cmd.Parameters.Add("@playerId", SqlDbType.Int).Value = playerId;
+                cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
 
                 DataTable dt = new DataTable();
 
