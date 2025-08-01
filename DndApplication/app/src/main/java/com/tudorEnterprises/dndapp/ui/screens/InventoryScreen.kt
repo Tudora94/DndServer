@@ -64,6 +64,7 @@ fun GetCampaignInventoryScreen(
         var inventoryItem by remember { mutableStateOf(InventoryItem()) }
 
 
+        //TODO this will be used when the DM wants to assign characters to the campaign
         val characters by characterSql.getPlayersForCampaign(id)
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -85,9 +86,10 @@ fun GetCampaignInventoryScreen(
 
         LaunchedEffect(Unit) {
             while (true) {
-                GenericRefreshService(context).fetchAndUpdateCampaignCharacters(
-                    characterSql,
-                    id
+                GenericRefreshService(context).fetchAndUpdateInventoryItems(
+                    inventorySql,
+                    id,
+                    userRole
                 )
                 delay(5000)
             }
@@ -151,7 +153,7 @@ fun GetCampaignInventoryScreen(
                 onConfirm = { enteredItem ->
                     inventoryItem = enteredItem
                     showDialog = false
-                    launchInventoryItemCreation(inventoryItem, context, inventorySql, id) //TODO: Implement this function to handle the creation of the inventory item and create inventory database
+                    launchInventoryItemCreation(inventoryItem, context, inventorySql, id)
                     Log.d("CreateInventoryItemDialog", "Item created: ${inventoryItem.name}")
                 }
             )

@@ -3,6 +3,7 @@ package com.tudorEnterprises.dndapp.networking
 import android.content.Context
 import android.util.Log
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateItemRequest
+import com.tudorEnterprises.dndapp.dataModels.responses.InventoryItemResponse
 import com.tudorEnterprises.dndapp.objects.InventoryItem
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpCharacterClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
@@ -25,6 +26,21 @@ class InventoryHttp(val context: Context) {
             throw Exception("Failed to create item: ${response.errorBody()?.string()}")
         }
 
+    }
+
+    suspend fun getItemsForCampaign(campaignId: Int): List<InventoryItemResponse>? {
+        val userId = SecureStorage.getUserId(context).toInt()
+
+        val response = withContext(Dispatchers.IO) {
+            InventoryService.getItemsForCampaign(campaignId, userId)
+        }
+
+        return if (response.isSuccessful) {
+            response.body()?.inventoryItems ?: emptyList()
+        } else {
+            Log.e("InventoryHttp", "Failed to fetch items for campaign: ${response.errorBody()?.string()}")
+            emptyList()
+        }
     }
 
 }

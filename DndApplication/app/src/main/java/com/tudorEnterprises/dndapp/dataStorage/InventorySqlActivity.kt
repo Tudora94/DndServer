@@ -48,7 +48,9 @@ class InventorySqlActivity(context: Context) {
     }
 
     fun getInventoryItemsById(id: Int, userRole: String) : Flow<List<InventoryItemData>> {
-        return if(userRole == UserRole.DUNGEON_MASTER.name) {
+        Log.d(this::class.java.simpleName, "user role is $userRole matching with ${UserRole.DUNGEON_MASTER.role}")
+
+        return if(userRole == UserRole.DUNGEON_MASTER.role) {
             db.inventoryDao.getAllItemsByCampaign(id)
         } else {
             db.inventoryDao.getAllItemsByCharacter(id)
