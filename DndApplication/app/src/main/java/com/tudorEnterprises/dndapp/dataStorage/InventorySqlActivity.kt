@@ -65,5 +65,10 @@ class InventorySqlActivity(context: Context) {
             id = itemId,
         ) == updateTime
     }
+
+    suspend fun deleteItemById(itemId: Int) {
+            db.inventoryDao.deleteItemById(itemId)
+    }
+
 }
 

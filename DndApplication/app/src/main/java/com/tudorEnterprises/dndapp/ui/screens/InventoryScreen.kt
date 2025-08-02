@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.InventoryItemData
 import com.tudorEnterprises.dndapp.networking.InventoryHttp
 import com.tudorEnterprises.dndapp.objects.InventoryItem
 import com.tudorEnterprises.dndapp.services.GenericRefreshService
@@ -120,7 +121,7 @@ fun GetCampaignInventoryScreen(
                     items(inventory) { item ->
                         GetInventoryButton(
                             item.itemName,
-                            { },
+                            { deleteInventoryItem(item, inventorySql, context) },
                             navController,
                             userRole == UserRole.DUNGEON_MASTER.role, // Enable delete button for DM
                         )
@@ -211,5 +212,18 @@ private fun launchInventoryItemCreation(
             sql.checkAndInsertInventoryItem(campaignId, inventoryItem.name, inventoryItem.description, inventoryItem.detail, syncItemId, updateTime)
         }
 
+    }
+}
+
+private fun deleteInventoryItem(
+    item: InventoryItemData,
+    sql: InventorySqlActivity,
+    context: Context
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        if (InventoryHttp(context).deleteItem(item.itemId)) {
+            sql.deleteItemById(item.itemId)
+            Log.d("CampaignInventory", "Deleted inventory item with ID: ${item.itemId}")
+        }
     }
 }

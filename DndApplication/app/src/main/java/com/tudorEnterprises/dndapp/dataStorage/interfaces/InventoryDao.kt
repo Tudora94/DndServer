@@ -19,4 +19,7 @@ interface InventoryDao {
 
     @Query("SELECT * FROM InventoryItemData WHERE character_id = :characterId")
     fun getAllItemsByCharacter(characterId: Int): Flow<List<InventoryItemData>>
+
+    @Query("DELETE FROM InventoryItemData WHERE itemId = :itemId")
+    suspend fun deleteItemById(itemId: Int)
 }

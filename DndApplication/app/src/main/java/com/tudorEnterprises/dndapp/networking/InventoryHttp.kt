@@ -43,4 +43,12 @@ class InventoryHttp(val context: Context) {
         }
     }
 
+    suspend fun deleteItem(itemId: Int) : Boolean {
+        Log.d("InventoryHttp", "Deleting item with ID: $itemId")
+        val response = withContext(Dispatchers.IO) {
+            InventoryService.deleteItemById(SecureStorage.getUserId(context).toInt(),itemId)
+        }
+        return response.body()?.success == true
+    }
+
 }
