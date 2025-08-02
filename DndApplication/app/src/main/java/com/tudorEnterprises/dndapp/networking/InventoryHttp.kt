@@ -43,6 +43,21 @@ class InventoryHttp(val context: Context) {
         }
     }
 
+    suspend fun getItemsForPlayer(playerId: Int, campaignId: Int): List<InventoryItemResponse>? {
+        val userId = SecureStorage.getUserId(context).toInt()
+
+        val response = withContext(Dispatchers.IO) {
+            InventoryService.getItemsForPlayer(playerId, userId, campaignId)
+        }
+
+        return if (response.isSuccessful) {
+            response.body()?.inventoryItems ?: emptyList()
+        } else {
+            Log.e("InventoryHttp", "Failed to fetch items for player: ${response.errorBody()?.string()}")
+            emptyList()
+        }
+    }
+
     suspend fun deleteItem(itemId: Int) : Boolean {
         Log.d("InventoryHttp", "Deleting item with ID: $itemId")
         val response = withContext(Dispatchers.IO) {

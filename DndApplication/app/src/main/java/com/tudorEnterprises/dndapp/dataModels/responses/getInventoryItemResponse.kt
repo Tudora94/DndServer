@@ -4,7 +4,7 @@ data class getInventoryItemResponse(val inventoryItems: List<InventoryItemRespon
 data class InventoryItemResponse(
     val id : Int,
     val campaignId: Int,
-    val playerId: Int,
+    val playerId: Int?,
     val itemName: String,
     val itemDescription: String,
     val itemDetail: String,

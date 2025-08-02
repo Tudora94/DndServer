@@ -27,4 +27,11 @@ interface InventoryService {
     suspend fun deleteItemById(
         @Path("userId") userId: Int, @Path("itemId") itemId: Int
     ): Response<BaseResponse>
+
+    @GET("/api/Inventory/GetPlayerItems/{userId}/{characterId}/{campaignId}")
+    suspend fun getItemsForPlayer(
+        @Path("characterId") characterId: Int,
+        @Path("userId") userId: Int,
+        @Path("campaignId") campaignId: Int
+    ): Response<getInventoryItemResponse>
 }

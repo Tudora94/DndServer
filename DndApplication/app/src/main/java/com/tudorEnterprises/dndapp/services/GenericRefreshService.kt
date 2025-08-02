@@ -1,11 +1,14 @@
 package com.tudorEnterprises.dndapp.services
 
 import android.content.Context
+import android.util.Log
 import com.tudorEnterprises.dndapp.constants.UserRole
+import com.tudorEnterprises.dndapp.dataModels.responses.InventoryItemResponse
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
 import com.tudorEnterprises.dndapp.networking.CampaignHttp
 import com.tudorEnterprises.dndapp.networking.InventoryHttp
+import kotlinx.coroutines.flow.first
 
 class GenericRefreshService(val context: Context) {
 
@@ -20,20 +23,48 @@ class GenericRefreshService(val context: Context) {
         }
     }
 
-    suspend fun fetchAndUpdateInventoryItems(dbCalls: InventorySqlActivity, id: Int, userRole: String) {
+    suspend fun fetchAndUpdateInventoryItems(dbCalls: InventorySqlActivity, campaignId: Int, userRole: String, playerId : Int? = null) {
         val httpCalls = InventoryHttp(context)
 
         //check if the user is a DM, if so, fetch all items for campaign else fetch only the items for the character
         if(userRole == UserRole.DUNGEON_MASTER.role) {
-            val itemList = httpCalls.getItemsForCampaign(id)
+            val itemList = httpCalls.getItemsForCampaign(campaignId)
 
-            if (itemList != null) {
+            if (itemList != null) { // retrieved list from server is not null, compare to local and delete if needed then add/ update remaining items
+
+                checkAndDeleteItems(itemList, dbCalls, campaignId, userRole)
+
                 for(item in itemList) {
-                    dbCalls.checkAndInsertInventoryItem(id, item.itemName, item.itemDescription, item.itemDetail, item.id, item.updateTime, item.playerId)
+                    dbCalls.checkAndInsertInventoryItem(campaignId, item.itemName, item.itemDescription, item.itemDetail, item.id, item.updateTime, item.playerId)
                 }
             }
         }
+//        else if (userRole == UserRole.PLAYER.role) {
+//            val itemList = httpCalls.getItemsForPlayer(campaignId, )
+//
+//            if (itemList != null) { // retrieved list from server is not null, compare to local and delete if needed then add/ update remaining items
+//
+//                checkAndDeleteItems(itemList, dbCalls, id, userRole)
+//
+//                for(item in itemList) {
+//                    dbCalls.checkAndInsertInventoryItem(item, item.itemName, item.itemDescription, item.itemDetail, item.id, item.updateTime, item.playerId)
+//                }
+//            }
+//        }
+    }
 
-//        val InventoryList = httpCalls.getInventoryItemsById(id, userRole)
+    private suspend fun checkAndDeleteItems(itemList: List<InventoryItemResponse>, dbCalls: InventorySqlActivity, id: Int, userRole: String) {
+        val localItems = dbCalls.getInventoryItemsById(id, userRole)
+        val serverIds = itemList.map { it.id }.toSet()
+
+        val itemsToDelete = localItems.first().filter { it.itemId !in serverIds }
+        if(itemsToDelete.isNotEmpty()) {
+            for(item in itemsToDelete) {
+                Log.d("item Deletion", "deleting item ${item.itemId}")
+
+                dbCalls.deleteItemById(item.itemId)
+            }
+        }
+
     }
 }
