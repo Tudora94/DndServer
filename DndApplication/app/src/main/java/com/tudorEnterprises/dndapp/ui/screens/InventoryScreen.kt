@@ -69,6 +69,9 @@ fun GetCampaignInventoryScreen(
         val characters by characterSql.getPlayersForCampaign(id)
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
+        // Get the inventory items for the campaign or player - this needs to be able to handle campaignId and playerId when playerId is null
+        // when userRole is DUNGEON_MASTER, we assume ID is the campaign ID, otherwise it is the player ID, and we need to pass in the campaignId separately
+
         val inventory by inventorySql.getInventoryItemsById(id, userRole)
             .collectAsStateWithLifecycle(initialValue = emptyList())
 

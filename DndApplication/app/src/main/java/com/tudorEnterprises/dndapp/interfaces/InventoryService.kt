@@ -30,7 +30,7 @@ interface InventoryService {
 
     @GET("/api/Inventory/GetPlayerItems/{userId}/{characterId}/{campaignId}")
     suspend fun getItemsForPlayer(
-        @Path("characterId") characterId: Int,
+        @Path("characterId") characterId: Int?,
         @Path("userId") userId: Int,
         @Path("campaignId") campaignId: Int
     ): Response<getInventoryItemResponse>

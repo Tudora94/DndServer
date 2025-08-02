@@ -39,22 +39,22 @@ class GenericRefreshService(val context: Context) {
                 }
             }
         }
-//        else if (userRole == UserRole.PLAYER.role) {
-//            val itemList = httpCalls.getItemsForPlayer(campaignId, )
-//
-//            if (itemList != null) { // retrieved list from server is not null, compare to local and delete if needed then add/ update remaining items
-//
-//                checkAndDeleteItems(itemList, dbCalls, id, userRole)
-//
-//                for(item in itemList) {
-//                    dbCalls.checkAndInsertInventoryItem(item, item.itemName, item.itemDescription, item.itemDetail, item.id, item.updateTime, item.playerId)
-//                }
-//            }
-//        }
+        else if (userRole == UserRole.PLAYER.role) {
+            val itemList = httpCalls.getItemsForPlayer(playerId, campaignId)
+
+            if (itemList != null) { // retrieved list from server is not null, compare to local and delete if needed then add/ update remaining items
+
+                checkAndDeleteItems(itemList, dbCalls, campaignId, userRole, playerId)
+
+                for(item in itemList) {
+                    dbCalls.checkAndInsertInventoryItem(item.campaignId, item.itemName, item.itemDescription, item.itemDetail, item.id, item.updateTime, item.playerId)
+                }
+            }
+        }
     }
 
-    private suspend fun checkAndDeleteItems(itemList: List<InventoryItemResponse>, dbCalls: InventorySqlActivity, id: Int, userRole: String) {
-        val localItems = dbCalls.getInventoryItemsById(id, userRole)
+    private suspend fun checkAndDeleteItems(itemList: List<InventoryItemResponse>, dbCalls: InventorySqlActivity, id: Int, userRole: String, playerId: Int? = null) {
+        val localItems = dbCalls.getInventoryItemsById(id, userRole, playerId)
         val serverIds = itemList.map { it.id }.toSet()
 
         val itemsToDelete = localItems.first().filter { it.itemId !in serverIds }

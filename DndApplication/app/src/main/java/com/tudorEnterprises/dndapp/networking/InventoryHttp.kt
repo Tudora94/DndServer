@@ -43,7 +43,7 @@ class InventoryHttp(val context: Context) {
         }
     }
 
-    suspend fun getItemsForPlayer(playerId: Int, campaignId: Int): List<InventoryItemResponse>? {
+    suspend fun getItemsForPlayer(playerId: Int?, campaignId: Int): List<InventoryItemResponse>? {
         val userId = SecureStorage.getUserId(context).toInt()
 
         val response = withContext(Dispatchers.IO) {
