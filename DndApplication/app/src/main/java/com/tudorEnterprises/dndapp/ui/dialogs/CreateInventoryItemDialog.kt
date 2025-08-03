@@ -54,7 +54,7 @@ fun CreateInventoryItemDialog(
                         OutlinedTextField(
                             value = inventoryItem.name,
                             onValueChange = {
-                                if (it.length <= 255) {
+                                if (it.length <= 38) {
                                     inventoryItem = inventoryItem.copy(name = it)
                                 }
                             },
