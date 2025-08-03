@@ -80,14 +80,15 @@ fun NavigationController() {
                 playerCampaignId = playerCampaignId
             )
         }
-        composable(route = Screen.InventoryItem.route + "/{itemId}/{inventoryName}/{inventoryDescription}/{inventoryDetail}/{userRole}?campaignId={campaignId}",
+        composable(route = Screen.InventoryItem.route + "/{itemId}/{inventoryName}/{inventoryDescription}/{inventoryDetail}/{userRole}?campaignId={campaignId}&characterId={characterId}",
             arguments = listOf(
                 navArgument("itemId") { type = NavType.IntType },
                 navArgument("inventoryName") { type = NavType.StringType },
                 navArgument("inventoryDescription") { type = NavType.StringType },
                 navArgument("inventoryDetail") { type = NavType.StringType },
                 navArgument("userRole") { type = NavType.StringType },
-                navArgument("campaignId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for campaign ID
+                navArgument("campaignId") { type = NavType.StringType; nullable = true; defaultValue = null }, // Optional argument for campaign ID
+                navArgument("characterId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for character ID
             )
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
@@ -98,6 +99,8 @@ fun NavigationController() {
 
             val campaignIdString = backStackEntry.arguments?.getString("campaignId")
             val campaignId = campaignIdString?.toIntOrNull()
+            val characterIdString = backStackEntry.arguments?.getString("characterId")
+            val characterId = characterIdString?.toIntOrNull()
 
             GetInventoryItemScreen(
                 navController = navController,
@@ -106,7 +109,8 @@ fun NavigationController() {
                 inventoryItemDescription = inventoryDescription,
                 inventoryItemDetail = inventoryDetail,
                 userRole = userRole,
-                campaignId = campaignId
+                campaignId = campaignId,
+                characterId = characterId
             )
         }
 

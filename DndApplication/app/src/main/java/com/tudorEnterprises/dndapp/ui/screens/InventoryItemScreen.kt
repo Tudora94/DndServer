@@ -52,8 +52,8 @@ fun GetInventoryItemScreen(
     inventoryItemDescription: String,
     inventoryItemDetail: String,
     userRole: String,
-    navController: NavController
-    //add characterId: Int? = null //this is used when the item is assigned to a character, otherwise it will be null
+    navController: NavController,
+    characterId: Int? = null //this is used when the item is assigned to a character, otherwise it will be null
 ) {
     //THIS PAGE IS NOT REAL TIME SO NO LAUNCHED EFFECTS ARE NEEDED
     val context = LocalContext.current
@@ -136,7 +136,7 @@ fun GetInventoryItemScreen(
                             modifier = Modifier.weight(6f)
                         ) {
                             TextField(
-                                value = selectedOption, //TODO set this to the current assigned character name and only to None if not assigned, this will need to pass the playerId of the item.
+                                value = getCurrentCharacterName(characterId, charactersWithDefault) ?: "None",
                                 onValueChange = {},
                                 readOnly = true,
                                 label = { Text("Select player") },
@@ -281,4 +281,15 @@ private fun onItemSelected(
             )
         }
     }
+}
+
+private fun getCurrentCharacterName(
+    characterId: Int?,
+    chracters: List<CampaignCharactersData>
+) : String? {
+    if( characterId == null)
+    {
+        return null
+    }
+    return chracters.find { it.playerId == characterId }?.characterName ?: "None"
 }

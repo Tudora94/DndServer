@@ -31,7 +31,8 @@ fun GetInventoryButton(
     ) {
         ElevatedButton(
             onClick = {navController.navigate(Screen.InventoryItem.route + "/${inventoryItem.itemId}/${inventoryItem.itemName}/${inventoryItem.description}/${inventoryItem.detail}/$userRole" +
-                    "?campaignId=${inventoryItem.campaignId}") },
+                    "?campaignId=${inventoryItem.campaignId}" +
+                    "&characterId=${inventoryItem.characterId}") },
             modifier = Modifier.weight(4f)
         ) {
             Text(inventoryItem.itemName)
