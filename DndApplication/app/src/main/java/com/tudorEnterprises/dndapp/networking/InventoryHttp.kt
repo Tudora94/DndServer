@@ -85,7 +85,7 @@ class InventoryHttp(val context: Context) {
 
     suspend fun assignItemToPlayer(
         itemId: Int,
-        playerId: Int,
+        playerId: Int?,
         campaignId: Int,
         updateTime: Long
     ): Boolean {

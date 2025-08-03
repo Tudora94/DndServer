@@ -24,5 +24,5 @@ interface InventoryDao {
     suspend fun deleteItemById(itemId: Int)
 
     @Query("UPDATE InventoryItemData SET character_id = :playerId, update_time = :updateTime WHERE itemId = :itemId AND campaign_id = :campaignId")
-    suspend fun assignItemToPlayer(itemId: Int, playerId: Int, campaignId: Int, updateTime: Long)
+    suspend fun assignItemToPlayer(itemId: Int, playerId: Int?, campaignId: Int, updateTime: Long)
 }

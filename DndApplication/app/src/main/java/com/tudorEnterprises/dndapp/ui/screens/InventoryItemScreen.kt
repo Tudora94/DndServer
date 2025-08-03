@@ -106,7 +106,7 @@ fun GetInventoryItemScreen(
 
                     val charactersWithDefault = listOf(
                         CampaignCharactersData(
-                            playerId = 0,
+                            playerId = null,
                             characterName = "None",
                             id = -1,
                             userId = "System",
@@ -157,7 +157,7 @@ fun GetInventoryItemScreen(
                                             selectedOption = option.characterName ?: "None"
                                             expanded = false
                                             onItemSelected(
-                                                option.playerId ?: 0,
+                                                option.playerId,
                                                 inventoryItemId,
                                                 campaignId ?: 0,
                                                 context,
@@ -248,7 +248,7 @@ fun GetInventoryItemScreen(
 }
 
 private fun onItemSelected(
-    playerId: Int,
+    playerId: Int?,
     itemId: Int,
     campaignId: Int,
     context: Context,
@@ -264,21 +264,26 @@ private fun onItemSelected(
     CoroutineScope(Dispatchers.IO).launch {
         val updateTime = Instant.now().epochSecond
 
-        val success = InventoryHttp(context).assignItemToPlayer(
-            itemId = itemId,
-            playerId = playerId,
-            campaignId = campaignId,
-            updateTime = updateTime
-        )
+        try {
+            val success = InventoryHttp(context).assignItemToPlayer(
+                itemId = itemId,
+                playerId = playerId,
+                campaignId = campaignId,
+                updateTime = updateTime
+            )
+
 
         if (success) {
             //update playerId in sql
             sql.assignItemToPlayer(
                 itemId = itemId,
-                campaignId = playerId,
-                characterId = campaignId,
+                campaignId = campaignId,
+                characterId = playerId,
                 updateTime = updateTime
             )
+        }
+        } catch (exception: Exception) {
+            Log.e("InventoryItemScreen", "Error assigning item to player: ${exception.message}")
         }
     }
 }
