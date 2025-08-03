@@ -56,24 +56,28 @@ fun NavigationController() {
             GetCharacterBaseScreen(navController = navController, characterId = characterId)
         }
         composable(
-            route = Screen.CampaignInventory.route + "/{id}/{name}/{userRole}",
+            route = Screen.CampaignInventory.route + "/{id}/{name}/{userRole}?playerCampaignId={playerCampaignId}",
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
-                navArgument("userRole") { type = NavType.StringType } // Assuming userRole is passed as a string
+                navArgument("userRole") { type = NavType.StringType }, // Assuming userRole is passed as a string
+                navArgument("playerCampaignId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for player campaigns
             )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("id") ?: 0
             val name = backStackEntry.arguments?.getString("name") ?: ""
             val userRole = backStackEntry.arguments?.getString("userRole") ?: UserRole.PLAYER.role
 
+            val playerCampaignIdString = backStackEntry.arguments?.getString("playerCampaignId")
+            val playerCampaignId = playerCampaignIdString?.toIntOrNull()
+
             GetCampaignInventoryScreen(
                 navController = navController,
                 id = id,
                 name = name,
-                userRole = userRole
+                userRole = userRole,
+                playerCampaignId = playerCampaignId
             )
         }
-
     }
 }

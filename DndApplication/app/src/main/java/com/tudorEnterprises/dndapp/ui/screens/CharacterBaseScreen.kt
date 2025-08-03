@@ -1,6 +1,7 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -124,7 +125,9 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                         }
                     }
                     ElevatedButton(
-                        onClick = {navController.navigate(Screen.CampaignInventory.route + "/${characterId}/${character.characterName}/${UserRole.PLAYER.role}")},
+                        onClick = {
+                            Log.d("CharacterBaseScreen", "Navigating to Campaign Inventory for characterId: ${character.campaignId}")
+                            navController.navigate(Screen.CampaignInventory.route + "/${characterId}/${character.characterName}/${UserRole.PLAYER.role}?playerCampaignId=${character.campaignId}")},
                         modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, end = 8.dp)
                     ) {
                         Text(text = "Inventory")

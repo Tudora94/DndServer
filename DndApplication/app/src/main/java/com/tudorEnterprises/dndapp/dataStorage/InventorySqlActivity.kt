@@ -47,14 +47,14 @@ class InventorySqlActivity(context: Context) {
         }
     }
 
-    fun getInventoryItemsById(id: Int, userRole: String, playerId: Int? = null) : Flow<List<InventoryItemData>> {
+    fun getInventoryItemsById(id: Int, userRole: String, playerCampaignId: Int? = null) : Flow<List<InventoryItemData>> {
         //TODO this is used by the DM and Player screen, currently only passes one ID either campaign or player
         Log.d(this::class.java.simpleName, "user role is $userRole matching with ${UserRole.DUNGEON_MASTER.role}")
 
         return if(userRole == UserRole.DUNGEON_MASTER.role) {
             db.inventoryDao.getAllItemsByCampaign(id)
         } else {
-            db.inventoryDao.getAllItemsByCharacter(playerId, id)
+            db.inventoryDao.getAllItemsByCharacter(id, playerCampaignId)
         }
     }
 

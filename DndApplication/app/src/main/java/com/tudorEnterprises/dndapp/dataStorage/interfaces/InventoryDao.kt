@@ -18,7 +18,7 @@ interface InventoryDao {
     fun getAllItemsByCampaign(campaignId: Int): Flow<List<InventoryItemData>>
 
     @Query("SELECT * FROM InventoryItemData WHERE character_id = :characterId AND campaign_id = :campaignId")
-    fun getAllItemsByCharacter(characterId: Int?, campaignId: Int): Flow<List<InventoryItemData>>
+    fun getAllItemsByCharacter(characterId: Int, campaignId: Int?): Flow<List<InventoryItemData>>
 
     @Query("DELETE FROM InventoryItemData WHERE itemId = :itemId")
     suspend fun deleteItemById(itemId: Int)

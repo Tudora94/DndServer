@@ -53,7 +53,8 @@ fun GetCampaignInventoryScreen(
     id: Int,
     navController: NavController,
     name: String,
-    userRole: String
+    userRole: String,
+    playerCampaignId: Int? = null // This is used when the user is a player, to get their specific campaign inventory
 ) {
 
     val context = LocalContext.current
@@ -64,15 +65,12 @@ fun GetCampaignInventoryScreen(
         var showDialog by remember { mutableStateOf(false) }
         var inventoryItem by remember { mutableStateOf(InventoryItem()) }
 
-
-        //TODO this will be used when the DM wants to assign characters to the campaign
-        val characters by characterSql.getPlayersForCampaign(id)
-            .collectAsStateWithLifecycle(initialValue = emptyList())
-
         // Get the inventory items for the campaign or player - this needs to be able to handle campaignId and playerId when playerId is null
         // when userRole is DUNGEON_MASTER, we assume ID is the campaign ID, otherwise it is the player ID, and we need to pass in the campaignId separately
 
-        val inventory by inventorySql.getInventoryItemsById(id, userRole)
+        //pass in playerCampaignId if present, otherwise it will be null
+
+        val inventory by inventorySql.getInventoryItemsById(id, userRole, playerCampaignId)
             .collectAsStateWithLifecycle(initialValue = emptyList())
 
         if( userRole == UserRole.DUNGEON_MASTER.role) {
@@ -88,12 +86,15 @@ fun GetCampaignInventoryScreen(
             }
         }
 
+        //pass in playerCampaignId if present, otherwise it will be null
+
         LaunchedEffect(Unit) {
             while (true) {
                 GenericRefreshService(context).fetchAndUpdateInventoryItems(
                     inventorySql,
                     id,
-                    userRole
+                    userRole,
+                    playerCampaignId
                 )
                 delay(5000)
             }
@@ -113,7 +114,7 @@ fun GetCampaignInventoryScreen(
                 Text(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "Inventory for $name",
+                    text = "Inventory for $name + $playerCampaignId",
                 )
 
                 LazyColumn(
