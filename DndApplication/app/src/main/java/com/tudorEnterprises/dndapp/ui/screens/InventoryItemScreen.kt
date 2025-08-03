@@ -1,5 +1,6 @@
 package com.tudorEnterprises.dndapp.ui.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,10 +32,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignCharactersData
+import com.tudorEnterprises.dndapp.networking.InventoryHttp
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,10 +53,12 @@ fun GetInventoryItemScreen(
     inventoryItemDetail: String,
     userRole: String,
     navController: NavController
+    //add characterId: Int? = null //this is used when the item is assigned to a character, otherwise it will be null
 ) {
     //THIS PAGE IS NOT REAL TIME SO NO LAUNCHED EFFECTS ARE NEEDED
     val context = LocalContext.current
     val characterSql = CampaignCharacterSqlActivity(context)
+    val inventorySql = InventorySqlActivity(context) //to get inventory items for the campaign
 
     DndApplicationTheme {
 
@@ -59,10 +68,12 @@ fun GetInventoryItemScreen(
         Scaffold(
             topBar = { GetAppBarTopLoggedIn(navController) },
             bottomBar = { GetBottomAppBar("Test") }
-        ) {
-                innerPadding ->
+        ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding).fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 //                Column(
@@ -76,7 +87,9 @@ fun GetInventoryItemScreen(
 //                    )
 //                }
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
                 ) {
                     Text(
                         text = "Inventory Item",
@@ -84,7 +97,7 @@ fun GetInventoryItemScreen(
                         modifier = Modifier.padding(top = 16.dp)
                     )
                 }
-                if(userRole == UserRole.DUNGEON_MASTER.role) //will only display if the user is a DM
+                if (userRole == UserRole.DUNGEON_MASTER.role) //will only display if the user is a DM
                 {
                     // Fetch the list of characters for the campaign
                     val characters by characterSql.getPlayersForCampaign(campaignId ?: 0)
@@ -123,7 +136,7 @@ fun GetInventoryItemScreen(
                             modifier = Modifier.weight(6f)
                         ) {
                             TextField(
-                                value = selectedOption,
+                                value = selectedOption, //TODO set this to the current assigned character name and only to None if not assigned, this will need to pass the playerId of the item.
                                 onValueChange = {},
                                 readOnly = true,
                                 label = { Text("Select player") },
@@ -141,9 +154,15 @@ fun GetInventoryItemScreen(
                                     DropdownMenuItem(
                                         text = { Text(option.characterName ?: "None") },
                                         onClick = {
-                                            selectedOption = option.characterName?:"None"
+                                            selectedOption = option.characterName ?: "None"
                                             expanded = false
-                                            onItemSelected(option.playerId, inventoryItemId)
+                                            onItemSelected(
+                                                option.playerId ?: 0,
+                                                inventoryItemId,
+                                                campaignId ?: 0,
+                                                context,
+                                                inventorySql
+                                            )
                                         }
                                     )
                                 }
@@ -156,10 +175,12 @@ fun GetInventoryItemScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                ){
+                ) {
                     item {
                         Column(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
@@ -178,7 +199,9 @@ fun GetInventoryItemScreen(
                     }
                     item {
                         Column(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
@@ -197,7 +220,9 @@ fun GetInventoryItemScreen(
                     }
                     item {
                         Column(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
@@ -222,8 +247,38 @@ fun GetInventoryItemScreen(
     }
 }
 
-private fun onItemSelected(characterId: Int?, itemId: Int) {
+private fun onItemSelected(
+    playerId: Int,
+    itemId: Int,
+    campaignId: Int,
+    context: Context,
+    sql: InventorySqlActivity
+) {
     // Handle the selection of the item
     // This function can be used to update the state or perform an action based on the selected item
-    Log.d("InventoryItemScreen", "Selected character ID: $characterId for item ID: $itemId")
+    Log.d(
+        "InventoryItemScreen",
+        "Selected character ID: $playerId for item ID: $itemId, campaign ID: $campaignId"
+    )
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val updateTime = Instant.now().epochSecond
+
+        val success = InventoryHttp(context).assignItemToPlayer(
+            itemId = itemId,
+            playerId = playerId,
+            campaignId = campaignId,
+            updateTime = updateTime
+        )
+
+        if (success) {
+            //update playerId in sql
+            sql.assignItemToPlayer(
+                itemId = itemId,
+                campaignId = playerId,
+                characterId = campaignId,
+                updateTime = updateTime
+            )
+        }
+    }
 }

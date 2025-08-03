@@ -1,5 +1,6 @@
 package com.tudorEnterprises.dndapp.interfaces
 
+import com.tudorEnterprises.dndapp.dataModels.requests.AddItemToPlayerRequest
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateItemRequest
 import com.tudorEnterprises.dndapp.dataModels.responses.BaseResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.CreateItemResponse
@@ -8,6 +9,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -34,4 +36,9 @@ interface InventoryService {
         @Path("userId") userId: Int,
         @Path("campaignId") campaignId: Int
     ): Response<getInventoryItemResponse>
+
+    @PATCH("/api/Inventory/AddItemToPlayer")
+    suspend fun addItemToPlayer(
+        @Body request: AddItemToPlayerRequest
+    ): Response<BaseResponse>
 }

@@ -71,5 +71,15 @@ class InventorySqlActivity(context: Context) {
             db.inventoryDao.deleteItemById(itemId)
     }
 
+    suspend fun assignItemToPlayer(itemId: Int, characterId: Int, campaignId: Int, updateTime: Long)
+    {
+        db.inventoryDao.assignItemToPlayer(
+            itemId = itemId,
+            playerId = characterId,
+            campaignId = campaignId,
+            updateTime = updateTime
+        )
+    }
+
 }
 
