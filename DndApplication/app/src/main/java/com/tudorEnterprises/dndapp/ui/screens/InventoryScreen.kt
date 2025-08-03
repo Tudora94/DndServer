@@ -124,10 +124,10 @@ fun GetCampaignInventoryScreen(
                 ) {
                     items(inventory) { item ->
                         GetInventoryButton(
-                            item.itemName,
+                            item,
                             { deleteInventoryItem(item, inventorySql, context) },
                             navController,
-                            userRole == UserRole.DUNGEON_MASTER.role, // Enable delete button for DM
+                            userRole, // Enable delete button for DM
                         )
                     }
 

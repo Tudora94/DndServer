@@ -14,26 +14,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
+import com.tudorEnterprises.dndapp.constants.UserRole
+import com.tudorEnterprises.dndapp.dataStorage.tables.InventoryItemData
 
 @Composable
 fun GetInventoryButton(
-    inventoryItemName: String,
+    inventoryItem: InventoryItemData,
     onDelete: () -> Unit,
     navController: NavController,
-    isDM: Boolean,
+    userRole: String,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ElevatedButton(
-            onClick = { }, //TODO: Implement navigation to inventory details
+            onClick = {navController.navigate(Screen.InventoryItem.route + "/${inventoryItem.itemId}/${inventoryItem.itemName}/${inventoryItem.description}/${inventoryItem.detail}/$userRole" +
+                    "?campaignId=${inventoryItem.campaignId}") },
             modifier = Modifier.weight(4f)
         ) {
-            Text(inventoryItemName)
+            Text(inventoryItem.itemName)
         }
 
-        if( isDM) {
+        if( userRole == UserRole.DUNGEON_MASTER.role) {
             ElevatedButton(
                 onClick = { onDelete() },
                 modifier = Modifier.weight(1f)
@@ -49,7 +53,7 @@ fun GetInventoryButton(
 private fun GetInventoryButtonPreviewTrue() {
     val navController = rememberNavController()
     val itemName = "Potion of Healing"
-    GetInventoryButton(itemName, { }, navController, isDM = true)
+    GetInventoryButton(InventoryItemData(0, 0, null, itemName), { }, navController, userRole = UserRole.DUNGEON_MASTER.role)
 }
 
 @Preview
@@ -57,5 +61,5 @@ private fun GetInventoryButtonPreviewTrue() {
 private fun GetInventoryButtonPreviewFalse() {
     val navController = rememberNavController()
     val itemName = "Potion of Healing"
-    GetInventoryButton(itemName, { }, navController, isDM = false)
+    GetInventoryButton(InventoryItemData(0, 0, null, itemName), { }, navController, userRole = UserRole.PLAYER.role)
 }

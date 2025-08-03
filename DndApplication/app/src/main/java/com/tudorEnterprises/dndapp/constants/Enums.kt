@@ -9,6 +9,7 @@ enum class Screen(val route: String) {
     Campaign("Dm_Campaign"),
     Character("Player_Character"),
     CampaignInventory("Campaign_Inventory"),
+    InventoryItem("Inventory_Item"),
 }
 
 enum class Buttons(val buttonText: String, val buttonRoute: Screen) {

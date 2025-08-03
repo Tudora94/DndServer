@@ -16,6 +16,7 @@ import com.tudorEnterprises.dndapp.ui.screens.GetCharacterBaseScreen
 import com.tudorEnterprises.dndapp.ui.screens.LoginScreen
 import com.tudorEnterprises.dndapp.ui.screens.PlayerLandingScreen
 import com.tudorEnterprises.dndapp.ui.screens.GetCampaignInventoryScreen
+import com.tudorEnterprises.dndapp.ui.screens.GetInventoryItemScreen
 
 
 @Composable
@@ -60,7 +61,7 @@ fun NavigationController() {
             arguments = listOf(
                 navArgument("id") { type = NavType.IntType },
                 navArgument("name") { type = NavType.StringType },
-                navArgument("userRole") { type = NavType.StringType }, // Assuming userRole is passed as a string
+                navArgument("userRole") { type = NavType.StringType },
                 navArgument("playerCampaignId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for player campaigns
             )
         ) { backStackEntry ->
@@ -79,5 +80,35 @@ fun NavigationController() {
                 playerCampaignId = playerCampaignId
             )
         }
+        composable(route = Screen.InventoryItem.route + "/{itemId}/{inventoryName}/{inventoryDescription}/{inventoryDetail}/{userRole}?campaignId={campaignId}",
+            arguments = listOf(
+                navArgument("itemId") { type = NavType.IntType },
+                navArgument("inventoryName") { type = NavType.StringType },
+                navArgument("inventoryDescription") { type = NavType.StringType },
+                navArgument("inventoryDetail") { type = NavType.StringType },
+                navArgument("userRole") { type = NavType.StringType },
+                navArgument("campaignId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for campaign ID
+            )
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
+            val inventoryName = backStackEntry.arguments?.getString("inventoryName") ?: ""
+            val inventoryDescription = backStackEntry.arguments?.getString("inventoryDescription") ?: ""
+            val inventoryDetail = backStackEntry.arguments?.getString("inventoryDetail") ?: ""
+            val userRole = backStackEntry.arguments?.getString("userRole") ?: UserRole.PLAYER.role
+
+            val campaignIdString = backStackEntry.arguments?.getString("campaignId")
+            val campaignId = campaignIdString?.toIntOrNull()
+
+            GetInventoryItemScreen(
+                navController = navController,
+                inventoryItemId = itemId,
+                inventoryName = inventoryName,
+                inventoryItemDescription = inventoryDescription,
+                inventoryItemDetail = inventoryDetail,
+                userRole = userRole,
+                campaignId = campaignId
+            )
+        }
+
     }
 }
