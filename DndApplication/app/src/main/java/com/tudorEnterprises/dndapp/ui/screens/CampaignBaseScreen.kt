@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.constants.Screen
+import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignNameData
@@ -179,7 +181,7 @@ fun GetCampaignBaseScreen(navController: NavController, campaignId: Int) {
                     }
                 }
                 ElevatedButton(
-                    onClick = { },
+                    onClick = {navController.navigate(Screen.CampaignInventory.route + "/${campaignId}/${campaign.campaignName}/${UserRole.DUNGEON_MASTER.role}")},
                     modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 16.dp, end = 8.dp)
                 ) {
                     Text(text = "Inventory")

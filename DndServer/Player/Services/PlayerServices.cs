@@ -48,12 +48,13 @@ namespace DndServer.Player.Services
                     {
                         Id = Convert.ToInt32(dataRow["ID"]),
                         Name = dataRow["CharacterName"].ToString() ?? "",
-                        UpdateTime = Convert.ToInt64(dataRow["UpdateTime"])
+                        UpdateTime = Convert.ToInt64(dataRow["UpdateTime"]),
                     };
 
                     if (dataRow["CampaignId"] is int campaignId)
                     {
                         player.CampaignId = campaignId;
+                        player.CampaignName = dataRow["CampaignName"].ToString() ?? "";
                     }
 
                     response.Players.Add(player);

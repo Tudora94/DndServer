@@ -116,7 +116,7 @@ namespace DndServer.Dal
             {
                 connections.SqlOpenConnection(conn);
 
-                string sqlString = @"SELECT ID, UserId, CampaignId, CharacterName, UpdateTime FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId";
+                string sqlString = @"SELECT PCN.ID, PCN.UserId, CampaignId, CharacterName, PCN.UpdateTime, CampaignName FROM DndDb.dbo.PlayerCharacterName AS PCN JOIN DndDb.dbo.CampaignName AS CN ON PCN.CampaignId = CN.Id WHERE PCN.UserId = @userId";
                 SqlCommand command = new SqlCommand(sqlString, conn);
 
                 command.Parameters.Add("userId", SqlDbType.Int).Value=UserId;
@@ -128,8 +128,9 @@ namespace DndServer.Dal
                 connections.SQLCloseConnection(conn);
                 return dt;
             }
-            catch 
+            catch (Exception ex)
             {
+                string msg = ex.Message;
                 return false;
             }
         }

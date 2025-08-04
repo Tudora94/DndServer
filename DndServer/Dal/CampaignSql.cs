@@ -170,7 +170,7 @@ namespace DndServer.Dal
             SqlConnection conn = new SqlConnection();
             connections.SqlOpenConnection(conn);
 
-            string sql = @"SELECT P.Id, username, firstName, CharacterName FROM DndDb.dbo.PlayerCharacterName AS P JOIN DndDb.dbo.Users AS U ON P.UserId = U.Id JOIN DndDb.dbo.UserDetails AS UD ON P.UserId = UD.userId WHERE CampaignId = @campaignId";
+            string sql = @"SELECT P.Id, username, firstName, CharacterName, UpdateTime FROM DndDb.dbo.PlayerCharacterName AS P JOIN DndDb.dbo.Users AS U ON P.UserId = U.Id JOIN DndDb.dbo.UserDetails AS UD ON P.UserId = UD.userId WHERE CampaignId = @campaignId";
             SqlCommand cmd = new SqlCommand(sql, conn);
 
             cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
@@ -187,6 +187,7 @@ namespace DndServer.Dal
                 model.Username = Convert.ToString(dr[1]);
                 model.FirstName = Convert.ToString(dr[2]);
                 model.CharachterName = Convert.ToString(dr[3]);
+                model.UpdateTime = Convert.ToInt64(dr[4]);
 
                 players.Add(model);
             }
