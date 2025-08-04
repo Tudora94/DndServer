@@ -99,6 +99,18 @@
 								"type": "text/javascript",
 								"packages": {}
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var upTime = Date.now();\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
 					],
 					"request": {
@@ -116,7 +128,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"name\": \"TestUserCampaign22\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"name\": \"postmanCampaign\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -221,6 +233,13 @@
 								],
 								"type": "text/javascript",
 								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -382,9 +401,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var upTime = Date.now();\r",
 									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+									"pm.environment.set(\"updateTime\", uptimeInt);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -420,7 +439,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"PlayerName5\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
+							"raw": "{\r\n  \"name\": \"testingAgain\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -520,9 +539,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var upTime = Date.now();\r",
 									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+									"pm.environment.set(\"updateTime\", uptimeInt);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -544,7 +563,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"newTest\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}},\r\n  \"Id\": {{characterId}}\r\n}",
+							"raw": "{\r\n  \"name\": \"newTest2\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"updateTime\": {{updateTime}},\r\n  \"Id\": {{characterId}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -567,6 +586,20 @@
 				},
 				{
 					"name": "Add Player to Campaign",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var upTime = Date.now();\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -629,7 +662,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									""
+									"var upTime = Date.now();\r",
+									"var uptimeInt = parseInt(upTime)\r",
+									"pm.environment.set(\"updateTime\", uptimeInt);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -651,7 +686,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"campaignId\": {{campaignId}},\r\n  \"itemName\": \"string1\",\r\n  \"itemDescription\": \"string2\",\r\n  \"itemDetail\": \"string3\"\r\n}",
+							"raw": "{\r\n  \"userId\": {{userId}},\r\n  \"updateTime\": {{updateTime}},\r\n  \"campaignId\": {{campaignId}},\r\n  \"itemName\": \"string 1\",\r\n  \"itemDescription\": \"string 2\",\r\n  \"itemDetail\": \"String 3\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -679,9 +714,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = pm.environment.get(\"updateTime\")\r",
+									"var upTime = Date.now();\r",
 									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+									"pm.environment.set(\"updateTime\", uptimeInt);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -835,9 +870,19 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var upTime = pm.environment.get(\"updateTime\")\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var upTime = Date.now();\r",
 									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt+1);"
+									"pm.environment.set(\"updateTime\", uptimeInt);"
 								],
 								"type": "text/javascript",
 								"packages": {}
