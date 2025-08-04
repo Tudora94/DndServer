@@ -104,9 +104,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -401,9 +401,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -539,9 +539,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -591,9 +591,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -662,9 +662,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -714,9 +714,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -880,9 +880,9 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var upTime = Date.now();\r",
-									"var uptimeInt = parseInt(upTime)\r",
-									"pm.environment.set(\"updateTime\", uptimeInt);"
+									"var upTime = Date.now(); // returns milliseconds since epoch\r",
+									"var uptimeSeconds = Math.floor(upTime / 1000); // convert to seconds\r",
+									"pm.environment.set(\"updateTime\", uptimeSeconds);"
 								],
 								"type": "text/javascript",
 								"packages": {}
