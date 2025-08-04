@@ -3,6 +3,7 @@ package com.tudorEnterprises.dndapp.objects
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import androidx.core.content.edit
 
 object SecureStorage {
     private fun getPreferences(context: Context) =
@@ -17,7 +18,7 @@ object SecureStorage {
         )
 
     fun saveToken(context: Context, token: String) {
-        getPreferences(context).edit().putString("jwt_token", token).apply()
+        getPreferences(context).edit { putString("jwt_token", token) }
     }
 
     fun getToken(context: Context): String? {
@@ -25,11 +26,11 @@ object SecureStorage {
     }
 
     fun clearToken(context: Context) {
-        getPreferences(context).edit().remove("jwt_token").apply()
+        getPreferences(context).edit { remove("jwt_token") }
     }
 
     fun saveRefreshToken(context: Context, token: String) {
-        getPreferences(context).edit().putString("refresh_token", token).apply()
+        getPreferences(context).edit { putString("refresh_token", token) }
     }
 
     fun getRefreshToken(context: Context): String? {
@@ -37,11 +38,11 @@ object SecureStorage {
     }
 
     fun clearRefreshToken(context: Context) {
-        getPreferences(context).edit().remove("refresh_token").apply()
+        getPreferences(context).edit { remove("refresh_token") }
     }
 
     fun saveUserId(context: Context, userId: String) {
-        getPreferences(context).edit().putString("userId", userId).apply()
+        getPreferences(context).edit { putString("userId", userId) }
     }
 
     fun getUserId(context: Context): String {
@@ -49,7 +50,7 @@ object SecureStorage {
     }
 
     fun clearUserId(context: Context) {
-        getPreferences(context).edit().remove("userId").apply()
+        getPreferences(context).edit { remove("userId") }
     }
 
 }

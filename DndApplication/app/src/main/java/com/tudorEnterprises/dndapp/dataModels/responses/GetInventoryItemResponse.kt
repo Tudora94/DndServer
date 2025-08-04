@@ -1,6 +1,8 @@
 package com.tudorEnterprises.dndapp.dataModels.responses
 
-data class getInventoryItemResponse(val inventoryItems: List<InventoryItemResponse>, val message : String, val success: Boolean)
+@Suppress("unused")
+data class GetInventoryItemResponse(val inventoryItems: List<InventoryItemResponse>, val message : String, val success: Boolean)
+@Suppress("unused")
 data class InventoryItemResponse(
     val id : Int,
     val campaignId: Int,

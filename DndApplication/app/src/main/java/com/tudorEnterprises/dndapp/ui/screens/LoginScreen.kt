@@ -33,9 +33,8 @@ import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Buttons
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
-import com.tudorEnterprises.dndapp.networking.validateHttp
+import com.tudorEnterprises.dndapp.networking.ValidateHttp
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
-import com.tudorEnterprises.dndapp.objects.RetroFitHttpValidateClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
@@ -47,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.content.edit
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -68,7 +68,7 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
     fun loginRequest(context: Context, showDialog: (Boolean, String?) -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             showDialog(true, "Logging in...") // Show spinner
-            context.getSharedPreferences("secure_prefs", Context.MODE_PRIVATE).edit().clear().apply()
+            context.getSharedPreferences("secure_prefs", Context.MODE_PRIVATE).edit { clear() }
             try {
                 val response = withContext(Dispatchers.IO) {
                     RetroFitHttpAuthClient.api.login(LoginRequest(username, password))
@@ -188,7 +188,7 @@ private suspend fun checkValidToken(context: Context): Boolean {
     try {
         //make http call to auth server to check if token is valid
         return withContext(Dispatchers.IO) {
-            validateHttp(context).validateToken(userId)
+            ValidateHttp(context).validateToken(userId)
         }
     } catch (e: Exception) {
         Log.e("LoginScreen", "Error navigating to DmOrPlayer: $e")

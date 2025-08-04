@@ -19,9 +19,6 @@ interface CampaignDao {
     @Query("SELECT * FROM CampaignNameData WHERE sync_Campaign_Id = :campaignId")
     suspend fun  getCampaignById(campaignId: Int) : CampaignNameData?
 
-    @Query("DELETE FROM CampaignNameData")
-    suspend fun clearCampaigns()
-
     @Query("SELECT * FROM CampaignNameData WHERE userId = :userId")
     fun getAllCampaigns(userId: String) : Flow<List<CampaignNameData>>
 

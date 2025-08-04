@@ -4,7 +4,7 @@ import com.tudorEnterprises.dndapp.dataModels.requests.AddItemToPlayerRequest
 import com.tudorEnterprises.dndapp.dataModels.requests.CreateItemRequest
 import com.tudorEnterprises.dndapp.dataModels.responses.BaseResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.CreateItemResponse
-import com.tudorEnterprises.dndapp.dataModels.responses.getInventoryItemResponse
+import com.tudorEnterprises.dndapp.dataModels.responses.GetInventoryItemResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,7 +23,7 @@ interface InventoryService {
     @GET("/api/Inventory/GetCampaignInventory/{userId}/{campaignId}")
     suspend fun getItemsForCampaign(
         @Path("campaignId") campaignId: Int, @Path("userId") userId: Int
-    ): Response<getInventoryItemResponse>
+    ): Response<GetInventoryItemResponse>
 
     @DELETE("/api/Inventory/DeleteInventoryItem/{userId}/{itemId}")
     suspend fun deleteItemById(
@@ -35,7 +35,7 @@ interface InventoryService {
         @Path("characterId") characterId: Int?,
         @Path("userId") userId: Int,
         @Path("campaignId") campaignId: Int
-    ): Response<getInventoryItemResponse>
+    ): Response<GetInventoryItemResponse>
 
     @PATCH("/api/Inventory/AddItemToPlayer")
     suspend fun addItemToPlayer(

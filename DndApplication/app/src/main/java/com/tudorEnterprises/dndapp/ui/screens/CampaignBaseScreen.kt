@@ -196,7 +196,7 @@ private suspend fun getRoomCode(context: Context, campaignId: Int) : String {
     try {
         response = CampaignHttp(context).getRoomCode(campaignId)
     } catch (ex: Exception) {
-        Log.d("CampaignBaseScreen", "exception calling roomcode: $ex")
+        Log.d("CampaignBaseScreen", "exception calling getRoomCode: $ex")
     }
     if(response == null)
         return ""

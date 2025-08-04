@@ -18,7 +18,7 @@ class GenericRefreshService(val context: Context) {
 
         for(character in characterList) {
 
-                dbCalls.insertCharacterData(campaignId, character.charachterName, character.id, character.updateTime)
+                dbCalls.insertCharacterData(campaignId, character.characterName, character.id, character.updateTime)
 //            }
         }
     }

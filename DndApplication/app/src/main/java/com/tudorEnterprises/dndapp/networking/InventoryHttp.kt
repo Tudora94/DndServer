@@ -12,13 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class InventoryHttp(val context: Context) {
-    private val InventoryService =
+    private val inventoryService =
         RetroFitHttpCharacterClient.RetroFitHttpInventoryClient.create(context)
 
     suspend fun createNewItem(campaignId: Int, item: InventoryItem, updateTime: Long): Int {
         val userId = SecureStorage.getUserId(context).toInt()
         val response = withContext(Dispatchers.IO) {
-            InventoryService.createInventoryItem(
+            inventoryService.createInventoryItem(
                 CreateItemRequest(
                     userId,
                     updateTime,
@@ -43,7 +43,7 @@ class InventoryHttp(val context: Context) {
         val userId = SecureStorage.getUserId(context).toInt()
 
         val response = withContext(Dispatchers.IO) {
-            InventoryService.getItemsForCampaign(campaignId, userId)
+            inventoryService.getItemsForCampaign(campaignId, userId)
         }
 
         return if (response.isSuccessful) {
@@ -61,7 +61,7 @@ class InventoryHttp(val context: Context) {
         val userId = SecureStorage.getUserId(context).toInt()
 
         val response = withContext(Dispatchers.IO) {
-            InventoryService.getItemsForPlayer(playerId, userId, campaignId)
+            inventoryService.getItemsForPlayer(playerId, userId, campaignId)
         }
 
         return if (response.isSuccessful) {
@@ -78,7 +78,7 @@ class InventoryHttp(val context: Context) {
     suspend fun deleteItem(itemId: Int): Boolean {
         Log.d("InventoryHttp", "Deleting item with ID: $itemId")
         val response = withContext(Dispatchers.IO) {
-            InventoryService.deleteItemById(SecureStorage.getUserId(context).toInt(), itemId)
+            inventoryService.deleteItemById(SecureStorage.getUserId(context).toInt(), itemId)
         }
         return response.body()?.success == true
     }
@@ -93,7 +93,7 @@ class InventoryHttp(val context: Context) {
         val userId = SecureStorage.getUserId(context).toInt()
 
         val response = withContext(Dispatchers.IO) {
-            InventoryService.addItemToPlayer(
+            inventoryService.addItemToPlayer(
                 AddItemToPlayerRequest(
                     userId = userId,
                     itemId = itemId,

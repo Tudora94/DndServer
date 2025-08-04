@@ -3,7 +3,7 @@ package com.tudorEnterprises.dndapp.networking
 import android.content.Context
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpValidateClient
 
-class validateHttp(val context: Context) {
+class ValidateHttp(val context: Context) {
 
     private val validateService = RetroFitHttpValidateClient.create(context)
 
