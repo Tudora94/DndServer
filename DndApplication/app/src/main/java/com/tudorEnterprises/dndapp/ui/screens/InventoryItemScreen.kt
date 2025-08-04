@@ -63,7 +63,7 @@ fun GetInventoryItemScreen(
     DndApplicationTheme {
 
         var expanded by remember { mutableStateOf(false) }
-        var selectedOption by remember { mutableStateOf("None") }
+        var selectedOption by remember { mutableStateOf(-1) }
 
         Scaffold(
             topBar = { GetAppBarTopLoggedIn(navController) },
@@ -106,7 +106,7 @@ fun GetInventoryItemScreen(
 
                     val charactersWithDefault = listOf(
                         CampaignCharactersData(
-                            playerId = null,
+                            playerId = null, // -1 is used as a default value for "None" in the dropdown
                             characterName = "None",
                             id = -1,
                             userId = "System",
@@ -136,7 +136,7 @@ fun GetInventoryItemScreen(
                             modifier = Modifier.weight(6f)
                         ) {
                             TextField(
-                                value = getCurrentCharacterName(characterId, charactersWithDefault) ?: "None",
+                                value = getCurrentCharacterName(characterId, selectedOption,  charactersWithDefault) ?: "None", //TODO this needs to check selectedOption first, if null then use function to identify it
                                 onValueChange = {},
                                 readOnly = true,
                                 label = { Text("Select player") },
@@ -154,7 +154,7 @@ fun GetInventoryItemScreen(
                                     DropdownMenuItem(
                                         text = { Text(option.characterName ?: "None") },
                                         onClick = {
-                                            selectedOption = option.characterName ?: "None"
+                                            selectedOption = option.playerId ?: 0 // -1 is used as a default value for "None" in the dropdown
                                             expanded = false
                                             onItemSelected(
                                                 option.playerId,
@@ -290,11 +290,17 @@ private fun onItemSelected(
 
 private fun getCurrentCharacterName(
     characterId: Int?,
-    chracters: List<CampaignCharactersData>
+    selectedOption: Int,
+    characters: List<CampaignCharactersData>
 ) : String? {
-    if( characterId == null)
+    Log.d("GetCurrentCharacterName", "characterId: $characterId, selectedOption: $selectedOption, characters size: ${characters.size}")
+    if((characterId == null && selectedOption == -1) || characterId == -1)  // -1 is used as a default value for "None" in the dropdown
     {
         return null
     }
-    return chracters.find { it.playerId == characterId }?.characterName ?: "None"
+    if( selectedOption != -1) {
+        return characters.find { it.playerId == selectedOption }?.characterName ?: "None"
+
+    }
+    return characters.find { it.playerId == characterId }?.characterName ?: "None"
 }
