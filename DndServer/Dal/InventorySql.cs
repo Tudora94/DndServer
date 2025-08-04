@@ -127,7 +127,7 @@ WHERE UserId = @userId AND Id = @itemId";
                 return false;
             }
         }
-        public bool addItemToPlayer(int userId, int itemId, int campaignId, int playerId, long updateTime)
+        public bool addItemToPlayer(int userId, int itemId, int campaignId, int? playerId, long updateTime)
         {
             try
             {
@@ -144,7 +144,7 @@ WHERE UserId = @userId AND CampaignId = @campaignId AND Id = @itemId";
                 cmd.Parameters.Add("@itemId", SqlDbType.Int).Value = itemId;
                 cmd.Parameters.Add("@campaignId", SqlDbType.Int).Value = campaignId;
 
-                cmd.Parameters.Add("@playerId", SqlDbType.Int).Value = playerId;
+                cmd.Parameters.Add("@playerId", SqlDbType.Int).Value = playerId ?? (object)DBNull.Value;
                 cmd.Parameters.Add("@updateTime", SqlDbType.BigInt).Value = updateTime;
 
                 int rowsAffected = cmd.ExecuteNonQuery();
