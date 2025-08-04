@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -29,41 +30,72 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
-import com.tudorEnterprises.dndapp.dataStorage.CampaignSqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
+import com.tudorEnterprises.dndapp.dataStorage.tables.InventoryItemData
+import com.tudorEnterprises.dndapp.networking.InventoryHttp
 import com.tudorEnterprises.dndapp.objects.InventoryItem
 import com.tudorEnterprises.dndapp.services.GenericRefreshService
 import com.tudorEnterprises.dndapp.ui.dialogs.CreateInventoryItemDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
+import com.tudorEnterprises.dndapp.ui.navigation.GetInventoryButton
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.Instant
 
 @Composable
 fun GetCampaignInventoryScreen(
-    campaignId: Int,
-    navController: NavController
+    id: Int,
+    navController: NavController,
+    name: String,
+    userRole: String,
+    playerCampaignId: Int? = null // This is used when the user is a player, to get their specific campaign inventory
 ) {
-    // Placeholder for the Campaign Inventory screen content
-    // This function will be implemented later
-    // It will display the inventory of a specific campaign
 
     val context = LocalContext.current
-    val campaignSql = CampaignSqlActivity(context)
-    val characterSql = CampaignCharacterSqlActivity(context)
+    val characterSql = CampaignCharacterSqlActivity(context) //to get characters for the campaign
+    val inventorySql = InventorySqlActivity(context) //to get inventory items for the campaign
 
     DndApplicationTheme {
         var showDialog by remember { mutableStateOf(false) }
         var inventoryItem by remember { mutableStateOf(InventoryItem()) }
 
+        // Get the inventory items for the campaign or player - this needs to be able to handle campaignId and playerId when playerId is null
+        // when userRole is DUNGEON_MASTER, we assume ID is the campaign ID, otherwise it is the player ID, and we need to pass in the campaignId separately
 
-        val characters by characterSql.getPlayersForCampaign(campaignId)
+        //pass in playerCampaignId if present, otherwise it will be null
+
+        val inventory by inventorySql.getInventoryItemsById(id, userRole, playerCampaignId)
             .collectAsStateWithLifecycle(initialValue = emptyList())
+
+        if( userRole == UserRole.DUNGEON_MASTER.role) {
+
+            LaunchedEffect(Unit) {
+                while (true) {
+                    GenericRefreshService(context).fetchAndUpdateCampaignCharacters(
+                        characterSql,
+                        id
+                    )
+                    delay(5000)
+                }
+            }
+        }
+
+        //pass in playerCampaignId if present, otherwise it will be null
 
         LaunchedEffect(Unit) {
             while (true) {
-                GenericRefreshService(context).fetchAndUpdateCampaignCharacters(characterSql, campaignId)
+                GenericRefreshService(context).fetchAndUpdateInventoryItems(
+                    inventorySql,
+                    id,
+                    userRole,
+                    playerCampaignId
+                )
                 delay(5000)
             }
         }
@@ -82,7 +114,7 @@ fun GetCampaignInventoryScreen(
                 Text(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "Inventory + $campaignId",
+                    text = "Inventory for $name",
                 )
 
                 LazyColumn(
@@ -90,13 +122,14 @@ fun GetCampaignInventoryScreen(
                         .weight(1f) // Take up available space
                         .fillMaxWidth()
                 ) {
-//                    items(campaigns) { campaignName ->
-//                        GetCampaignButtons(
-//                            campaignName,
-//                            { deleteCampaign(campaignName, sql, context) },
-//                            navController
-//                        )
-//                    }
+                    items(inventory) { item ->
+                        GetInventoryButton(
+                            item,
+                            { deleteInventoryItem(item, inventorySql, context) },
+                            navController,
+                            userRole, // Enable delete button for DM
+                        )
+                    }
 
                     // Use an item in LazyColumn to add spacing
                     item {
@@ -111,7 +144,9 @@ fun GetCampaignInventoryScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    CreateInventoryItemButton { showDialog = true }
+                    if( userRole == UserRole.DUNGEON_MASTER.role) {
+                        CreateInventoryItemButton { showDialog = true }
+                    }
                 }
             }
 
@@ -123,7 +158,7 @@ fun GetCampaignInventoryScreen(
                 onConfirm = { enteredItem ->
                     inventoryItem = enteredItem
                     showDialog = false
-//                    launchInventoryItemCreation(inventoryItem, context, sql)
+                    launchInventoryItemCreation(inventoryItem, context, inventorySql, id)
                     Log.d("CreateInventoryItemDialog", "Item created: ${inventoryItem.name}")
                 }
             )
@@ -162,12 +197,37 @@ fun CreateInventoryItemButton(onClick: () -> Unit) {
 private fun launchInventoryItemCreation(
     inventoryItem: InventoryItem,
     context: Context,
-    sql: CampaignCharacterSqlActivity
+    sql: InventorySqlActivity,
+    campaignId: Int
 ) {
 
-    val updateTime = Instant.now().epochSecond
-
-
-
     Log.d("CampaignInventory", "Launching inventory item creation for: ${inventoryItem.name}")
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val updateTime = Instant.now().epochSecond
+
+        val syncItemId = InventoryHttp(context).createNewItem(
+            campaignId,
+            inventoryItem,
+            updateTime
+        )
+
+        if( syncItemId != 0) {
+            sql.checkAndInsertInventoryItem(campaignId, inventoryItem.name, inventoryItem.description, inventoryItem.detail, syncItemId, updateTime)
+        }
+
+    }
+}
+
+private fun deleteInventoryItem(
+    item: InventoryItemData,
+    sql: InventorySqlActivity,
+    context: Context
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        if (InventoryHttp(context).deleteItem(item.itemId)) {
+            sql.deleteItemById(item.itemId)
+            Log.d("CampaignInventory", "Deleted inventory item with ID: ${item.itemId}")
+        }
+    }
 }
