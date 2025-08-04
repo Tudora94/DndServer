@@ -21,6 +21,21 @@ object RetroFitHttpAuthClient {
     }
 }
 
+object RetroFitHttpValidateClient {
+    fun create(context: Context): LoginService {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(JwtHandler(context)) // Pass context
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(baseUrl) // Replace with actual base URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client) // Attach OkHttpClient with the interceptor
+            .build()
+            .create(LoginService::class.java)
+    }
+}
+
 object RetroFitHttpCampaignClient {
     fun create(context: Context): CampaignService {
         val client = OkHttpClient.Builder()
