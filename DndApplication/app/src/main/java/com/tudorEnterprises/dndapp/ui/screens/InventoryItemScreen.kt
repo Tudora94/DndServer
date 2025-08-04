@@ -34,6 +34,7 @@ import com.tudorEnterprises.dndapp.constants.UserRole
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.tables.CampaignCharactersData
+import com.tudorEnterprises.dndapp.dataStorage.tables.InventoryItemData
 import com.tudorEnterprises.dndapp.networking.InventoryHttp
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTopLoggedIn
 import com.tudorEnterprises.dndapp.ui.navigation.GetBottomAppBar
@@ -48,9 +49,9 @@ import java.time.Instant
 fun GetInventoryItemScreen(
     inventoryItemId: Int,
     campaignId: Int? = null, // Default to null if not provided, i.e. when a player accesses the screen
-    inventoryName: String,
-    inventoryItemDescription: String,
-    inventoryItemDetail: String,
+//    inventoryName: String,
+//    inventoryItemDescription: String,
+//    inventoryItemDetail: String,
     userRole: String,
     navController: NavController,
     characterId: Int? = null //this is used when the item is assigned to a character, otherwise it will be null
@@ -64,6 +65,18 @@ fun GetInventoryItemScreen(
 
         var expanded by remember { mutableStateOf(false) }
         var selectedOption by remember { mutableStateOf(-1) }
+
+        val inventory by inventorySql.getInventoryItemById(inventoryItemId)
+            .collectAsStateWithLifecycle(initialValue = InventoryItemData(
+                itemId = 0,
+                itemName = "",
+                description = "",
+                detail = "",
+                characterId = null,
+                campaignId = campaignId ?: 0,
+                updateTime = 0
+            ))
+
 
         Scaffold(
             topBar = { GetAppBarTopLoggedIn(navController) },
@@ -190,7 +203,7 @@ fun GetInventoryItemScreen(
                             )
 
                             Text(
-                                text = inventoryName,
+                                text = inventory?.itemName ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
@@ -211,7 +224,7 @@ fun GetInventoryItemScreen(
                             )
 
                             Text(
-                                text = inventoryItemDescription,
+                                text = inventory?.description ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
@@ -232,7 +245,7 @@ fun GetInventoryItemScreen(
                             )
 
                             Text(
-                                text = inventoryItemDetail,
+                                text = inventory?.detail ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )

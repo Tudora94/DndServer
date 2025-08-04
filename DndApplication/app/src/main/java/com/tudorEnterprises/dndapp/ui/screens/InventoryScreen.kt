@@ -114,7 +114,7 @@ fun GetCampaignInventoryScreen(
                 Text(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp),
-                    text = "Inventory for $name + $playerCampaignId",
+                    text = "Inventory for $name",
                 )
 
                 LazyColumn(

@@ -58,6 +58,12 @@ class InventorySqlActivity(context: Context) {
         }
     }
 
+    fun getInventoryItemById(itemId: Int): Flow<InventoryItemData?> {
+        return db.inventoryDao.getItemById(
+            itemId = itemId
+        )
+    }
+
     private fun validateInventoryItemExists(
         itemId: Int,
         updateTime: Long

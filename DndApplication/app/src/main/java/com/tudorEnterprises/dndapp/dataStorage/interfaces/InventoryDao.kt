@@ -25,4 +25,9 @@ interface InventoryDao {
 
     @Query("UPDATE InventoryItemData SET character_id = :playerId, update_time = :updateTime WHERE itemId = :itemId AND campaign_id = :campaignId")
     suspend fun assignItemToPlayer(itemId: Int, playerId: Int?, campaignId: Int, updateTime: Long)
+
+    @Query("SELECT * FROM InventoryItemData WHERE itemId = :itemId")
+    fun getItemById(
+        itemId: Int,
+    ): Flow<InventoryItemData?>
 }

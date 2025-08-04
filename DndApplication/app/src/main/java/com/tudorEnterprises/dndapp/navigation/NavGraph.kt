@@ -80,21 +80,15 @@ fun NavigationController() {
                 playerCampaignId = playerCampaignId
             )
         }
-        composable(route = Screen.InventoryItem.route + "/{itemId}/{inventoryName}/{inventoryDescription}/{inventoryDetail}/{userRole}?campaignId={campaignId}&characterId={characterId}",
+        composable(route = Screen.InventoryItem.route + "/{itemId}/{userRole}?campaignId={campaignId}&characterId={characterId}",
             arguments = listOf(
                 navArgument("itemId") { type = NavType.IntType },
-                navArgument("inventoryName") { type = NavType.StringType },
-                navArgument("inventoryDescription") { type = NavType.StringType },
-                navArgument("inventoryDetail") { type = NavType.StringType },
                 navArgument("userRole") { type = NavType.StringType },
                 navArgument("campaignId") { type = NavType.StringType; nullable = true; defaultValue = null }, // Optional argument for campaign ID
                 navArgument("characterId") { type = NavType.StringType; nullable = true; defaultValue = null } // Optional argument for character ID
             )
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: 0
-            val inventoryName = backStackEntry.arguments?.getString("inventoryName") ?: ""
-            val inventoryDescription = backStackEntry.arguments?.getString("inventoryDescription") ?: ""
-            val inventoryDetail = backStackEntry.arguments?.getString("inventoryDetail") ?: ""
             val userRole = backStackEntry.arguments?.getString("userRole") ?: UserRole.PLAYER.role
 
             val campaignIdString = backStackEntry.arguments?.getString("campaignId")
@@ -105,9 +99,6 @@ fun NavigationController() {
             GetInventoryItemScreen(
                 navController = navController,
                 inventoryItemId = itemId,
-                inventoryName = inventoryName,
-                inventoryItemDescription = inventoryDescription,
-                inventoryItemDetail = inventoryDetail,
                 userRole = userRole,
                 campaignId = campaignId,
                 characterId = characterId
