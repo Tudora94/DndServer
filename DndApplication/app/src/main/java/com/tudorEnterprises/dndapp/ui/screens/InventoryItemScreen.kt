@@ -245,7 +245,7 @@ fun GetInventoryItemScreen(
                             )
 
                             Text(
-                                text = inventory?.detail ?: "",
+                                text = inventory?.detail?.replace("\\n", "\n") ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
