@@ -16,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +33,9 @@ import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.constants.Buttons
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
+import com.tudorEnterprises.dndapp.networking.validateHttp
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
+import com.tudorEnterprises.dndapp.objects.RetroFitHttpValidateClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop
@@ -107,6 +110,13 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
         }
     }
 
+    //check for token here and navigate to DmOrPlayer if it exists
+    LaunchedEffect(Unit) {
+        if(checkValidToken(context)) {
+            navController.navigate(Screen.DmOrPlayer.route)
+        }
+    }
+
     DndApplicationTheme {
         Scaffold(topBar = {
             GetAppBarTop()
@@ -162,6 +172,29 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
 
         }
     }
+}
+
+private suspend fun checkValidToken(context: Context): Boolean {
+    val token = SecureStorage.getToken(context)
+    val userId = SecureStorage.getUserId(context)
+
+    Log.d("checkValidToken", "Token: $token, UserId: $userId")
+
+    if(token == null || userId == "0") {
+        Log.d("LoginScreen", "No token or userId found, navigating to login")
+        return false
+    }
+
+    try {
+        //make http call to auth server to check if token is valid
+        return withContext(Dispatchers.IO) {
+            validateHttp(context).validateToken(userId)
+        }
+    } catch (e: Exception) {
+        Log.e("LoginScreen", "Error navigating to DmOrPlayer: $e")
+    }
+
+    return false
 }
 
 @Preview

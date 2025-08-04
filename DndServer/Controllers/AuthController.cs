@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DndServer.User.Models;
 using DndServer.User.Services;
 using DndServer.Dal;
+using DndServer.Campaign.Models;
 
 namespace DndServer.Controllers
 {
@@ -13,7 +14,7 @@ namespace DndServer.Controllers
     public class AuthController : ControllerBase
 
     {
-
+        ClaimValidator claimValidator = new ClaimValidator();
         private readonly IConfiguration _configuration;
 
         public AuthController(IConfiguration configuration)
@@ -96,6 +97,30 @@ namespace DndServer.Controllers
             token.User = user.Id;
 
             return Ok(token);
+        }
+
+        [HttpGet("validateToken/{userId}")]
+
+        public async Task<ActionResult<BaseResponse>> validateToken([System.Web.Http.FromUri] int userId)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var claimAccepted = claimValidator.validateClaimUser(userId, token, authentication);
+
+            var response = new BaseResponse();
+
+            if (claimAccepted)
+            {
+                response.Success = true;
+                response.Message = "token validated";
+                return Ok(response);
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "token invalid";
+                return BadRequest(response);
+
+            }
         }
     }
 }
