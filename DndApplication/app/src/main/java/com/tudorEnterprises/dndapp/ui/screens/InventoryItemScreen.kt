@@ -26,7 +26,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -245,7 +250,7 @@ fun GetInventoryItemScreen(
                             )
 
                             Text(
-                                text = inventory?.detail?.replace("\\n", "\n") ?: "",
+                                text = parseStyledText(inventory?.detail?:""),     //inventory?.detail?.replace("\\n", "\n") ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             )
@@ -316,4 +321,53 @@ private fun getCurrentCharacterName(
 
     }
     return characters.find { it.playerId == characterId }?.characterName ?: "None"
+}
+
+fun parseStyledText(input: String): AnnotatedString {
+    val builder = AnnotatedString.Builder()
+    var index = 0
+
+    while (index < input.length) {
+        when {
+            input.startsWith("<b>", index) -> {
+                val end = input.indexOf("</b>", index)
+                if (end != -1) {
+                    val boldText = input.substring(index + 3, end)
+                    builder.withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(boldText)
+                    }
+                    index = end + 4
+                } else {
+                    builder.append("<b>")
+                    index += 3
+                }
+            }
+
+            input.startsWith("<i>", index) -> {
+                val end = input.indexOf("</i>", index)
+                if (end != -1) {
+                    val italicText = input.substring(index + 3, end)
+                    builder.withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                        append(italicText)
+                    }
+                    index = end + 4
+                } else {
+                    builder.append("<i>")
+                    index += 3
+                }
+            }
+
+            input.startsWith("\\n", index) -> {
+                builder.append("\n")
+                index += 2
+            }
+
+            else -> {
+                builder.append(input[index])
+                index++
+            }
+        }
+    }
+
+    return builder.toAnnotatedString()
 }
