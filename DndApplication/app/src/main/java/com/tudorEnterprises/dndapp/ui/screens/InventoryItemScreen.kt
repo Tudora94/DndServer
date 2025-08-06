@@ -154,7 +154,7 @@ fun GetInventoryItemScreen(
                             modifier = Modifier.weight(6f)
                         ) {
                             TextField(
-                                value = getCurrentCharacterName(characterId, selectedOption,  charactersWithDefault) ?: "None", //TODO this needs to check selectedOption first, if null then use function to identify it
+                                value = getCurrentCharacterName(characterId, selectedOption,  charactersWithDefault) ?: "None",
                                 onValueChange = {},
                                 readOnly = true,
                                 label = { Text("Select player") },

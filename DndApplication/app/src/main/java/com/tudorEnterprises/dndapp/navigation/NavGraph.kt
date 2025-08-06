@@ -23,8 +23,6 @@ import com.tudorEnterprises.dndapp.ui.screens.GetInventoryItemScreen
 fun NavigationController() {
     val navController = rememberNavController()
 
-    //TODO add token check to confirm if access token exists and
-
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route, // Starts at Login

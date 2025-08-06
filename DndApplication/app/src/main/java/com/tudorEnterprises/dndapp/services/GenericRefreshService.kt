@@ -16,6 +16,7 @@ class GenericRefreshService(val context: Context) {
         val httpCalls = CampaignHttp(context)
         val characterList = httpCalls.getCampaignCharacters(campaignId = campaignId)
 
+        //TODO the delete should be handled here
         for(character in characterList) {
 
                 dbCalls.insertCharacterData(campaignId, character.charachterName, character.id, character.updateTime)

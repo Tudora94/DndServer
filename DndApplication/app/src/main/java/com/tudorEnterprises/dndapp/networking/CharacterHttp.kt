@@ -39,6 +39,7 @@ class CharacterHttp(val context: Context) {
     }
 
     suspend fun deleteCharacter(characterId: Int): Boolean {
+        //TODO pass in updateTime, to ensure item is updated correctly
         Log.d(this::class.java.simpleName, "character sent for deletion $characterId")
         val response = withContext(Dispatchers.IO) {
             characterService.deleteCharacterById(

@@ -116,7 +116,7 @@ namespace DndServer.Dal
             {
                 connections.SqlOpenConnection(conn);
 
-                string sqlString = @"SELECT PCN.ID, PCN.UserId, CampaignId, CharacterName, PCN.UpdateTime, CampaignName FROM DndDb.dbo.PlayerCharacterName AS PCN JOIN DndDb.dbo.CampaignName AS CN ON PCN.CampaignId = CN.Id WHERE PCN.UserId = @userId";
+                string sqlString = @"SELECT PCN.ID, PCN.UserId, CampaignId, CharacterName, PCN.UpdateTime, CampaignName FROM DndDb.dbo.PlayerCharacterName AS PCN LEFT JOIN DndDb.dbo.CampaignName AS CN ON PCN.CampaignId = CN.Id WHERE PCN.UserId = @userId";
                 SqlCommand command = new SqlCommand(sqlString, conn);
 
                 command.Parameters.Add("userId", SqlDbType.Int).Value=UserId;
@@ -141,7 +141,8 @@ namespace DndServer.Dal
             try
             {
                 connections.SqlOpenConnection( conn );
-                string sqlString = @"DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
+                string sqlString = @"UPDATE DndDb.dbo.Inventory SET PlayerId = NULL WHERE PlayerId = @charId " + 
+"DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
                 SqlCommand command = new SqlCommand( sqlString, conn);
 
                 command.Parameters.Add("userId", SqlDbType.Int).Value=userId;
