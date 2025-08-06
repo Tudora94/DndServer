@@ -26,7 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.tudorEnterprises.dndapp.R
 import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.objects.SecureStorage
-import com.tudorEnterprises.dndapp.ui.theme.Purple40
+import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,50 +35,53 @@ fun GetAppBarTopLoggedIn(navController: NavController) {
     var menuExpanded by remember { mutableStateOf(false) }
     val currentScreen by navController.currentBackStackEntryAsState()
 
-
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Purple40,
-            titleContentColor = MaterialTheme.colorScheme.inversePrimary,
-        ),
-        navigationIcon = {
-            if (currentScreen?.destination?.route != Screen.DmOrPlayer.route) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "back"
+    DndApplicationTheme {
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                titleContentColor = MaterialTheme.colorScheme.inversePrimary,
+            ),
+            navigationIcon = {
+                if (currentScreen?.destination?.route != Screen.DmOrPlayer.route) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            tint = MaterialTheme.colorScheme.inversePrimary,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "back"
+                        )
+                    }
+                }
+            },
+            title = {
+                Text(
+                    text = context.getString(R.string.app_name),
+                    style = MaterialTheme.typography.headlineLarge
+                )
+            },
+            actions = {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu",
+                        tint = MaterialTheme.colorScheme.inversePrimary)
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Logout") },
+                        onClick = {
+                            menuExpanded = false
+                            Log.d("LogOut", SecureStorage.getToken(context).toString())
+                            SecureStorage.clearToken(context)
+                            SecureStorage.clearRefreshToken(context)
+                            SecureStorage.clearUserId(context)
+                            navController.navigate(Screen.Home.route)
+                        }
                     )
                 }
             }
-        },
-        title = {
-            Text(
-                text = context.getString(R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge
-            )
-        },
-        actions = {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Logout") },
-                    onClick = {
-                        menuExpanded = false
-                        Log.d("LogOut", SecureStorage.getToken(context).toString())
-                        SecureStorage.clearToken(context)
-                        SecureStorage.clearRefreshToken(context)
-                        SecureStorage.clearUserId(context)
-                        navController.navigate(Screen.Home.route)
-                    }
-                )
-            }
-        }
-    )
+        )
+    }
 }
 
 @Preview

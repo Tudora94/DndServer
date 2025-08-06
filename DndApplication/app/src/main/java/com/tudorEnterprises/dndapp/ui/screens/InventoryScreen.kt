@@ -102,7 +102,7 @@ fun GetCampaignInventoryScreen(
 
         Scaffold(
             topBar = { GetAppBarTopLoggedIn(navController) },
-            bottomBar = { GetBottomAppBar("Test") }
+            bottomBar = { GetBottomAppBar() }
         ) {innerPadding ->
             Column(
                 modifier = Modifier

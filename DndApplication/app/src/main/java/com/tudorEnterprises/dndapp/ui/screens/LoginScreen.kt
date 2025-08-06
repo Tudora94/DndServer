@@ -55,7 +55,7 @@ fun LoginScreen(navController: NavController) {
 }
 
 @Composable
-private fun MainLoginWindow(debugVersion: String? = null, navController: NavController, context: Context) {
+private fun MainLoginWindow(navController: NavController, context: Context) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -120,7 +120,7 @@ private fun MainLoginWindow(debugVersion: String? = null, navController: NavCont
         Scaffold(topBar = {
             GetAppBarTop()
         }, bottomBar = {
-            GetBottomAppBar(debugVersion)
+            GetBottomAppBar()
         }) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -201,5 +201,5 @@ private suspend fun checkValidToken(context: Context): Boolean {
 private fun LoginPreview(){
     val navController = rememberNavController()
     val context = LocalContext.current
-    MainLoginWindow("TestVersion", navController, context)
+    MainLoginWindow(navController, context)
 }
