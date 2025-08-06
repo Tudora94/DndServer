@@ -35,7 +35,6 @@ import com.tudorEnterprises.dndapp.constants.Screen
 import com.tudorEnterprises.dndapp.dataModels.requests.LoginRequest
 import com.tudorEnterprises.dndapp.networking.validateHttp
 import com.tudorEnterprises.dndapp.objects.RetroFitHttpAuthClient
-import com.tudorEnterprises.dndapp.objects.RetroFitHttpValidateClient
 import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.dialogs.LoadingDialog
 import com.tudorEnterprises.dndapp.ui.navigation.GetAppBarTop

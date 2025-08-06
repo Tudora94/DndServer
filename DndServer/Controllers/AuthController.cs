@@ -4,6 +4,7 @@ using DndServer.User.Models;
 using DndServer.User.Services;
 using DndServer.Dal;
 using DndServer.Campaign.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DndServer.Controllers
 {
@@ -100,6 +101,7 @@ namespace DndServer.Controllers
         }
 
         [HttpGet("validateToken/{userId}")]
+        [Authorize]
 
         public async Task<ActionResult<BaseResponse>> validateToken([System.Web.Http.FromUri] int userId)
         {
