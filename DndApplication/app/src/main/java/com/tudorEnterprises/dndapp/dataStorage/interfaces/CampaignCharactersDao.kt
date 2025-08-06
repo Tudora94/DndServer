@@ -16,4 +16,7 @@ interface CampaignCharactersDao {
 
     @Query("SELECT updateTime FROM CampaignCharactersData WHERE id = :id")
     fun getCharacterUpdateTime(id: Int) : Long
+
+    @Query("DELETE FROM CampaignCharactersData WHERE playerId = :playerId AND campaignId = :campaignId")
+    suspend fun deletePlayerFromCampaign(playerId: Int, campaignId: Int)
 }
