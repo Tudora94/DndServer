@@ -21,8 +21,8 @@ interface CharacterService {
     @GET("api/Player/GetPlayers/{userId}")
     suspend fun getCharactersForUser(@Path("userId") userId: Int): Response<GetCharacterResponse>
 
-    @DELETE("api/Player/DeleteCharacter/userId/{userId}/characterId/{characterId}")
-    suspend fun deleteCharacterById(@Path("userId") userId: Int, @Path("characterId") characterId: Int): Response<BaseResponse>
+    @DELETE("api/Player/DeleteCharacter/userId/{userId}/characterId/{characterId}/updateTime/{updateTime}")
+    suspend fun deleteCharacterById(@Path("userId") userId: Int, @Path("characterId") characterId: Int, @Path("updateTime") updateTime: Long): Response<BaseResponse>
 
     @PATCH("api/Player/AddPlayerToCampaign")
     suspend fun addCharacterToCampaign(@Body request: AddPlayerToCampaignRequest): Response<AddPlayerToCampaignResponse>

@@ -118,8 +118,8 @@ namespace DndServer.Controllers
             }
         }
 
-        [HttpDelete("DeleteCharacter/userId/{userId}/characterId/{characterId}")]
-        public async Task<ActionResult<Response>> DeleteCharacter([System.Web.Http.FromUri] int characterId, [System.Web.Http.FromUri] int userId)
+        [HttpDelete("DeleteCharacter/userId/{userId}/characterId/{characterId}/updateTime/{updateTime}")]
+        public async Task<ActionResult<Response>> DeleteCharacter([System.Web.Http.FromUri] int characterId, [System.Web.Http.FromUri] int userId, [System.Web.Http.FromUri] long updateTime)
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var claimAccepted = claimValidator.validateClaimUser(userId, token, authSql);
@@ -129,7 +129,7 @@ namespace DndServer.Controllers
                 PlayerServices services = new PlayerServices();
 
                 var response = new PlayerBaseResponse();
-                var sqlResponse = services.DeletePlayer(characterId, userId);
+                var sqlResponse = services.DeletePlayer(characterId, userId, updateTime);
                 if(sqlResponse)
                 {
                     response.Success = true;

@@ -11,6 +11,7 @@ import com.tudorEnterprises.dndapp.objects.SecureStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.time.Instant
 
 class CharacterHttp(val context: Context) {
     private val characterService = RetroFitHttpCharacterClient.create(context)
@@ -44,7 +45,8 @@ class CharacterHttp(val context: Context) {
         val response = withContext(Dispatchers.IO) {
             characterService.deleteCharacterById(
                 SecureStorage.getUserId(context).toInt(),
-                characterId
+                characterId,
+                Instant.now().epochSecond
             )
         }
         return response.body()?.success == true
