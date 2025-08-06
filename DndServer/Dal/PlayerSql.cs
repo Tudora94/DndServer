@@ -135,18 +135,19 @@ namespace DndServer.Dal
             }
         }
 
-        public bool DeletePlayer(int characterId, int userId)
+        public bool DeletePlayer(int characterId, int userId, long updateTime)
         {
             SqlConnection conn = new SqlConnection();
             try
             {
                 connections.SqlOpenConnection( conn );
-                string sqlString = @"UPDATE DndDb.dbo.Inventory SET PlayerId = NULL WHERE PlayerId = @charId " + 
+                string sqlString = @"UPDATE DndDb.dbo.Inventory SET PlayerId = NULL, UpdateTime = @updateTime WHERE PlayerId = @charId " + 
 "DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
                 SqlCommand command = new SqlCommand( sqlString, conn);
 
                 command.Parameters.Add("userId", SqlDbType.Int).Value=userId;
                 command.Parameters.Add("charId", SqlDbType.Int).Value = characterId;
+                command.Parameters.Add("updateTime", SqlDbType.BigInt).Value = updateTime;
 
                 command.ExecuteNonQuery();
                 return true;
