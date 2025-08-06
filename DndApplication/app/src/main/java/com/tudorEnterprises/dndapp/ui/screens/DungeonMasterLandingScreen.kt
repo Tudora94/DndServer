@@ -75,7 +75,7 @@ fun DMLandingScreen(navController: NavController) {
         Scaffold(topBar = {
             GetAppBarTopLoggedIn(navController)
         }, bottomBar = {
-            GetBottomAppBar("Test")
+            GetBottomAppBar()
         }) { innerPadding ->
             Column(
                 modifier = Modifier
