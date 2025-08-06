@@ -21,8 +21,6 @@ fun CreateCampaignDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    //TODO validate campaign name is not blank, display tooltip if it is.
-
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {

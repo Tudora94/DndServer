@@ -16,7 +16,6 @@ import retrofit2.http.Path
 
 interface InventoryService {
 
-    //TODO add the methods for the InventoryService interface based off CharacterService interface
     @POST("/api/Inventory/CreateInventoryItem")
     suspend fun createInventoryItem(@Body request: CreateItemRequest): Response<CreateItemResponse>
 

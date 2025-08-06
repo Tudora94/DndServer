@@ -132,8 +132,6 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
                     ) {
                         Text(text = "Inventory")
                     }
-
-                    //TODO add inventory button - Inventory should be new table containing character ID, ItemID, name, descr, detail, call should return list of items for characterID and campaignCharacterId
                 }
     }
     if (showDialog) {
