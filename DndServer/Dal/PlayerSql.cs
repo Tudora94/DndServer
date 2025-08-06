@@ -141,7 +141,8 @@ namespace DndServer.Dal
             try
             {
                 connections.SqlOpenConnection( conn );
-                string sqlString = @"DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
+                string sqlString = @"UPDATE Inventory SET PlayerId = NULL WHERE PlayerId = @charId
+DELETE FROM DndDb.dbo.PlayerCharacterName WHERE UserId = @userId AND ID = @charId";
                 SqlCommand command = new SqlCommand( sqlString, conn);
 
                 command.Parameters.Add("userId", SqlDbType.Int).Value=userId;
