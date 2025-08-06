@@ -51,6 +51,10 @@ class CampaignCharacterSqlActivity(context: Context) {
         return db.campaignCharactersDao.getPlayersForCampaign(loggedInUser, campaignId)
     }
 
+    suspend fun deletePlayerById(characterId: Int, campaignId: Int) {
+        db.campaignCharactersDao.deletePlayerFromCampaign(characterId, campaignId)
+    }
+
     private fun validateCharacterExists(campaignId: Int, characterId: Int, updateTime: Long) : Boolean {
         val primaryKey = "$campaignId$characterId".toInt()
         return db.campaignCharactersDao.getCharacterUpdateTime(primaryKey)==updateTime

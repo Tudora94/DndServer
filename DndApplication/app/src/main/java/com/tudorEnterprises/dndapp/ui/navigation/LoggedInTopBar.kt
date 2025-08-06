@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.tudorEnterprises.dndapp.R
 import com.tudorEnterprises.dndapp.constants.Screen
-import com.tudorEnterprises.dndapp.constants.appName
 import com.tudorEnterprises.dndapp.objects.SecureStorage
 import com.tudorEnterprises.dndapp.ui.theme.DndApplicationTheme
 
@@ -54,7 +54,7 @@ fun GetAppBarTopLoggedIn(navController: NavController) {
             },
             title = {
                 Text(
-                    text = appName,
+                    text = context.getString(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge
                 )
             },

@@ -64,9 +64,9 @@ namespace DndServer.Player.Services
             return response;
         }
 
-        public bool DeletePlayer(int characterId, int userId)
+        public bool DeletePlayer(int characterId, int userId, long updateTime)
         {
-            return sql.DeletePlayer(characterId, userId);
+            return sql.DeletePlayer(characterId, userId, updateTime);
         }
 
         public bool UpdatePlayer(UpdateCharacterRequest request)

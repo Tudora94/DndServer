@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -40,20 +39,18 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -80,6 +77,28 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-
 }
+
+// 🪄 Custom task to rename signed release APK
+tasks.register<Copy>("renameSignedReleaseApk") {
+    val signedApkDir = File("${project.projectDir}/release")
+    val originalApk = File(signedApkDir, "app-release.apk")
+
+    val appName = project.findProperty("appName")?.toString() ?: "BagOfHolding"
+    val versionName = android.defaultConfig.versionName
+    val renamedApkName = "$appName-$versionName-release.apk"
+
+    from(originalApk)
+    into(signedApkDir)
+    rename { renamedApkName }
+}
+
+
+
+
+afterEvaluate {
+    tasks.named("renameSignedReleaseApk") {
+        finalizedBy("renameSignedReleaseApk")
+    }
+}
+

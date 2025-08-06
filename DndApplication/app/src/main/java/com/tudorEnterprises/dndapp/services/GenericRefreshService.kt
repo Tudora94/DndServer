@@ -3,6 +3,7 @@ package com.tudorEnterprises.dndapp.services
 import android.content.Context
 import android.util.Log
 import com.tudorEnterprises.dndapp.constants.UserRole
+import com.tudorEnterprises.dndapp.dataModels.responses.CampaignCharacterResponse
 import com.tudorEnterprises.dndapp.dataModels.responses.InventoryItemResponse
 import com.tudorEnterprises.dndapp.dataStorage.CampaignCharacterSqlActivity
 import com.tudorEnterprises.dndapp.dataStorage.InventorySqlActivity
@@ -16,10 +17,15 @@ class GenericRefreshService(val context: Context) {
         val httpCalls = CampaignHttp(context)
         val characterList = httpCalls.getCampaignCharacters(campaignId = campaignId)
 
-        for(character in characterList) {
+        if(characterList == null) {
+            Log.e("GenericRefreshService", "Failed to fetch characters for campaign $campaignId")
+            return
+        }
 
+        checkAndDeleteCharacters(characterList, dbCalls, campaignId)
+
+        for(character in characterList) {
                 dbCalls.insertCharacterData(campaignId, character.charachterName, character.id, character.updateTime)
-//            }
         }
     }
 
@@ -65,6 +71,19 @@ class GenericRefreshService(val context: Context) {
                 dbCalls.deleteItemById(item.itemId)
             }
         }
+    }
 
+    private suspend fun checkAndDeleteCharacters(characterList: List<CampaignCharacterResponse>, dbCalls: CampaignCharacterSqlActivity, campaignId: Int) {
+        val localCharacters = dbCalls.getPlayersForCampaign(campaignId)
+        val serverIds = characterList.map { it.id }.toSet()
+
+        val charactersToDelete = localCharacters.first().filter { it.id !in serverIds }
+        if(charactersToDelete.isNotEmpty()) {
+            for(character in charactersToDelete) {
+                Log.d("Character Deletion", "deleting character ${character.id}")
+
+                dbCalls.deletePlayerById(character.playerId ?: 0, campaignId)
+            }
+        }
     }
 }
