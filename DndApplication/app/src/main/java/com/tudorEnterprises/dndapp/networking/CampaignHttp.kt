@@ -77,13 +77,13 @@ class CampaignHttp(val context: Context) {
         return ""
     }
 
-    suspend fun getCampaignCharacters(campaignId: Int) : List<CampaignCharacterResponse>{
+    suspend fun getCampaignCharacters(campaignId: Int) : List<CampaignCharacterResponse>?{
         val response = withContext(Dispatchers.IO) {
             campaignService.getPlayers(campaignId)
         }
         if (response.body() != null) {
-            return response.body()!!
+            return response.body()
         }
-        return emptyList()
+        return null
     }
 }
