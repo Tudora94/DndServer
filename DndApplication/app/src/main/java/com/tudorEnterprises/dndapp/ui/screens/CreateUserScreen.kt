@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun CreateUserScreen(debugVersion: String? = null, navController: NavController) {
+fun CreateUserScreen(navController: NavController) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -115,7 +115,7 @@ fun CreateUserScreen(debugVersion: String? = null, navController: NavController)
         Scaffold(topBar = {
             GetAppBarTop()
         }, bottomBar = {
-            GetBottomAppBar(debugVersion)
+            GetBottomAppBar()
         }) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -232,5 +232,5 @@ fun CreateUserScreen(debugVersion: String? = null, navController: NavController)
 @Composable
 private fun ViewCreateUserScreen() {
     val navController = rememberNavController()
-    CreateUserScreen("TestVersion", navController)
+    CreateUserScreen(navController)
 }

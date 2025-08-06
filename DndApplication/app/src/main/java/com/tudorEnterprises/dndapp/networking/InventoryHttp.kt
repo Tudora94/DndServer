@@ -46,14 +46,14 @@ class InventoryHttp(val context: Context) {
             InventoryService.getItemsForCampaign(campaignId, userId)
         }
 
-        return if (response.isSuccessful) {
+        return if (response.isSuccessful && response.body()?.success == true) {
             response.body()?.inventoryItems ?: emptyList()
         } else {
             Log.e(
                 "InventoryHttp",
                 "Failed to fetch items for campaign: ${response.errorBody()?.string()}"
             )
-            emptyList()
+            null
         }
     }
 
@@ -64,14 +64,14 @@ class InventoryHttp(val context: Context) {
             InventoryService.getItemsForPlayer(playerId, userId, campaignId)
         }
 
-        return if (response.isSuccessful) {
+        return if (response.isSuccessful && response.body()?.success == true) {
             response.body()?.inventoryItems ?: emptyList()
         } else {
             Log.e(
                 "InventoryHttp",
                 "Failed to fetch items for player: ${response.errorBody()?.string()}"
             )
-            emptyList()
+            null
         }
     }
 

@@ -56,7 +56,7 @@ fun GetCharacterBaseScreen(navController: NavController, characterId: Int) {
 
     Scaffold(
         topBar = { GetAppBarTopLoggedIn(navController) },
-        bottomBar = { GetBottomAppBar("Test") }
+        bottomBar = { GetBottomAppBar() }
     ) { innerPadding ->
                 Column(
                     modifier = Modifier.padding(innerPadding) .fillMaxWidth() .fillMaxHeight(),
