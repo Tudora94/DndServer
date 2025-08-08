@@ -60,12 +60,14 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk \
             "${{ secrets.KEY_ALIAS }}"
 
-      - name: Zipalign APK
+      - name: ZipAlign APK
         working-directory: ./DndApplication
         run: |
-          zipalign -v 4 \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            app/build/outputs/apk/release/BagOfHolding-${{ steps.version.outputs.version_name }}-release.apk
+            ZIPALIGN=$(find /usr/local/lib/android/sdk/build-tools -name zipalign | sort | tail -n 1)
+            "$ZIPALIGN" -v 4 \
+              app/build/outputs/apk/release/app-release-unsigned.apk \
+              app/build/outputs/apk/release/BagOfHolding--release.apk
+
 
       - name: Upload signed APK
         uses: actions/upload-artifact@v4
