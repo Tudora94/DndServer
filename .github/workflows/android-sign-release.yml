@@ -30,17 +30,17 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Grant execute permission to Gradle
-        run: chmod +x ./DndServer/DndApplication/gradlew
+        run: chmod +x ./DndApplication/gradlew
 
       - name: Extract version name from build.gradle
         id: version
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: |
           VERSION_NAME=$(grep versionName app/build.gradle | sed -E 's/.*"(.*)".*/\1/')
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
 
       - name: Decrypt keystore
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: |
           openssl aes-256-cbc -d \
             -in .github/keystore/keystore.jks.enc \
@@ -48,11 +48,11 @@ jobs:
             -k "${{ secrets.ENCRYPTION_PASSWORD }}"
 
       - name: Build unsigned release APK
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: ./gradlew assembleRelease
 
       - name: Sign APK
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: |
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
             -keystore keystore.jks \
@@ -62,7 +62,7 @@ jobs:
             "${{ secrets.KEY_ALIAS }}"
 
       - name: Zipalign APK
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: |
           zipalign -v 4 \
             app/build/outputs/apk/release/app-release-unsigned.apk \
@@ -75,5 +75,5 @@ jobs:
           path: DndServer/DndApplication/app/build/outputs/apk/release/BagOfHolding-${{ steps.version.outputs.version_name }}-release.apk
 
       - name: Clean up
-        working-directory: ./DndServer/DndApplication
+        working-directory: ./DndApplication
         run: rm keystore.jks
