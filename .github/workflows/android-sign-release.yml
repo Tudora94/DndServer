@@ -35,10 +35,7 @@ jobs:
         id: version
         working-directory: ./DndApplication
         run: |
-          echo "Raw version line:"
-          grep 'versionName' app/build.gradle
-
-          VERSION_NAME=$(grep -oE 'versionName[[:space:]]*"[^"]+"' app/build.gradle | sed -E 's/versionName[[:space:]]*"([^"]+)"/\1/')
+          VERSION_NAME=$(grep -oE 'versionName[[:space:]]*=[[:space:]]*"[^"]+"' app/build.gradle.kts | sed -E 's/versionName[[:space:]]*=[[:space:]]*"([^"]+)"/\1/')
           echo "Extracted version name: $VERSION_NAME"
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
 
