@@ -1,0 +1,68 @@
+name: Android Signed Release Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & Sign APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission to Gradle
+        run: chmod +x ./gradlew
+
+      - name: Extract version name from build.gradle
+        id: version
+        run: |
+          VERSION_NAME=$(grep versionName app/build.gradle | sed -E 's/.*"(.*)".*/\1/')
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Decrypt keystore
+        run: |
+          openssl aes-256-cbc -d \
+            -in .github/keystore/keystore.jks.enc \
+            -out keystore.jks \
+            -k "${{ secrets.ENCRYPTION_PASSWORD }}"
+
+      - name: Build unsigned release APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign APK
+        run: |
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore keystore.jks \
+            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
+            -keypass "${{ secrets.KEY_PASSWORD }}" \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            "${{ secrets.KEY_ALIAS }}"
+
+      - name: Zipalign APK
+        run: |
+          zipalign -v 4 \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            app/build/outputs/apk/release/BagOfHolding-${{ steps.version.outputs.version_name }}-release.apk
+
+      - name: Upload signed APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BagOfHolding-Signed-APK
+          path: app/build/outputs/apk/release/BagOfHolding-${{ steps.version.outputs.version_name }}-release.apk
+
+      - name: Clean up
+        run: rm keystore.jks
