@@ -26,7 +26,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Grant execute permission to Gradle
-        run: chmod +x ./gradlew
+        run: chmod +x ./DndServer/DndApplication/gradlew
 
       - name: Extract version name from build.gradle
         id: version
@@ -42,7 +42,7 @@ jobs:
             -k "${{ secrets.ENCRYPTION_PASSWORD }}"
 
       - name: Build unsigned release APK
-        run: ./gradlew assembleRelease
+        run: ./DndServer/DndApplication/gradlew assembleRelease
 
       - name: Sign APK
         run: |
