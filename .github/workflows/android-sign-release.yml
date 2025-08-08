@@ -33,9 +33,9 @@ jobs:
 
       - name: Extract version name from build.gradle
         id: version
-        working-directory: ./DndApplication/app
+        working-directory: ./DndApplication
         run: |
-          VERSION_NAME=$(grep -oE 'versionName[[:space:]]*=[[:space:]]*"[^"]+"' build.gradle | sed -E 's/versionName[[:space:]]*=[[:space:]]*"([^"]+)"/\1/')
+          VERSION_NAME=$(grep -oE 'versionName[[:space:]]*=[[:space:]]*"[^"]+"' app/build.gradle | sed -E 's/versionName[[:space:]]*=[[:space:]]*"([^"]+)"/\1/')
           echo "Extracted version name: $VERSION_NAME"
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
 
