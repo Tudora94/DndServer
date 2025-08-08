@@ -43,7 +43,7 @@ jobs:
         run: |
           openssl aes-256-cbc -d \
             -in .github/keystore/keystore.jks.enc \
-            -out keystore.jks \
+            -out DndApplication/keystore.jks \
             -k "${{ secrets.ENCRYPTION_PASSWORD }}"
 
       - name: Build unsigned release APK
@@ -54,7 +54,7 @@ jobs:
         working-directory: ./DndApplication
         run: |
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-            -keystore .github/keystore/keystore.jks \
+            -keystore keystore.jks \
             -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
             -keypass "${{ secrets.KEY_PASSWORD }}" \
             app/build/outputs/apk/release/app-release-unsigned.apk \
