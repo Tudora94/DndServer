@@ -51,6 +51,7 @@ jobs:
         run: ./gradlew assembleRelease
 
       - name: Sign APK
+        working-directory: ./DndApplication
         run: |
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
             -keystore .github/keystore/keystore.jks \
