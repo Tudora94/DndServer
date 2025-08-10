@@ -3,6 +3,8 @@ name: Publish DndServer ASP.NET App
 on:
   push:
     branches: [ Main ]
+  pull_request:
+    branches: [ Main ]
   workflow_dispatch:
 
 jobs:
