@@ -35,9 +35,13 @@ jobs:
           name: DndServer-Published
           path: publish
 
+      - name: Install Web Deploy
+        run: |
+          choco install webdeploy -y
+
       - name: Deploy to IIS via Web Deploy
         run: |
-          msdeploy.exe -verb:sync ^
+          "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" -verb:sync ^
             -source:contentPath="publish" ^
             -dest:contentPath="C:\Program Files\PrimaryServer\publish",computerName="https://${{ secrets.WEBDEPLOY_SERVER }}:8172/msdeploy.axd?site=${{ secrets.WEBDEPLOY_SITE_NAME }}",userName="${{ secrets.WEBDEPLOY_USERNAME }}",password="${{ secrets.WEBDEPLOY_PASSWORD }}",authType="Basic" ^
             -allowUntrusted ^
