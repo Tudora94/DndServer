@@ -9,6 +9,9 @@ jobs:
   publish:
     runs-on: windows-latest
 
+    env:
+      PROJECT_PATH: DndServer/DndServer.csproj
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,10 +22,10 @@ jobs:
           dotnet-version: '6.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore DndServer/DndServer/DndServer.csproj
+        run: dotnet restore $env:PROJECT_PATH
 
       - name: Publish project
-        run: dotnet publish DndServer/DndServer/DndServer.csproj -c Release -o ./publish
+        run: dotnet publish $env:PROJECT_PATH -c Release -o ./publish
 
       - name: Upload published files
         uses: actions/upload-artifact@v4
