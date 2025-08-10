@@ -42,7 +42,7 @@ jobs:
       - name: Deploy to IIS via Web Deploy
         shell: pwsh
         run: |
-          $msdeploy = '"C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"'
+          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           $source = '-source:contentPath="publish"'
           $dest = '-dest:contentPath="C:\Program Files\PrimaryServer\publish",computerName="https://${{ secrets.WEBDEPLOY_SERVER }}:8172/msdeploy.axd?site=${{ secrets.WEBDEPLOY_SITE_NAME }}",userName="${{ secrets.WEBDEPLOY_USERNAME }}",password="${{ secrets.WEBDEPLOY_PASSWORD }}",authType="Basic"'
           & $msdeploy -verb:sync $source $dest -allowUntrusted -verbose
