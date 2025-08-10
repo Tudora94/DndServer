@@ -1,0 +1,31 @@
+name: Publish DndServer ASP.NET App
+
+on:
+  push:
+    branches: [ Main ]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore DndServer/DndServer/DndServer.csproj
+
+      - name: Publish project
+        run: dotnet publish DndServer/DndServer/DndServer.csproj -c Release -o ./publish
+
+      - name: Upload published files
+        uses: actions/upload-artifact@v4
+        with:
+          name: DndServer-Published
+          path: publish
