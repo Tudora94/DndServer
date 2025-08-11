@@ -58,8 +58,8 @@ jobs:
             exit 1
           }
 
-          Write-Host "Checking if package exists at $localPublishPath\package.zip"
-          if (-Not (Test-Path "$localPublishPath\package.zip")) {
+          Write-Host "Checking if package exists at $LOCAL_PUBLISH_PATH\package.zip"
+          if (-Not (Test-Path "$LOCAL_PUBLISH_PATH\package.zip")) {
           Write-Error "Package file not found!"
           exit 1
           }
