@@ -51,8 +51,17 @@ jobs:
         env:
           LOCAL_PUBLISH_PATH: ${{ github.workspace }}\publish
         run: |
-          $session = New-PSSession -ComputerName www.tudor-enterprises.com -Credential (New-Object System.Management.Automation.PSCredential("deployuser", (ConvertTo-SecureString "UxXW8gbfJbyrrBlFDNOf" -AsPlainText -Force)))
+          $user = "deployuser"
+          $pass = "UxXW8gbfJbyrrBlFDNOf"
+          $server = "www.tudor-enterprises.com"
+
+          $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
+          $cred = New-Object System.Management.Automation.PSCredential ($user, $securePass)
+
+          $session = New-PSSession -ComputerName $server -Credential $cred -UseSSL -Authentication Basic -SessionOption (New-PSSessionOption -SkipCNCheck)
+
           Copy-Item -Path "$env:LOCAL_PUBLISH_PATH\package.zip" -Destination "C:\Program Files\PrimaryServer\Deploy\package.zip" -ToSession $session
+
           Remove-PSSession $session
 
       # - name: Deploy to IIS via Web Deploy
