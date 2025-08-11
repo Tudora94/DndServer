@@ -87,5 +87,5 @@ jobs:
             Expand-Archive -Path $packagePath -DestinationPath $publishPath -Force
 
             Start-WebSite -Name $siteName
-          } -ArgumentList $env:SITE_NAME
+          } -ArgumentList "PrimaryServer"
           Remove-PSSession $session
