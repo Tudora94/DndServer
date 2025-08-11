@@ -59,11 +59,11 @@ jobs:
           $user   = $env:WEBDEPLOY_USERNAME
           $pass   = $env:WEBDEPLOY_PASSWORD
 
-          $sourceArg = '-source:contentPath="publish"'
+          $sourceArg = '-source:contentPath="PrimaryServer"'
           $destArg = '-dest:contentPath="PrimaryServer",computerName="https://' + $server + ':8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
 
           Write-Host "msdeploy path: $msdeploy"
-          Write-Host "source: publish"
+          Write-Host "source: PrimaryServer"
           Write-Host "dest computerName: https://$server:8172/msdeploy.axd?site=$site"
           Write-Host "dest contentPath: C:\Program Files\PrimaryServer\publish"
 
