@@ -65,7 +65,7 @@ jobs:
           Write-Host "===================="
 
           $sourceArg = "-source:dirPath=`"$localPublishPath`""
-          $destArg = "-dest:iisApp=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
+          $destArg = "-dest:contentPath=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
 
           Write-Host "msdeploy path: $msdeploy"
           Write-Host "source: $sourceArg"
