@@ -13,7 +13,7 @@ jobs:
 
     env:
       PROJECT_PATH: DndServer/DndServer.csproj
-      LOCAL_PUBLISH_PATH: ${{ github.workspace }}\DndServer\DndServer\publish
+      LOCAL_PUBLISH_PATH: ${{ github.workspace }}\publish
 
     steps:
       - name: Checkout code
