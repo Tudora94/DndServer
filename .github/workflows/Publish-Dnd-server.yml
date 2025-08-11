@@ -66,11 +66,11 @@ jobs:
           Write-Host "===================="
 
           $sourceArg = '-source:contentPath="PrimaryServer"'
-          $destArg = '-dest:contentPath="PrimaryServer",computerName="https://' + $server + ':8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
+          $destArg = '-dest:contentPath="PrimaryServer",computerName="https://www.tudor-enterprises.com:8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
 
           Write-Host "msdeploy path: $msdeploy"
           Write-Host "source: PrimaryServer"
-          Write-Host "dest computerName: https://$server:8172/msdeploy.axd?site=$site"
+          Write-Host "dest computerName: https://www.tudor-enterprises.com:8172/msdeploy.axd?site=$site"
           Write-Host "dest contentPath: C:\Program Files\PrimaryServer\publish"
 
           $args = @(
