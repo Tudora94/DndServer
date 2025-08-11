@@ -55,6 +55,12 @@ jobs:
             exit 1
           }
 
+          Write-Host "Checking if package exists at $localPublishPath\package.zip"
+          if (-Not (Test-Path "$localPublishPath\package.zip")) {
+          Write-Error "Package file not found!"
+          exit 1
+          }
+
           # Hardcoded credentials
           $server = "https://www.tudor-enterprises.com:8172/msdeploy.axd?site=PrimaryServer"
           $site = "PrimaryServer"
@@ -62,13 +68,8 @@ jobs:
           $pass = "UxXW8gbfJbyrrBlFDNOf"
           $localPublishPath = $env:LOCAL_PUBLISH_PATH
 
-          Write-Host "==== Debug Info ===="
-          Write-Host "Server: $server"
-          Write-Host "Site: $site"
-          Write-Host "Local source path: $localPublishPath"
-          Write-Host "===================="
-
-          $sourceArg = "-source:package=`"$localPublishPath\package.zip`""
+          $packagePath = Join-Path $localPublishPath 'package.zip'
+          $sourceArg = "-source:package=`"$packagePath`""
           $destArg = "-dest:iisApp=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
 
           Write-Host "msdeploy path: $msdeploy"
