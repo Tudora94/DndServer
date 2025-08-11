@@ -41,11 +41,6 @@ jobs:
 
       - name: Deploy to IIS via Web Deploy
         shell: pwsh
-        env:
-          WEBDEPLOY_SERVER: ${{ secrets.WEBDEPLOY_SERVER }}
-          WEBDEPLOY_SITE_NAME: ${{ secrets.WEBDEPLOY_SITE_NAME }}
-          WEBDEPLOY_USERNAME: ${{ secrets.WEBDEPLOY_USERNAME }}
-          WEBDEPLOY_PASSWORD: ${{ secrets.WEBDEPLOY_PASSWORD }}
         run: |
           $msdeploy = 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
 
@@ -54,24 +49,25 @@ jobs:
             exit 1
           }
 
-          $server = $env:WEBDEPLOY_SERVER
-          $site   = $env:WEBDEPLOY_SITE_NAME
-          $user   = $env:WEBDEPLOY_USERNAME
-          $pass   = $env:WEBDEPLOY_PASSWORD
+          # Hardcoded values for testing
+          $server = "https://www.tudor-enterprises.com:8172/msdeploy.axd?site=PrimaryServer"
+          $site = "PrimaryServer"
+          $user = "deployuser"
+          $pass = "UxXW8gbfJbyrrBlFDNOf"
+          $localPublishPath = "$(System.DefaultWorkingDirectory)/publish"
 
           Write-Host "==== Debug Info ===="
           Write-Host "Server: $server"
           Write-Host "Site: $site"
-          Write-Host "Local source path: publish"
+          Write-Host "Local source path: $localPublishPath"
           Write-Host "===================="
 
-          $sourceArg = '-source:contentPath="PrimaryServer"'
-          $destArg = '-dest:contentPath="PrimaryServer",computerName="https://www.tudor-enterprises.com:8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
+          $sourceArg = "-source:dirPath=`"$localPublishPath`""
+          $destArg = "-dest:iisApp=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
 
           Write-Host "msdeploy path: $msdeploy"
-          Write-Host "source: PrimaryServer"
-          Write-Host "dest computerName: https://www.tudor-enterprises.com:8172/msdeploy.axd?site=$site"
-          Write-Host "dest contentPath: C:\Program Files\PrimaryServer\publish"
+          Write-Host "source: $sourceArg"
+          Write-Host "dest: $destArg"
 
           $args = @(
             '-verb:sync'
