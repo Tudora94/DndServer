@@ -41,6 +41,8 @@ jobs:
 
       - name: Deploy to IIS via Web Deploy
         shell: pwsh
+        env:
+          LOCAL_PUBLISH_PATH: ${{ github.workspace }}\publish
         run: |
           $msdeploy = 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
 
@@ -49,12 +51,12 @@ jobs:
             exit 1
           }
 
-          # Hardcoded values for testing
+          # Hardcoded credentials
           $server = "https://www.tudor-enterprises.com:8172/msdeploy.axd?site=PrimaryServer"
           $site = "PrimaryServer"
           $user = "deployuser"
           $pass = "UxXW8gbfJbyrrBlFDNOf"
-          $localPublishPath = "$(System.DefaultWorkingDirectory)/publish"
+          $localPublishPath = $env:LOCAL_PUBLISH_PATH
 
           Write-Host "==== Debug Info ===="
           Write-Host "Server: $server"
@@ -75,7 +77,7 @@ jobs:
             $destArg
             '-allowUntrusted'
             '-verbose'
-          )
+          ) 
 
           $proc = Start-Process -FilePath $msdeploy -ArgumentList $args -Wait -NoNewWindow -PassThru
 
