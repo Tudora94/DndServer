@@ -62,7 +62,14 @@ jobs:
 
       - name: Deploy site on remote server
         run: |
-          $session = New-PSSession -ComputerName www.tudor-enterprises.com -Credential $cred -UseSSL -Port 5986
+          $user = "deployuser"
+          $pass = "UxXW8gbfJbyrrBlFDNOf"
+          $server = "www.tudor-enterprises.com"
+
+          $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
+          $cred = New-Object System.Management.Automation.PSCredential ($user, $securePass)
+
+          $session = New-PSSession -ComputerName $server -Credential $cred -UseSSL -Port 5986
           Invoke-Command -Session $session -ScriptBlock {
             $packagePath   = "C:\Program Files\PrimaryServer\Deploy\package.zip"
             $publishPath   = "C:\Program Files\PrimaryServer\Publish"
