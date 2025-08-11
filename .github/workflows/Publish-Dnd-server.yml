@@ -26,8 +26,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore $env:PROJECT_PATH
 
-      - name: Publish project
-        run: dotnet publish $env:PROJECT_PATH -c Release -o ./publish
+      - name: Publish project as package
+        run: dotnet publish $env:PROJECT_PATH -c Release -o ./publish /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PackageAsSingleFile=true /p:PackageLocation=./publish/package.zip
 
       - name: Upload published files
         uses: actions/upload-artifact@v4
@@ -64,8 +64,8 @@ jobs:
           Write-Host "Local source path: $localPublishPath"
           Write-Host "===================="
 
-          $sourceArg = "-source:dirPath=`"$localPublishPath`""
-          $destArg = "-dest:contentPath=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
+          $sourceArg = "-source:package=`"$localPublishPath\package.zip`""
+          $destArg = "-dest:iisApp=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
 
           Write-Host "msdeploy path: $msdeploy"
           Write-Host "source: $sourceArg"
