@@ -41,12 +41,43 @@ jobs:
 
       - name: Deploy to IIS via Web Deploy
         shell: pwsh
+        env:
+          WEBDEPLOY_SERVER: ${{ secrets.WEBDEPLOY_SERVER }}
+          WEBDEPLOY_SITE_NAME: ${{ secrets.WEBDEPLOY_SITE_NAME }}
+          WEBDEPLOY_USERNAME: ${{ secrets.WEBDEPLOY_USERNAME }}
+          WEBDEPLOY_PASSWORD: ${{ secrets.WEBDEPLOY_PASSWORD }}
         run: |
-          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          $msdeploy = 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
 
-          & $msdeploy `
-            -verb:sync `
-            "-source:contentPath=publish" `
-            "-dest:contentPath='C:\Program Files\PrimaryServer\publish',computerName=https://${{ secrets.WEBDEPLOY_SERVER }}:8172/msdeploy.axd?site=${{ secrets.WEBDEPLOY_SITE_NAME }},userName=${{ secrets.WEBDEPLOY_USERNAME }},password=${{ secrets.WEBDEPLOY_PASSWORD }},authType=Basic" `
-            -allowUntrusted `
-            -verbose
+          if (-not (Test-Path $msdeploy)) {
+            Write-Error "msdeploy.exe not found at $msdeploy"
+            exit 1
+          }
+
+          $server = $env:WEBDEPLOY_SERVER
+          $site   = $env:WEBDEPLOY_SITE_NAME
+          $user   = $env:WEBDEPLOY_USERNAME
+          $pass   = $env:WEBDEPLOY_PASSWORD
+
+          $sourceArg = '-source:contentPath="publish"'
+          $destArg = '-dest:contentPath="C:\Program Files\PrimaryServer\publish",computerName="https://' + $server + ':8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
+
+          Write-Host "msdeploy path: $msdeploy"
+          Write-Host "source: publish"
+          Write-Host "dest computerName: https://$server:8172/msdeploy.axd?site=$site"
+          Write-Host "dest contentPath: C:\Program Files\PrimaryServer\publish"
+
+          $args = @(
+            '-verb:sync'
+            $sourceArg
+            $destArg
+            '-allowUntrusted'
+            '-verbose'
+          )
+
+          $proc = Start-Process -FilePath $msdeploy -ArgumentList $args -Wait -NoNewWindow -PassThru
+
+          if ($proc.ExitCode -ne 0) {
+            Write-Error "msdeploy failed with exit code $($proc.ExitCode)"
+            exit $proc.ExitCode
+          }
