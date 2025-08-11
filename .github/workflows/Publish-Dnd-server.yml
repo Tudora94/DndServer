@@ -60,7 +60,7 @@ jobs:
           $pass   = $env:WEBDEPLOY_PASSWORD
 
           $sourceArg = '-source:contentPath="publish"'
-          $destArg = '-dest:contentPath="C:\Program Files\PrimaryServer\publish",computerName="https://' + $server + ':8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
+          $destArg = '-dest:contentPath="PrimaryServer",computerName="https://' + $server + ':8172/msdeploy.axd?site=' + $site + '",userName="' + $user + '",password="' + $pass + '",authType="Basic"'
 
           Write-Host "msdeploy path: $msdeploy"
           Write-Host "source: publish"
