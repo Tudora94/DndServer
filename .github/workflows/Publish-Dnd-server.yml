@@ -13,6 +13,7 @@ jobs:
 
     env:
       PROJECT_PATH: DndServer/DndServer.csproj
+      LOCAL_PUBLISH_PATH: ${{ github.workspace }}\DndServer\DndServer\publish
 
     steps:
       - name: Checkout code
@@ -36,7 +37,8 @@ jobs:
           path: publish
 
       - name: Zip published files
-        run: Compress-Archive -Path ./publish/* -DestinationPath ./publish/package.zip
+        Write-Host "Current directory: $(Get-Location)"
+        run: Compress-Archive -Path "$env:LOCAL_PUBLISH_PATH\*" -DestinationPath "$env:LOCAL_PUBLISH_PATH\package.zip"
         shell: pwsh
 
       - name: Install Web Deploy
