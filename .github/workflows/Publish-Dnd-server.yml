@@ -42,10 +42,6 @@ jobs:
           Compress-Archive -Path "$env:LOCAL_PUBLISH_PATH\*" -DestinationPath "$env:LOCAL_PUBLISH_PATH\package.zip"
         shell: pwsh
 
-      # - name: Install Web Deploy
-      #   run: |
-      #     choco install webdeploy -y
-
       - name: Copy package.zip to server
         shell: pwsh
         env:
@@ -64,50 +60,22 @@ jobs:
 
           Remove-PSSession $session
 
-      # - name: Deploy to IIS via Web Deploy
-      #   shell: pwsh
-      #   env:
-      #     LOCAL_PUBLISH_PATH: ${{ github.workspace }}\publish
-      #   run: |
-      #     $msdeploy = 'C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe'
+      - name: Deploy site on remote server
+        run: |
+          $session = New-PSSession -ComputerName www.tudor-enterprises.com -Credential $cred -UseSSL -Port 5986
+          Invoke-Command -Session $session -ScriptBlock {
+            $packagePath   = "C:\Program Files\PrimaryServer\Deploy\package.zip"
+            $publishPath   = "C:\Program Files\PrimaryServer\Publish"
+            $backupPath    = "C:\Program Files\PrimaryServer\Backup\Publish_{0:yyyyMMdd_HHmmss}" -f (Get-Date)
 
-      #     if (-not (Test-Path $msdeploy)) {
-      #       Write-Error "msdeploy.exe not found at $msdeploy"
-      #       exit 1
-      #     }
+            Import-Module WebAdministration
+            Stop-WebSite -Name "PrimaryServer"
 
-      #     Write-Host "Checking if package exists at $env:LOCAL_PUBLISH_PATH\package.zip"
-      #     if (-Not (Test-Path "$env:LOCAL_PUBLISH_PATH\package.zip")) {
-      #     Write-Error "Package file not found!"
-      #     exit 1
-      #     }
+            New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
+            Copy-Item -Path "$publishPath\*" -Destination $backupPath -Recurse -Force
+            Remove-Item -Path "$publishPath\*" -Recurse -Force
+            Expand-Archive -Path $packagePath -DestinationPath $publishPath -Force
 
-      #     # Hardcoded credentials
-      #     $server = "https://www.tudor-enterprises.com:8172/msdeploy.axd?site=PrimaryServer"
-      #     $site = "PrimaryServer"
-      #     $user = "deployuser"
-      #     $pass = "UxXW8gbfJbyrrBlFDNOf"
-
-      #     $localPublishPath = $env:LOCAL_PUBLISH_PATH
-      #     $packagePath = Join-Path $localPublishPath 'package.zip'
-      #     $sourceArg = "-source:package=`"$packagePath`""
-      #     $destArg = "-dest:iisApp=`"$site`",computerName=`"$server`",userName=`"$user`",password=`"$pass`",authType=`"Basic`""
-
-      #     Write-Host "msdeploy path: $msdeploy"
-      #     Write-Host "source: $sourceArg"
-      #     Write-Host "dest: $destArg"
-
-      #     $args = @(
-      #       '-verb:sync'
-      #       $sourceArg
-      #       $destArg
-      #       '-allowUntrusted'
-      #       '-verbose'
-      #     ) 
-
-      #     $proc = Start-Process -FilePath $msdeploy -ArgumentList $args -Wait -NoNewWindow -PassThru
-
-      #     if ($proc.ExitCode -ne 0) {
-      #       Write-Error "msdeploy failed with exit code $($proc.ExitCode)"
-      #       exit $proc.ExitCode
-      #     }
+            Start-WebSite -Name "PrimaryServer"
+          }
+          Remove-PSSession $session
