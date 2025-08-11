@@ -37,8 +37,9 @@ jobs:
           path: publish
 
       - name: Zip published files
-        Write-Host "Current directory: $(Get-Location)"
-        run: Compress-Archive -Path "$env:LOCAL_PUBLISH_PATH\*" -DestinationPath "$env:LOCAL_PUBLISH_PATH\package.zip"
+        run: |
+          Write-Host "Current directory: $(Get-Location)"
+          Compress-Archive -Path "$env:LOCAL_PUBLISH_PATH\*" -DestinationPath "$env:LOCAL_PUBLISH_PATH\package.zip"
         shell: pwsh
 
       - name: Install Web Deploy
