@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DndServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("DndServer/[controller]")]
     [ApiController]
     [Authorize]
     public class InventoryController : ControllerBase
