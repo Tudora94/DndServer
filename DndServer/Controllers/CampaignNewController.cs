@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace DndServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("DndServer/[controller]")]
     [ApiController]
     public class CampaignNewController : ControllerBase
     {
