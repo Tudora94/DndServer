@@ -72,20 +72,21 @@ jobs:
 
           $session = New-PSSession -ComputerName $env:SERVER -Credential $cred -UseSSL -Port 5986 -Authentication Basic -SessionOption (New-PSSessionOption -SkipCNCheck)
           Invoke-Command -Session $session -ScriptBlock {
-            param ($siteName)
 
             $packagePath   = "C:\Program Files\PrimaryServer\Deploy\package.zip"
             $publishPath   = "C:\Program Files\PrimaryServer\DndServer"
             $backupPath    = "C:\Program Files\PrimaryServer\Archive\DNDServer\DndServer_{0:yyyyMMdd_HHmmss}" -f (Get-Date)
+            $appPoolName   = "DndServer"
+
 
             Import-Module WebAdministration
-            Stop-WebSite -Name $siteName
+            Stop-WebAppPool -Name $appPoolName
 
             New-Item -ItemType Directory -Force -Path $backupPath | Out-Null
             Copy-Item -Path "$publishPath\*" -Destination $backupPath -Recurse -Force
             Remove-Item -Path "$publishPath\*" -Recurse -Force
             Expand-Archive -Path $packagePath -DestinationPath $publishPath -Force
 
-            Start-WebSite -Name $siteName
-          } -ArgumentList "PrimaryServer"
+            Start-WebAppPool -Name $appPoolName
+          }
           Remove-PSSession $session
