@@ -10,7 +10,7 @@ namespace DndServer.Controllers
 {
 
 
-    [Route("DndServer/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
 

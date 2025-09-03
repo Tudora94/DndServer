@@ -12,7 +12,7 @@ using DndServer.User.Services;
 
 namespace DndServer.Controllers
 {
-    [Route("DndServer/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class PlayerController : ControllerBase

@@ -75,8 +75,8 @@ jobs:
             param ($siteName)
 
             $packagePath   = "C:\Program Files\PrimaryServer\Deploy\package.zip"
-            $publishPath   = "C:\Program Files\PrimaryServer\Publish"
-            $backupPath    = "C:\Program Files\PrimaryServer\Archive\Publish_{0:yyyyMMdd_HHmmss}" -f (Get-Date)
+            $publishPath   = "C:\Program Files\PrimaryServer\DndServer"
+            $backupPath    = "C:\Program Files\PrimaryServer\Archive\DNDServer\DndServer_{0:yyyyMMdd_HHmmss}" -f (Get-Date)
 
             Import-Module WebAdministration
             Stop-WebSite -Name $siteName
