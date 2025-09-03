@@ -1,8 +1,6 @@
 name: Android Signed Release Build
 
 on:
-  push:
-    branches: [ Main ]
   pull_request:
     branches: [ Main ]
   workflow_dispatch:
